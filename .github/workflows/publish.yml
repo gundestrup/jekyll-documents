@@ -23,17 +23,3 @@ jobs:
 
       - name: Publish to RubyGems
         uses: rubygems/release-gem@v1
-
-      - name: Build gem for GitHub Packages
-        run: gem build jekyll-documents.gemspec
-
-      - name: Publish to GitHub Packages
-        run: |
-          cat << EOF > ~/.gem/credentials
-          ---
-          :github: Bearer ${GITHUB_TOKEN}
-          EOF
-          chmod 0600 ~/.gem/credentials
-          gem push --key github --host https://rubygems.pkg.github.com/gundestrup *.gem
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
