@@ -47,6 +47,8 @@ module Jekyll
       def parse_args(markup)
         # supports: count:5 category:'referat'
         args = {}
+        # Safe: markup comes from Jekyll template authors (trusted), not end users
+        # Runs only during static site generation, not on user requests
         markup.scan(/(\w+)\s*:\s*'([^']*)'|(\w+)\s*:\s*([^\s]+)/).each do |m|
           if m[0]
             args[m[0]] = m[1]

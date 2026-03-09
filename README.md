@@ -117,6 +117,19 @@ bundle exec rake doc    # Generate docs
 cd example && bundle exec jekyll serve  # Example site
 ```
 
+### 1. Bump version
+./bump_version.sh patch  # or minor/major
+
+### 2. Update CHANGELOG.md
+
+### 3. Commit and push
+git add .
+git commit -m "Bump version to X.Y.Z"
+git push
+
+### 4. Create GitHub release
+### → Automatically publishes to RubyGems!
+
 ## License
 
 AGPL-3.0-only
