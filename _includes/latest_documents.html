@@ -1,0 +1,10 @@
+{% assign count = include.count | default: site.config.documents.latest_default_count | default: 5 %}
+{% assign docs = site.documents | sort: "date" | reverse | slice: 0, count %}
+<ul class="latest-documents">
+  {% for doc in docs %}
+    <li>
+      <a href="{{ doc.url |_url }}{{ doc.title }}</a>
+      <small>({{ doc.date | date: "%d-%m-%Y" }}, {{ doc.category }})</small>
+    </li>
+  {% endfor %}
+</ul>
