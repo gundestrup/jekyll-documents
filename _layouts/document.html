@@ -6,13 +6,14 @@ layout: default
   <header>
     <h1>{{ page.title }}</h1>
     <p class="document-meta">
-      <strong>Date:</strong> {{ page.date | date: "%d-%m-%Y" }}<br>
+      <strong>Date:</strong> {{ page.date | date: "%Y-%m-%d" }}<br>
       <strong>Category:</strong> {{ page.category }}
     </p>
   </header>
 
   <p>
-    <a class="document relative_url }}
+    <a href="{{ page.file_url | relative_url }}" class="document-download">
+      {{ page.file_type | file_type_icon_tag }}
       Download ({{ page.extension | remove: "." | upcase }})
     </a>
   </p>

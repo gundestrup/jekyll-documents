@@ -14,6 +14,7 @@ module Jekyll
         s = s.gsub(/[æøåÆØÅ]/) { |ch| DANISH_MAP[ch] } if danish_map
         s = s.strip.gsub(/[^\p{Alnum}\-_\s]/u, "")
         s = s.tr(" ", "-").gsub(/-+/, "-")
+        s = s.gsub(/[æøåÆØÅ]/, "") unless danish_map  # Remove Danish chars if mapping disabled
         s = s.downcase if downcase
         s
       end

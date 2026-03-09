@@ -4,13 +4,13 @@ Gem::Specification.new do |spec|
   spec.name          = "jekyll-documents"
   spec.version       = File.read(File.expand_path("lib/jekyll/documents/version.rb", __dir__))
                          .match(/VERSION\s*=\s*"([^"]+)"/)[1]
-  spec.authors       = ["Svend Erik Gundestrup"]
-  spec.email         = ["no-reply@example.com"]
+  spec.authors       = ["Svend Gundestrup"]
+  spec.email         = ["no-reply@borg-collective.eu"]
 
   spec.summary       = "Auto-generate Jekyll pages for documents (PDF/DOCX/...) with category/date/title parsing."
   spec.description   = "A Jekyll plugin + theme that scans assets/documents/**, creates a collection item per file, " \
                        "adds metadata (title/date/category), outputs pages, generates a JSON index for Lunr, and integrates with jekyll-sitemap."
-  spec.homepage      = "https://github.com/YOUR_ORG/jekyll-documents"
+  spec.homepage      = "https://github.com/gundestrup/jekyll-documents"
   spec.license       = "AGPL-3.0-only"
 
   spec.required_ruby_version = ">= 2.7"
@@ -20,4 +20,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "jekyll", ">= 4.0"
+  
+  spec.add_development_dependency "rspec", "~> 3.12"
+  spec.add_development_dependency "rake", "~> 13.0"
+  spec.add_development_dependency "yard", "~> 0.9"
 end

@@ -18,6 +18,9 @@ module Jekyll
         FileUtils.mkdir_p(File.dirname(dest_path))
         File.write(dest_path, @content)
         true
+      rescue StandardError => e
+        Jekyll.logger.error "jekyll-documents", "Failed to write #{dest_path}: #{e.message}"
+        false
       end
     end
   end

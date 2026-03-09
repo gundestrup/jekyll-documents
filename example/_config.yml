@@ -1,0 +1,53 @@
+# Example Jekyll site demonstrating jekyll-documents plugin
+
+title: Document Management Example
+description: A demonstration of the jekyll-documents plugin
+baseurl: ""
+url: "http://localhost:4000"
+
+# Theme
+theme: minima
+
+# Plugins
+plugins:
+  - jekyll-documents
+  - jekyll-sitemap
+
+# Jekyll Documents Configuration
+documents:
+  root: "assets/documents"
+  permalink: "/documents/:category/:slug/"
+  slug_downcase: true
+  slug_danish_map: true
+  categories_from_path: true
+  
+  # Validation
+  strict_filename: true
+  strict_extensions: true
+  
+  # JSON Index for search
+  json_index: true
+  json_index_path: "/documents.json"
+  
+  # Supported file types
+  include_extensions:
+    - ".pdf"
+    - ".docx"
+    - ".pptx"
+    - ".xlsx"
+    - ".odt"
+    - ".ods"
+    - ".odp"
+  
+  latest_default_count: 5
+  layout: "document"
+  
+  # Icon configuration - try changing this!
+  icon_set: "color"  # options: "color", "lines", "minimal", "ultra-minimal"
+  
+  # Optional: remap category names
+  category_map:
+    "referat": "minutes"
+
+# Build settings
+markdown: kramdown

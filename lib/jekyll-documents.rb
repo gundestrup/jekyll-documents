@@ -5,6 +5,7 @@ require_relative "jekyll/documents/version"
 require_relative "jekyll/documents/configuration"
 require_relative "jekyll/documents/utils"
 require_relative "jekyll/documents/filters"
+require_relative "jekyll/documents/file_type_icons"
 require_relative "jekyll/documents/generator"
 require_relative "jekyll/documents/json_index_generator"
 

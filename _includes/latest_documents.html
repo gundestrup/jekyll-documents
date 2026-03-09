@@ -3,8 +3,9 @@
 <ul class="latest-documents">
   {% for doc in docs %}
     <li>
-      <a href="{{ doc.url |_url }}{{ doc.title }}</a>
-      <small>({{ doc.date | date: "%d-%m-%Y" }}, {{ doc.category }})</small>
+      {{ doc.file_type | file_type_icon_tag }}
+      <a href="{{ doc.url | relative_url }}">{{ doc.title }}</a>
+      <small>({{ doc.date | date: "%Y-%m-%d" }}, {{ doc.category }})</small>
     </li>
   {% endfor %}
 </ul>

@@ -6,13 +6,15 @@ module Jekyll
       DEFAULTS = {
         "root" => "assets/documents",
         "permalink" => "/documents/:category/:slug/",
-        "title_from_filename" => true,
         "slug_downcase" => true,
         "slug_danish_map" => true,
         "categories_from_path" => true,
         "include_extensions" => %w[.pdf .docx .pptx .xlsx .odt .ods .odp],
         "layout" => "document",
         "latest_default_count" => 5,
+
+        # Icon configuration
+        "icon_set" => "color",
 
         # Validation
         "strict_filename" => true,

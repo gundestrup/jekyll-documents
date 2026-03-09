@@ -4,10 +4,15 @@ require "date"
 
 module Jekyll
   module Documents
+    # Main generator that scans document files and creates Jekyll collection items
+    # @api public
     class Generator < ::Jekyll::Generator
       safe true
       priority :normal
 
+      # Generates document collection from files in configured root directory
+      # @param site [Jekyll::Site] the Jekyll site instance
+      # @return [void]
       def generate(site)
         @site   = site
         @config = Configuration.read(site)
@@ -30,7 +35,7 @@ module Jekyll
           end
           next unless @config["include_extensions"].include?(ext)
 
-          rel_path = path.sub(site.source + "/", "")
+          rel_path = path.start_with?(site.source) ? path[(site.source.length + 1)..-1] : path
           category = infer_category_from(rel_path)
           basename = File.basename(path, ext)
 
@@ -54,6 +59,7 @@ module Jekyll
           doc.data["category"]   = remap_category(category)
           doc.data["file_url"]   = "/" + rel_path
           doc.data["extension"]  = ext
+          doc.data["file_type"]  = ext.sub(".", "").downcase
           doc.data["slug"]       = slug
           doc.data["permalink"]  = @config["permalink"]
             .gsub(":category", doc.data["category"].to_s)
@@ -67,25 +73,47 @@ module Jekyll
 
       private
 
+      # Ensures a collection exists and is configured for output
+      # @param site [Jekyll::Site] the Jekyll site instance
+      # @param label [String] the collection name
+      # @return [Jekyll::Collection] the collection
       def ensure_collection(site, label)
-        site.collections[label] ||= ::Jekyll::Collection.new(site, label)
+        unless site.collections[label]
+          site.collections[label] = ::Jekyll::Collection.new(site, label)
+          site.config["collections"] ||= {}
+          site.config["collections"][label] = { "output" => true }
+        end
+        site.collections[label]
       end
 
+      # Creates a virtual source path for the document
+      # @param basename [String] the file basename
+      # @param category [String] the document category
+      # @return [String] virtual source path
       def source_stub_for(basename, category)
         File.join("_documents", "#{category}-#{basename}.md")
       end
 
+      # Infers category from the file's directory path
+      # @param rel_path [String] relative path from site source
+      # @return [String] the category name
       def infer_category_from(rel_path)
         return "uncategorized" unless @config["categories_from_path"]
-        File.dirname(rel_path).split("/").last || "uncategorized"
+        category_dir = File.dirname(rel_path).sub("#{@config['root']}", "")
+        category_dir.split("/").reject(&:empty?).last || "uncategorized"
       end
 
+      # Remaps category name using category_map configuration
+      # @param cat [String] the original category
+      # @return [String] the remapped category (lowercased)
       def remap_category(cat)
         map = @config["category_map"] || {}
         (map[cat] || cat).to_s.downcase
       end
 
-      # Returns [date, title, valid_format?]
+      # Parses filename to extract date and title
+      # @param basename [String] the filename without extension
+      # @return [Array<Date, String, Boolean>] date, title, and validity flag
       def parse_filename(basename)
         if basename =~ /^(\d{4})-(\d{2})-(\d{2})_(.+)$/
           date = Date.parse("#{Regexp.last_match(1)}-#{Regexp.last_match(2)}-#{Regexp.last_match(3)}")
@@ -98,12 +126,16 @@ module Jekyll
         [nil, basename.tr("_", " "), false]
       end
 
+      # Builds a URL-safe slug from filename
+      # @param basename [String] the filename without extension
+      # @return [String] the generated slug
       def build_slug(basename)
         s = basename.sub(/^\d{4}-\d{2}-\d{2}_/, "")
         s = s.gsub(/[æøåÆØÅ]/, {"æ"=>"ae","ø"=>"oe","å"=>"aa","Æ"=>"Ae","Ø"=>"Oe","Å"=>"Aa"}) if @config["slug_danish_map"]
         s = s.downcase if @config["slug_downcase"]
-        s = s.gsub(/[^\p{Alnum}\-_\s]/u, "").tr(" ", "-").gsub(/-+/, "-")
-        s
+        s = s.gsub(/[^\p{Alnum}\-_\s]/u, "").tr("_ ", "--").gsub(/-+/, "-")
+        s = s.sub(/^-+/, "").sub(/-+$/, "")  # Remove leading/trailing hyphens
+        s.empty? ? "untitled" : s
       end
     end
   end

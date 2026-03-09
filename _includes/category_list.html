@@ -2,7 +2,9 @@
 <ul class="documents-category-list">
   {% for cat in cats %}
     <li>
-      {{ {{ cat }}</a>
+      <img src="/assets/icons/{{ site.documents.icon_set | default: 'color' }}/folder-svgrepo-com.svg" alt="Folder" class="folder-icon" />
+      <span class="category-name">{{ cat }}</span>
+      <span class="category-count">({{ site.documents | where: "category", cat | size }})</span>
     </li>
   {% endfor %}
 </ul>

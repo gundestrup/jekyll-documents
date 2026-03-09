@@ -7,6 +7,8 @@ module Jekyll
         super
         @args = parse_args(markup)
       end
+      
+      public_class_method :new
 
       def render(context)
         site = context.registers[:site]
@@ -20,16 +22,27 @@ module Jekyll
 
         out = +"<ul class=\"latest-documents\">\n"
         docs.each do |d|
-          title = d.data["title"]
-          url   = d.url
-          date  = (d.data["date"] || Time.at(0)).strftime("%d-%m-%Y")
-          out << %(<li>#{url}#{title}</a> <small>(#{date})</small></li>\n)
+          title = escape_html(d.data["title"])
+          url   = escape_html(d.url)
+          date  = (d.data["date"] || Time.at(0)).strftime("%Y-%m-%d")
+          out << %(<li><a href="#{url}">#{title}</a> <small>(#{date})</small></li>\n)
         end
         out << "</ul>\n"
         out
       end
 
       private
+
+      def escape_html(text)
+        return "" unless text
+        text.to_s.gsub(/[&<>"']/, {
+          "&" => "&amp;",
+          "<" => "&lt;",
+          ">" => "&gt;",
+          '"' => "&quot;",
+          "'" => "&#39;"
+        })
+      end
 
       def parse_args(markup)
         # supports: count:5 category:'referat'
@@ -48,3 +61,4 @@ module Jekyll
 end
 
 Liquid::Template.register_tag("latest_documents", Jekyll::Documents::LatestDocumentsTag)
+

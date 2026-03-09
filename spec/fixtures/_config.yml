@@ -1,0 +1,5 @@
+# Test fixture configuration
+title: Test Site
+documents:
+  root: "assets/documents"
+  permalink: "/documents/:category/:slug/"

@@ -1,0 +1,14 @@
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+
+gem "jekyll", "~> 4.3"
+gem "minima", "~> 2.5"
+gem "jekyll-sitemap"
+
+# Local development - use the gem from parent directory
+gem "jekyll-documents", path: ".."
+
+group :jekyll_plugins do
+  gem "jekyll-documents"
+end
