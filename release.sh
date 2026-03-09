@@ -25,36 +25,28 @@ echo "1️⃣  Adding all files..."
 git add .
 
 echo "2️⃣  Committing changes..."
-git commit -m "Release v$VERSION: Add configurable icon system with 4 icon sets
-
-- Add 4 icon sets: color, lines, minimal, ultra-minimal
-- Include 20+ file type icons from svgrepo.com
-- Add folder icons for category lists
-- Icons appear in all views (pages, lists, search, categories)
-- Add icon_set configuration option
-- Update README with simplified documentation
-- Fix slug generation (underscores to hyphens)
-- Fix Danish character mapping
-- Add comprehensive test suite (72 tests passing)
-- Add YARD documentation
-- Add example Jekyll site
-- Add CI/CD workflow"
+read -p "Enter commit message: " COMMIT_MSG
+if [ -z "$COMMIT_MSG" ]; then
+    COMMIT_MSG="Release v$VERSION"
+fi
+git commit -m "$COMMIT_MSG"
 
 echo "3️⃣  Creating tag v$VERSION..."
-git tag -a "v$VERSION" -m "Version $VERSION - Configurable Icon System"
+git tag -a "v$VERSION" -m "Version $VERSION"
 
 echo "4️⃣  Pushing to GitHub..."
 git push origin main
 git push origin "v$VERSION"
 
-echo "5️⃣  Building gem..."
-gem build jekyll-documents.gemspec
-
 echo ""
-echo "✅ Release complete!"
+echo "✅ Code pushed to GitHub!"
 echo ""
-echo "📋 Next steps:"
-echo "   1. Publish to RubyGems: gem push jekyll-documents-$VERSION.gem"
-echo "   2. Create GitHub release at: https://github.com/gundestrup/jekyll-documents/releases"
-echo "   3. Attach gem file: jekyll-documents-$VERSION.gem"
+echo "📋 Next step:"
+echo "   Create GitHub release at: https://github.com/gundestrup/jekyll-documents/releases/new?tag=v$VERSION"
+echo ""
+echo "   The workflow will automatically:"
+echo "   ✓ Build the gem"
+echo "   ✓ Publish to RubyGems.org (via OIDC)"
+echo ""
+echo "   No manual gem push needed! 🎉"
 echo ""
