@@ -1,0 +1,9 @@
+{% assign docs = include.docs | default: site.documents | sort: "date" | reverse %}
+<ul class="documents-list">
+  {% for doc in docs %}
+    <li>
+      <{ doc.url | relative_url }}{{ doc.title }}</a>
+      <small>({{ doc.date | date: "%d-%m-%Y" }}, {{ doc.category }})</small>
+    </li>
+  {% endfor %}
+</ul>
