@@ -1,0 +1,8 @@
+{% assign cats = site.documents | map: "category" | uniq | sort %}
+<ul class="documents-category-list">
+  {% for cat in cats %}
+    <li>
+      {{ {{ cat }}</a>
+    </li>
+  {% endfor %}
+</ul>
