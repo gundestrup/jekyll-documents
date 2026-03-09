@@ -13,29 +13,38 @@ This guide shows how to link your GitHub repository with RubyGems for automated 
 
 ## Setup Steps
 
-### 1. Get RubyGems API Token
+### Method 1: OIDC Trusted Publisher (Recommended)
 
-1. Sign in to RubyGems: https://rubygems.org/sign_in
-2. Go to your profile settings: https://rubygems.org/profile/edit
-3. Click on "API Keys" in the sidebar
-4. Click "New API Key"
-5. **Name**: `GitHub Actions - jekyll-documents`
-6. **Scopes**: Select "Push rubygems"
-7. **Index rubygems**: Leave unchecked
-8. **MFA**: Enable if you have 2FA (recommended)
-9. Click "Create"
-10. **Copy the API key** (you'll only see it once!)
+This is the modern, more secure approach that works seamlessly with MFA.
 
-### 2. Add Secret to GitHub
+1. Go to: https://rubygems.org/profile/oidc/pending_trusted_publishers/new
+2. Fill in the form:
+   - **Gem name**: `jekyll-documents`
+   - **GitHub repository owner**: `gundestrup`
+   - **GitHub repository name**: `jekyll-documents`
+   - **Workflow filename**: `publish.yml`
+   - **Environment name**: (leave blank)
+3. Click **Create**
+4. **Done!** No secrets needed in GitHub
 
-1. Go to your repository: https://github.com/gundestrup/jekyll-documents
-2. Click **Settings** → **Secrets and variables** → **Actions**
-3. Click **New repository secret**
-4. **Name**: `RUBYGEMS_API_KEY`
-5. **Value**: Paste your RubyGems API key
-6. Click **Add secret**
+### Method 2: API Key (Alternative)
 
-### 3. Update Gemspec for GitHub Packages (Optional)
+If you prefer using API keys:
+
+1. Go to: https://rubygems.org/profile/edit
+2. Click **API Keys** → **New API Key**
+3. **Name**: `GitHub Actions - jekyll-documents`
+4. **Scopes**: ✓ Push rubygems
+5. **MFA**: Select "UI and gem signin" (NOT "UI and API")
+6. Copy the API key
+7. Add to GitHub:
+   - Go to: https://github.com/gundestrup/jekyll-documents/settings/secrets/actions
+   - Click **New repository secret**
+   - **Name**: `RUBYGEMS_API_KEY`
+   - **Value**: Paste the API key
+   - Click **Add secret**
+
+### 2. Update Gemspec for GitHub Packages (Optional)
 
 The gemspec already has the correct metadata. Verify it includes:
 
@@ -49,7 +58,7 @@ spec.metadata = {
 }
 ```
 
-### 4. Test the Workflow
+### 3. Test the Workflow
 
 The workflow is triggered when you **publish a GitHub release**. To test:
 

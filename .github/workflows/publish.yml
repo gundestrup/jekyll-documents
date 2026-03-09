@@ -10,6 +10,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write  # Required for OIDC
 
     steps:
       - uses: actions/checkout@v4
@@ -24,16 +25,7 @@ jobs:
         run: gem build jekyll-documents.gemspec
 
       - name: Publish to RubyGems
-        run: |
-          mkdir -p ~/.gem
-          cat << EOF > ~/.gem/credentials
-          ---
-          :rubygems_api_key: ${RUBYGEMS_API_KEY}
-          EOF
-          chmod 0600 ~/.gem/credentials
-          gem push *.gem
-        env:
-          RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+        uses: rubygems/release-gem@v1
 
       - name: Publish to GitHub Packages
         run: |
