@@ -1,6 +1,7 @@
 /.bundle/
 /pkg/
 /vendor/
+/tmp/
 .DS_Store
 Gemfile.lock
 *.gem
