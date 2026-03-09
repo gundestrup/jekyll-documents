@@ -21,11 +21,11 @@ jobs:
           ruby-version: '3.2'
           bundler-cache: true
 
-      - name: Build gem
-        run: gem build jekyll-documents.gemspec
-
       - name: Publish to RubyGems
         uses: rubygems/release-gem@v1
+
+      - name: Build gem for GitHub Packages
+        run: gem build jekyll-documents.gemspec
 
       - name: Publish to GitHub Packages
         run: |
