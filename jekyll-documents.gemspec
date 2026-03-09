@@ -13,6 +13,15 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/gundestrup/jekyll-documents"
   spec.license       = "AGPL-3.0-only"
 
+  spec.metadata = {
+    "source_code_uri"   => "https://github.com/gundestrup/jekyll-documents",
+    "bug_tracker_uri"   => "https://github.com/gundestrup/jekyll-documents/issues",
+    "changelog_uri"     => "https://github.com/gundestrup/jekyll-documents/blob/main/CHANGELOG.md",
+    "documentation_uri" => "https://github.com/gundestrup/jekyll-documents",
+    "homepage_uri"      => "https://github.com/gundestrup/jekyll-documents",
+    "rubygems_mfa_required" => "true"
+  }
+
   spec.required_ruby_version = ">= 2.7"
 
   spec.files         = Dir.glob("{lib,assets,_includes,_layouts}/**/*") +
