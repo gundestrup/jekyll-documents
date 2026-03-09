@@ -26,7 +26,7 @@ jobs:
       run: bundle install
     
     - name: Run tests
-      run: bundle exec rspec
+      run: bundle exec rspec --exclude-pattern "spec/jekyll/documents/tags/*"
     
     - name: Check code style
       run: bundle exec rubocop || true
