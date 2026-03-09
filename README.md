@@ -1,6 +1,6 @@
 # jekyll-documents
 Jekyll static document generator
-``ìni
+``` ini
 jekyll-documents/
 ├─ .gitignore
 ├─ CHANGELOG.md
