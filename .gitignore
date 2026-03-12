@@ -7,3 +7,5 @@ Gemfile.lock
 *.gem
 /.idea/
 /.vscode/
+/coverage/
+spec/examples.txt
