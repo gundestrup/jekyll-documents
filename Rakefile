@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "English"
 require "bundler/gem_tasks"
 require "rspec/core/rake_task"
 require "yard"
@@ -35,7 +36,7 @@ desc "Check code smells with Reek"
 task :reek do
   sh "bundle exec reek --config .reek.yml lib/" do |ok, _|
     # Reek warnings are acceptable, only fail on errors
-    ok || $?.exitstatus == 2
+    ok || $CHILD_STATUS.exitstatus == 2
   end
 end
 
