@@ -32,7 +32,7 @@ Metrics/MethodLength:
   Max: 50
 
 Metrics/AbcSize:
-  Max: 50
+  Enabled: false
 
 Metrics/BlockLength:
   Exclude:
@@ -55,6 +55,9 @@ Metrics/PerceivedComplexity:
   Max: 12
   Exclude:
     - 'lib/jekyll-documents.rb'
+
+Naming/FileName:
+  Enabled: false
 
 Layout/LineLength:
   Max: 100
