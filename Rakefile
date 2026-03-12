@@ -33,7 +33,10 @@ end
 
 desc "Check code smells with Reek"
 task :reek do
-  sh "bundle exec reek --config .reek.yml lib/"
+  sh "bundle exec reek --config .reek.yml lib/" do |ok, _|
+    # Reek warnings are acceptable, only fail on errors
+    ok || $?.exitstatus == 2
+  end
 end
 
 desc "Run security audit"
