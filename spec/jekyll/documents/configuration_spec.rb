@@ -22,10 +22,10 @@ RSpec.describe Jekyll::Documents::Configuration do
 
     it "merges user configuration with defaults" do
       site = make_site("documents" => {
-        "root" => "custom/path",
-        "strict_filename" => false,
-        "latest_default_count" => 10
-      })
+                         "root" => "custom/path",
+                         "strict_filename" => false,
+                         "latest_default_count" => 10
+                       })
       config = described_class.read(site)
 
       expect(config["root"]).to eq("custom/path")

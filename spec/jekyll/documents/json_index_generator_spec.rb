@@ -14,7 +14,7 @@ RSpec.describe Jekyll::Documents::JsonIndexGenerator do
       it "does not generate JSON file" do
         site = make_site("documents" => { "json_index" => false })
         generator.generate(site)
-        
+
         expect(site.static_files).to be_empty
       end
     end
@@ -23,9 +23,9 @@ RSpec.describe Jekyll::Documents::JsonIndexGenerator do
       it "does not generate JSON file" do
         site = make_site
         site.collections["documents"] = Jekyll::Collection.new(site, "documents")
-        
+
         generator.generate(site)
-        
+
         expect(site.static_files).to be_empty
       end
     end
@@ -48,9 +48,9 @@ RSpec.describe Jekyll::Documents::JsonIndexGenerator do
         site = make_site("source" => temp_dir)
         doc_generator = Jekyll::Documents::Generator.new
         doc_generator.generate(site)
-        
+
         generator.generate(site)
-        
+
         json_file = site.static_files.find { |f| f.is_a?(Jekyll::Documents::TextStaticFile) }
         expect(json_file).not_to be_nil
       end
@@ -59,15 +59,15 @@ RSpec.describe Jekyll::Documents::JsonIndexGenerator do
         site = make_site("source" => temp_dir)
         doc_generator = Jekyll::Documents::Generator.new
         doc_generator.generate(site)
-        
+
         generator.generate(site)
-        
+
         json_file = site.static_files.find { |f| f.is_a?(Jekyll::Documents::TextStaticFile) }
         json_data = JSON.parse(json_file.instance_variable_get(:@content))
-        
+
         expect(json_data).to be_an(Array)
         expect(json_data.size).to eq(2)
-        
+
         first_doc = json_data.first
         expect(first_doc).to have_key("url")
         expect(first_doc).to have_key("title")
@@ -80,12 +80,12 @@ RSpec.describe Jekyll::Documents::JsonIndexGenerator do
         site = make_site("source" => temp_dir)
         doc_generator = Jekyll::Documents::Generator.new
         doc_generator.generate(site)
-        
+
         generator.generate(site)
-        
+
         json_file = site.static_files.find { |f| f.is_a?(Jekyll::Documents::TextStaticFile) }
         json_data = JSON.parse(json_file.instance_variable_get(:@content))
-        
+
         expect(json_data.first["date"]).to match(/^\d{4}-\d{2}-\d{2}$/)
       end
 
@@ -96,9 +96,9 @@ RSpec.describe Jekyll::Documents::JsonIndexGenerator do
         )
         doc_generator = Jekyll::Documents::Generator.new
         doc_generator.generate(site)
-        
+
         generator.generate(site)
-        
+
         json_file = site.static_files.find { |f| f.is_a?(Jekyll::Documents::TextStaticFile) }
         expect(json_file.instance_variable_get(:@dir)).to eq("/custom")
         expect(json_file.instance_variable_get(:@name)).to eq("path.json")

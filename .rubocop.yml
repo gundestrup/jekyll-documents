@@ -1,0 +1,69 @@
+# frozen_string_literal: true
+
+plugins:
+  - rubocop-performance
+
+AllCops:
+  TargetRubyVersion: 2.7
+  NewCops: enable
+  Exclude:
+    - 'tmp/**/*'
+    - 'vendor/**/*'
+    - 'spec/fixtures/**/*'
+    - '*.gem'
+    - 'Gemfile.lock'
+  SuggestExtensions: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  EnforcedStyle: always
+
+Style/StringLiterals:
+  Enabled: true
+  EnforcedStyle: double_quotes
+
+Style/Documentation:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Metrics/MethodLength:
+  Max: 50
+
+Metrics/AbcSize:
+  Max: 50
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+    - 'Rakefile'
+    - 'jekyll-documents.gemspec'
+    - 'lib/jekyll/documents/generator.rb'
+
+Metrics/CyclomaticComplexity:
+  Max: 12
+  Exclude:
+    - 'lib/jekyll/documents/generator.rb'
+    - 'lib/jekyll/documents/json_index_generator.rb'
+    - 'lib/jekyll/documents/tags/latest_documents.rb'
+
+Metrics/ModuleLength:
+  Max: 150
+
+Metrics/PerceivedComplexity:
+  Max: 12
+  Exclude:
+    - 'lib/jekyll-documents.rb'
+
+Layout/LineLength:
+  Max: 100
+
+Performance/RedundantBlockCall:
+  Enabled: true
+
+Performance/StringInclude:
+  Enabled: true
+
+Gemspec/DevelopmentDependencies:
+  Enabled: false

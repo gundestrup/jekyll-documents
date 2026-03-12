@@ -1,0 +1,9 @@
+---
+# bundler-audit configuration
+# https://github.com/rubysec/bundler-audit
+
+# Ignore certain vulnerabilities (use sparingly)
+ignore: []
+
+# Update database before scanning
+update: true

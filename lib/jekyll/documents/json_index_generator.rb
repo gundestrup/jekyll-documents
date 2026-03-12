@@ -18,11 +18,11 @@ module Jekyll
 
         items = docs.map do |d|
           {
-            "url"       => d.url,
-            "title"     => d.data["title"],
-            "category"  => d.data["category"],
-            "date"      => (d.data["date"] || Time.at(0)).strftime("%Y-%m-%d"),
-            "slug"      => d.data["slug"],
+            "url" => d.url,
+            "title" => d.data["title"],
+            "category" => d.data["category"],
+            "date" => (d.data["date"] || Time.at(0)).strftime("%Y-%m-%d"),
+            "slug" => d.data["slug"],
             "file_type" => d.data["file_type"],
             "extension" => d.data["extension"]
           }

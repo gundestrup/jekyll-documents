@@ -35,14 +35,14 @@ module Jekyll
           end
           next unless @config["include_extensions"].include?(ext)
 
-          rel_path = path.start_with?(site.source) ? path[(site.source.length + 1)..-1] : path
+          rel_path = path.start_with?(site.source) ? path[(site.source.length + 1)..] : path
           category = infer_category_from(rel_path)
           basename = File.basename(path, ext)
 
           date, title, valid = parse_filename(basename)
           if !valid && @config["strict_filename"]
             ::Jekyll.logger.abort_with "jekyll-documents",
-              "Filename must be 'YYYY-MM-DD_Title.ext' → #{rel_path}"
+                                       "Filename must be 'YYYY-MM-DD_Title.ext' → #{rel_path}"
           end
 
           slug = build_slug(basename)
@@ -57,13 +57,13 @@ module Jekyll
           doc.data["title"]      = title
           doc.data["date"]       = date || File.mtime(path)
           doc.data["category"]   = remap_category(category)
-          doc.data["file_url"]   = "/" + rel_path
+          doc.data["file_url"]   = "/#{rel_path}"
           doc.data["extension"]  = ext
           doc.data["file_type"]  = ext.sub(".", "").downcase
           doc.data["slug"]       = slug
           doc.data["permalink"]  = @config["permalink"]
-            .gsub(":category", doc.data["category"].to_s)
-            .gsub(":slug", slug)
+                                   .gsub(":category", doc.data["category"].to_s)
+                                   .gsub(":slug", slug)
 
           doc.content = "Auto-generated document page."
 
@@ -99,7 +99,8 @@ module Jekyll
       # @return [String] the category name
       def infer_category_from(rel_path)
         return "uncategorized" unless @config["categories_from_path"]
-        category_dir = File.dirname(rel_path).sub("#{@config['root']}", "")
+
+        category_dir = File.dirname(rel_path).sub(@config["root"].to_s, "")
         category_dir.split("/").reject(&:empty?).last || "uncategorized"
       end
 
@@ -116,7 +117,8 @@ module Jekyll
       # @return [Array<Date, String, Boolean>] date, title, and validity flag
       def parse_filename(basename)
         if basename =~ /^(\d{4})-(\d{2})-(\d{2})_(.+)$/
-          date = Date.parse("#{Regexp.last_match(1)}-#{Regexp.last_match(2)}-#{Regexp.last_match(3)}")
+          date = Date.parse("#{Regexp.last_match(1)}-#{Regexp.last_match(2)}-" \
+                            "#{Regexp.last_match(3)}")
           title = Regexp.last_match(4).tr("_", " ")
           [date, title, true]
         else
@@ -131,10 +133,14 @@ module Jekyll
       # @return [String] the generated slug
       def build_slug(basename)
         s = basename.sub(/^\d{4}-\d{2}-\d{2}_/, "")
-        s = s.gsub(/[æøåÆØÅ]/, {"æ"=>"ae","ø"=>"oe","å"=>"aa","Æ"=>"Ae","Ø"=>"Oe","Å"=>"Aa"}) if @config["slug_danish_map"]
+        if @config["slug_danish_map"]
+          s = s.gsub(/[æøåÆØÅ]/,
+                     { "æ" => "ae", "ø" => "oe", "å" => "aa", "Æ" => "Ae", "Ø" => "Oe",
+                       "Å" => "Aa" })
+        end
         s = s.downcase if @config["slug_downcase"]
-        s = s.gsub(/[^\p{Alnum}\-_\s]/u, "").tr("_ ", "--").gsub(/-+/, "-")
-        s = s.sub(/^-+/, "").sub(/-+$/, "")  # Remove leading/trailing hyphens
+        s = s.gsub(/[^\p{Alnum}\-_\s]/u, "").tr("_ ", "--").squeeze("-")
+        s = s.sub(/^-+/, "").sub(/-+$/, "") # Remove leading/trailing hyphens
         s.empty? ? "untitled" : s
       end
     end

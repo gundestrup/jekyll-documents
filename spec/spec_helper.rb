@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+require "simplecov"
+SimpleCov.start do
+  add_filter "/spec/"
+  add_filter "/tmp/"
+  minimum_coverage 98
+end
+
 require "jekyll"
 require "rspec"
 require_relative "../lib/jekyll-documents"
@@ -19,9 +26,7 @@ RSpec.configure do |config|
   config.disable_monkey_patching!
   config.warnings = true
 
-  if config.files_to_run.one?
-    config.default_formatter = "doc"
-  end
+  config.default_formatter = "doc" if config.files_to_run.one?
 
   config.order = :random
   Kernel.srand config.seed
@@ -34,6 +39,6 @@ def make_site(config = {})
     "destination" => File.expand_path("../tmp", __dir__),
     "quiet" => true
   ).merge(config)
-  
+
   Jekyll::Site.new(site_config)
 end

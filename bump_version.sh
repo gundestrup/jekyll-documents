@@ -50,10 +50,43 @@ rm "${VERSION_FILE}.bak"
 
 echo "✅ Updated $VERSION_FILE"
 echo ""
+
+# Add CHANGELOG entry if it doesn't exist
+if ! grep -q "## \[$NEW_VERSION\]" CHANGELOG.md; then
+    echo "📝 Adding CHANGELOG entry for v$NEW_VERSION..."
+    
+    # Create temporary file with new entry
+    TEMP_FILE=$(mktemp)
+    
+    # Add new version entry at the top (after "# Changelog")
+    {
+        head -n 2 CHANGELOG.md
+        echo ""
+        echo "## [$NEW_VERSION] - $(date +%Y-%m-%d)"
+        echo ""
+        echo "### Added"
+        echo "- "
+        echo ""
+        echo "### Changed"
+        echo "- "
+        echo ""
+        echo "### Fixed"
+        echo "- "
+        echo ""
+        tail -n +3 CHANGELOG.md
+    } > "$TEMP_FILE"
+    
+    mv "$TEMP_FILE" CHANGELOG.md
+    echo "✅ CHANGELOG.md updated with template for v$NEW_VERSION"
+else
+    echo "ℹ️  CHANGELOG.md already has entry for v$NEW_VERSION"
+fi
+
+echo ""
 echo "Next steps:"
-echo "  1. Update CHANGELOG.md with changes for v$NEW_VERSION"
+echo "  1. Edit CHANGELOG.md and fill in changes for v$NEW_VERSION"
 echo "  2. Run: ./release.sh"
 echo "     (This will commit, tag, and push to GitHub)"
-echo "  3. Create GitHub release at: https://github.com/gundestrup/jekyll-documents/releases/new?tag=v$NEW_VERSION"
+echo "  3. Create GitHub release (release notes will be auto-extracted)"
 echo "     → Workflow will automatically publish to RubyGems! 🎉"
 echo ""

@@ -27,7 +27,7 @@ RSpec.describe Jekyll::Documents::Filters do
     end
 
     it "can disable Danish character mapping" do
-      result = filter.documents_slugify("Møde om Økonomi", true, false)
+      result = filter.documents_slugify("Møde om Økonomi", downcase: true, danish_map: false)
       expect(result).to eq("mde-om-konomi")
     end
 
@@ -37,7 +37,7 @@ RSpec.describe Jekyll::Documents::Filters do
     end
 
     it "can preserve case" do
-      result = filter.documents_slugify("Board Meeting", false)
+      result = filter.documents_slugify("Board Meeting", downcase: false)
       expect(result).to eq("Board-Meeting")
     end
 

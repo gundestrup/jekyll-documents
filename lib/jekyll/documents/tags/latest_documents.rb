@@ -7,7 +7,7 @@ module Jekyll
         super
         @args = parse_args(markup)
       end
-      
+
       public_class_method :new
 
       def render(context)
@@ -35,13 +35,14 @@ module Jekyll
 
       def escape_html(text)
         return "" unless text
+
         text.to_s.gsub(/[&<>"']/, {
-          "&" => "&amp;",
-          "<" => "&lt;",
-          ">" => "&gt;",
-          '"' => "&quot;",
-          "'" => "&#39;"
-        })
+                         "&" => "&amp;",
+                         "<" => "&lt;",
+                         ">" => "&gt;",
+                         '"' => "&quot;",
+                         "'" => "&#39;"
+                       })
       end
 
       def parse_args(markup)
@@ -63,4 +64,3 @@ module Jekyll
 end
 
 Liquid::Template.register_tag("latest_documents", Jekyll::Documents::LatestDocumentsTag)
-

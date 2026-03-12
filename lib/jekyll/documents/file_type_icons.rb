@@ -104,7 +104,8 @@ module Jekyll
       def file_type_icon(file_type, context = nil)
         icon_set = get_icon_set(context)
         icons = ICON_MAP[icon_set] || ICON_MAP["color"]
-        icons[file_type.to_s.downcase] || "/assets/icons/#{icon_set}/unknown-document-svgrepo-com.svg"
+        icons[file_type.to_s.downcase] ||
+          "/assets/icons/#{icon_set}/unknown-document-svgrepo-com.svg"
       end
 
       # Returns an HTML img tag for the file type icon
@@ -114,7 +115,8 @@ module Jekyll
       # @param context [Liquid::Context] the Liquid context for accessing site config
       # @return [String] HTML img tag
       # @example
-      #   file_type_icon_tag('pdf') #=> '<img src="/assets/icons/color/pdf.svg" alt="PDF file" class="file-icon" />'
+      #   file_type_icon_tag('pdf') #=> \
+      #     '<img src="/assets/icons/color/pdf.svg" alt="PDF file" class="file-icon" />'
       def file_type_icon_tag(file_type, css_class: "file-icon", alt: nil, context: nil)
         url = file_type_icon(file_type, context)
         alt_text = alt || "#{file_type.upcase} file"
@@ -128,13 +130,14 @@ module Jekyll
       # @return [String] the icon set name
       def get_icon_set(context)
         return "color" unless context
-        
+
         site_config = context.registers[:site]&.config
         documents_config = site_config["documents"] if site_config
         icon_set = documents_config["icon_set"] if documents_config
-        
+
         # Validate icon set exists
         return "color" unless icon_set && ICON_MAP.key?(icon_set)
+
         icon_set
       end
     end

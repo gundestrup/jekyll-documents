@@ -28,12 +28,17 @@ jobs:
     - name: Install dependencies
       run: bundle install
     
-    - name: Run tests
-      run: bundle exec rspec --exclude-pattern "spec/jekyll/documents/tags/*"
+    - name: Run security audit
+      run: bundle exec bundler-audit check --update
     
     - name: Check code style
-      run: bundle exec rubocop || true
-      continue-on-error: true
+      run: bundle exec rubocop
+    
+    - name: Check code smells
+      run: bundle exec reek --config .reek.yml lib/
+    
+    - name: Run tests with coverage
+      run: bundle exec rspec
 
   build:
     runs-on: ubuntu-latest

@@ -3,8 +3,8 @@
 source "https://rubygems.org"
 
 gem "jekyll", "~> 4.3"
-gem "minima", "~> 2.5"
 gem "jekyll-sitemap"
+gem "minima", "~> 2.5"
 
 # Local development - use the gem from parent directory
 gem "jekyll-documents", path: ".."

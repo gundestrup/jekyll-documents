@@ -12,9 +12,9 @@ RSpec.describe Jekyll::Documents::Generator do
     context "when documents directory does not exist" do
       it "logs a warning and returns early" do
         site = make_site("documents" => { "root" => "nonexistent/path" })
-        
+
         expect(Jekyll.logger).to receive(:warn).with("jekyll-documents", /Directory not found/)
-        
+
         generator.generate(site)
         expect(site.collections["documents"]).to be_nil
       end
@@ -87,30 +87,30 @@ RSpec.describe Jekyll::Documents::Generator do
   describe "#parse_filename" do
     it "parses valid YYYY-MM-DD_Title format" do
       date, title, valid = generator.send(:parse_filename, "2026-03-01_Board_Meeting")
-      
+
       expect(valid).to be true
       expect(date).to eq(Date.new(2026, 3, 1))
       expect(title).to eq("Board Meeting")
     end
 
     it "handles underscores in title" do
-      date, title, valid = generator.send(:parse_filename, "2026-03-01_Board_Meeting_Minutes")
-      
+      _, title, valid = generator.send(:parse_filename, "2026-03-01_Board_Meeting_Minutes")
+
       expect(valid).to be true
       expect(title).to eq("Board Meeting Minutes")
     end
 
     it "returns invalid for incorrect format" do
       date, title, valid = generator.send(:parse_filename, "InvalidFilename")
-      
+
       expect(valid).to be false
       expect(date).to be_nil
       expect(title).to eq("InvalidFilename")
     end
 
     it "handles invalid dates gracefully" do
-      date, title, valid = generator.send(:parse_filename, "2026-13-99_Invalid_Date")
-      
+      date, _, valid = generator.send(:parse_filename, "2026-13-99_Invalid_Date")
+
       expect(valid).to be false
       expect(date).to be_nil
     end
@@ -160,9 +160,9 @@ RSpec.describe Jekyll::Documents::Generator do
   describe "#infer_category_from" do
     before do
       generator.instance_variable_set(:@config, {
-        "categories_from_path" => true,
-        "root" => "assets/documents"
-      })
+                                        "categories_from_path" => true,
+                                        "root" => "assets/documents"
+                                      })
     end
 
     it "extracts category from path" do
@@ -185,8 +185,8 @@ RSpec.describe Jekyll::Documents::Generator do
   describe "#remap_category" do
     before do
       generator.instance_variable_set(:@config, {
-        "category_map" => { "referat" => "minutes" }
-      })
+                                        "category_map" => { "referat" => "minutes" }
+                                      })
     end
 
     it "remaps category when mapping exists" do

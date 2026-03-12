@@ -9,12 +9,12 @@ module Jekyll
       }.freeze
 
       # Slugify while handling Danish letters and basic punctuation cleanup.
-      def documents_slugify(input, downcase = true, danish_map = true)
+      def documents_slugify(input, downcase: true, danish_map: true)
         s = input.to_s.dup
         s = s.gsub(/[æøåÆØÅ]/) { |ch| DANISH_MAP[ch] } if danish_map
         s = s.strip.gsub(/[^\p{Alnum}\-_\s]/u, "")
-        s = s.tr(" ", "-").gsub(/-+/, "-")
-        s = s.gsub(/[æøåÆØÅ]/, "") unless danish_map  # Remove Danish chars if mapping disabled
+        s = s.tr(" ", "-").squeeze("-")
+        s = s.gsub(/[æøåÆØÅ]/, "") unless danish_map # Remove Danish chars if mapping disabled
         s = s.downcase if downcase
         s
       end
