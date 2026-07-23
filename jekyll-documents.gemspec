@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
     "rubygems_mfa_required" => "true"
   }
 
-  spec.required_ruby_version = ">= 3.1"
+  spec.required_ruby_version = ">= 3.2"
 
   spec.files         = Dir.glob("{lib,assets,_includes,_layouts}/**/*") +
                        ["README.md", "CHANGELOG.md", "LICENSE", "jekyll-documents.gemspec"]

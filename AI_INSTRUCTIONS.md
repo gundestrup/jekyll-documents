@@ -6,7 +6,7 @@
 
 Jekyll plugin that turns files in `assets/documents/` into browsable document pages with icons, categories, and search.
 
-- **Language**: Ruby (>= 3.1)
+- **Language**: Ruby (>= 3.2)
 - **Framework**: Jekyll 4.x plugin (generator + Liquid tags/filters)
 - **Gem name**: `jekyll-documents`
 - **Current version**: 0.3.0
@@ -137,7 +137,7 @@ Documents must follow `YYYY-MM-DD_Title.ext` format. Supported extensions: `.pdf
 - [README.Development.md](./README.Development.md) — Development workflow, commands, scripts, CI/CD
 - [readme.errors.md](./readme.errors.md) — Known bugs and issues with fix status markers
 - [CHANGELOG.md](./CHANGELOG.md) — Version history and release notes
-- [.rubocop.yml](./.rubocop.yml) — Code style rules (TargetRubyVersion 3.1)
+- [.rubocop.yml](./.rubocop.yml) — Code style rules (TargetRubyVersion 3.2)
 - [.reek.yml](./.reek.yml) — Code smell detection with intentional exclusions
 - [jekyll-documents.gemspec](./jekyll-documents.gemspec) — Gem spec and metadata
 - [.devin/wiki.json](./.devin/wiki.json) — DeepWiki steering file (controls wiki generation on deepwiki.com)

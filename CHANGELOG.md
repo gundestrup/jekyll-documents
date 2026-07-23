@@ -13,8 +13,8 @@
 - **System test for full build pipeline**: End-to-end test covering generator → JSON index → tag rendering
 
 ### Changed
-- **Minimum Ruby version**: Bumped from `>= 2.7` to `>= 3.1` (Ruby 2.7 EOL March 2023, 3.0 EOL April 2024)
-- **RuboCop `TargetRubyVersion`**: Updated from `2.7` to `3.1` to match gemspec
+- **Minimum Ruby version**: Bumped from `>= 2.7` to `>= 3.2` (zeitwerk 2.7+ — a Jekyll dependency — requires Ruby >= 3.2)
+- **RuboCop `TargetRubyVersion`**: Updated from `2.7` to `3.2` to match gemspec
 - **Templates use baked icon data**: `latest_documents.html`, `documents_list.html`, `document.html` now use `{{ doc.icon_url }}` instead of the broken `file_type_icon_tag` filter
 - **`category_list.html` icon set**: Now reads `icon_set` from first document's baked data instead of non-functional `site.documents.icon_set`
 - **`latest_documents.html` count fallback**: Simplified to `| default: 5` since `site.config` is inaccessible in Liquid
