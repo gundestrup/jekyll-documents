@@ -2,7 +2,7 @@
 <ul class="documents-list">
   {% for doc in docs %}
     <li>
-      {{ doc.file_type | file_type_icon_tag }}
+      <img src="{{ doc.icon_url | relative_url }}" alt="{{ doc.file_type | upcase }} file" class="file-icon" />
       <a href="{{ doc.url | relative_url }}">{{ doc.title }}</a>
       <small>({{ doc.date | date: "%Y-%m-%d" }}, {{ doc.category }})</small>
     </li>

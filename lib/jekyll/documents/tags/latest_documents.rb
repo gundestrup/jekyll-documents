@@ -17,14 +17,15 @@ module Jekyll
         category = @args["category"]
 
         docs = site.collections["documents"]&.docs || []
-        docs = docs.select { |d| d.data["category"] == category } if category
-        docs = docs.sort_by { |d| d.data["date"] || Time.at(0) }.reverse.first(count)
+        docs = docs.select { |doc| doc.data["category"] == category } if category
+        docs = docs.sort_by { |doc| doc.data["date"] || Time.at(0) }.reverse.first(count)
 
         out = +"<ul class=\"latest-documents\">\n"
-        docs.each do |d|
-          title = escape_html(d.data["title"])
-          url   = escape_html(d.url)
-          date  = (d.data["date"] || Time.at(0)).strftime("%Y-%m-%d")
+        docs.each do |doc|
+          data = doc.data
+          title = escape_html(data["title"])
+          url   = escape_html(doc.url)
+          date  = (data["date"] || Time.at(0)).strftime("%Y-%m-%d")
           out << %(<li><a href="#{url}">#{title}</a> <small>(#{date})</small></li>\n)
         end
         out << "</ul>\n"
@@ -50,11 +51,11 @@ module Jekyll
         args = {}
         # Safe: markup comes from Jekyll template authors (trusted), not end users
         # Runs only during static site generation, not on user requests
-        markup.scan(/(\w+)\s*:\s*'([^']*)'|(\w+)\s*:\s*([^\s]+)/).each do |m|
-          if m[0]
-            args[m[0]] = m[1]
+        markup.scan(/(\w+)\s*:\s*'([^']*)'|(\w+)\s*:\s*([^\s]+)/).each do |match|
+          if match[0]
+            args[match[0]] = match[1]
           else
-            args[m[2]] = m[3]
+            args[match[2]] = match[3]
           end
         end
         args

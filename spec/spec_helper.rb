@@ -2,14 +2,16 @@
 
 require "simplecov"
 SimpleCov.start do
-  add_filter "/spec/"
-  add_filter "/tmp/"
+  skip "/spec/"
+  skip "/tmp/"
   minimum_coverage 98
 end
 
 require "jekyll"
 require "rspec"
 require_relative "../lib/jekyll-documents"
+
+Dir.glob(File.expand_path("support/**/*.rb", __dir__), sort: true).each { |f| require f }
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|

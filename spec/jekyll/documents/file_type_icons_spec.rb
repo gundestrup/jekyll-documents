@@ -3,6 +3,33 @@
 require "spec_helper"
 
 RSpec.describe Jekyll::Documents::FileTypeIcons do
+  describe ".icon_for" do
+    it "returns color icon for known file type" do
+      result = described_class.icon_for("pdf", "color")
+      expect(result).to eq("/assets/icons/color/pdf-document-svgrepo-com.svg")
+    end
+
+    it "returns set-specific icon for lines" do
+      result = described_class.icon_for("docx", "lines")
+      expect(result).to eq("/assets/icons/lines/doc-svgrepo-com.svg")
+    end
+
+    it "falls back to color for unknown icon set" do
+      result = described_class.icon_for("pdf", "nonsense")
+      expect(result).to eq("/assets/icons/color/pdf-document-svgrepo-com.svg")
+    end
+
+    it "returns unknown icon for missing file type" do
+      result = described_class.icon_for("unknown", "color")
+      expect(result).to eq("/assets/icons/color/unknown-document-svgrepo-com.svg")
+    end
+
+    it "handles nil file type" do
+      result = described_class.icon_for(nil, "color")
+      expect(result).to eq("/assets/icons/color/unknown-document-svgrepo-com.svg")
+    end
+  end
+
   let(:filter_class) do
     Class.new do
       include Jekyll::Documents::FileTypeIcons
@@ -100,15 +127,28 @@ RSpec.describe Jekyll::Documents::FileTypeIcons do
         expect(result).to eq("/assets/icons/color/pdf-document-svgrepo-com.svg")
       end
     end
+
+    context "with nil file_type" do
+      it "returns unknown icon" do
+        result = filter.file_type_icon(nil)
+        expect(result).to eq("/assets/icons/color/unknown-document-svgrepo-com.svg")
+      end
+    end
+
+    context "with empty string file_type" do
+      it "returns unknown icon" do
+        result = filter.file_type_icon("")
+        expect(result).to eq("/assets/icons/color/unknown-document-svgrepo-com.svg")
+      end
+    end
   end
 
   describe "#file_type_icon_tag" do
     it "returns an img tag with correct attributes" do
       result = filter.file_type_icon_tag("pdf")
-      expect(result).to include("<img")
-      expect(result).to include("src=")
-      expect(result).to include("alt=")
-      expect(result).to include("class=")
+      expected = %(<img src="/assets/icons/color/pdf-document-svgrepo-com.svg" ) +
+                 %(alt="PDF file" class="file-icon" />)
+      expect(result).to eq(expected)
     end
 
     it "uses default CSS class" do
@@ -118,7 +158,9 @@ RSpec.describe Jekyll::Documents::FileTypeIcons do
 
     it "allows custom CSS class" do
       result = filter.file_type_icon_tag("pdf", css_class: "custom-class")
-      expect(result).to include('class="custom-class"')
+      expected = %(<img src="/assets/icons/color/pdf-document-svgrepo-com.svg" ) +
+                 %(alt="PDF file" class="custom-class" />)
+      expect(result).to eq(expected)
     end
 
     it "generates default alt text" do
@@ -128,7 +170,9 @@ RSpec.describe Jekyll::Documents::FileTypeIcons do
 
     it "allows custom alt text" do
       result = filter.file_type_icon_tag("pdf", alt: "Custom alt")
-      expect(result).to include('alt="Custom alt"')
+      expected = %(<img src="/assets/icons/color/pdf-document-svgrepo-com.svg" ) +
+                 %(alt="Custom alt" class="file-icon" />)
+      expect(result).to eq(expected)
     end
 
     it "includes correct icon path" do
@@ -139,7 +183,19 @@ RSpec.describe Jekyll::Documents::FileTypeIcons do
     it "passes context to file_type_icon" do
       allow(filter).to receive(:file_type_icon).with("pdf", context).and_return("/test/icon.svg")
       result = filter.file_type_icon_tag("pdf", context: context)
-      expect(result).to include("/test/icon.svg")
+      expect(result).to eq(%(<img src="/test/icon.svg" alt="PDF file" class="file-icon" />))
+    end
+
+    it "handles unknown file type" do
+      result = filter.file_type_icon_tag("xyz")
+      expect(result).to include("unknown-document-svgrepo-com.svg")
+      expect(result).to include('alt="XYZ file"')
+    end
+
+    it "handles nil file type" do
+      result = filter.file_type_icon_tag(nil)
+      expect(result).to include("unknown-document-svgrepo-com.svg")
+      expect(result).to include('alt=" file"')
     end
   end
 end

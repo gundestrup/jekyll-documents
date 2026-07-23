@@ -35,7 +35,7 @@ module Jekyll
           end
           next unless @config["include_extensions"].include?(ext)
 
-          rel_path = path.start_with?(site.source) ? path[(site.source.length + 1)..] : path
+          rel_path = path.delete_prefix("#{site.source}/")
           category = infer_category_from(rel_path)
           basename = File.basename(path, ext)
 
@@ -46,6 +46,8 @@ module Jekyll
           end
 
           slug = build_slug(basename)
+          file_type = ext.sub(".", "").downcase
+          icon_set = @config["icon_set"]
 
           doc = ::Jekyll::Document.new(
             source_stub_for(basename, category),
@@ -53,17 +55,20 @@ module Jekyll
             collection: collection
           )
 
-          doc.data["layout"]     = @config["layout"]
-          doc.data["title"]      = title
-          doc.data["date"]       = date || File.mtime(path)
-          doc.data["category"]   = remap_category(category)
-          doc.data["file_url"]   = "/#{rel_path}"
-          doc.data["extension"]  = ext
-          doc.data["file_type"]  = ext.sub(".", "").downcase
-          doc.data["slug"]       = slug
-          doc.data["permalink"]  = @config["permalink"]
-                                   .gsub(":category", doc.data["category"].to_s)
-                                   .gsub(":slug", slug)
+          data = doc.data
+          data["layout"]     = @config["layout"]
+          data["title"]      = title
+          data["date"]       = date || File.mtime(path)
+          data["category"]   = remap_category(category)
+          data["file_url"]   = "/#{rel_path}"
+          data["extension"]  = ext
+          data["file_type"]  = file_type
+          data["icon_set"]   = icon_set
+          data["icon_url"]   = Jekyll::Documents::FileTypeIcons.icon_for(file_type, icon_set)
+          data["slug"]       = slug
+          data["permalink"]  = @config["permalink"]
+                               .gsub(":category", data["category"].to_s)
+                               .gsub(":slug", slug)
 
           doc.content = "Auto-generated document page."
 
@@ -117,8 +122,10 @@ module Jekyll
       # @return [Array<Date, String, Boolean>] date, title, and validity flag
       def parse_filename(basename)
         if basename =~ /^(\d{4})-(\d{2})-(\d{2})_(.+)$/
-          date = Date.parse("#{Regexp.last_match(1)}-#{Regexp.last_match(2)}-" \
-                            "#{Regexp.last_match(3)}")
+          year = Regexp.last_match(1).to_i
+          month = Regexp.last_match(2).to_i
+          day = Regexp.last_match(3).to_i
+          date = Date.new(year, month, day)
           title = Regexp.last_match(4).tr("_", " ")
           [date, title, true]
         else
@@ -132,16 +139,16 @@ module Jekyll
       # @param basename [String] the filename without extension
       # @return [String] the generated slug
       def build_slug(basename)
-        s = basename.sub(/^\d{4}-\d{2}-\d{2}_/, "")
+        slug = basename.sub(/^\d{4}-\d{2}-\d{2}_/, "")
         if @config["slug_danish_map"]
-          s = s.gsub(/[æøåÆØÅ]/,
-                     { "æ" => "ae", "ø" => "oe", "å" => "aa", "Æ" => "Ae", "Ø" => "Oe",
-                       "Å" => "Aa" })
+          slug = slug.gsub(/[æøåÆØÅ]/,
+                           { "æ" => "ae", "ø" => "oe", "å" => "aa", "Æ" => "Ae", "Ø" => "Oe",
+                             "Å" => "Aa" })
         end
-        s = s.downcase if @config["slug_downcase"]
-        s = s.gsub(/[^\p{Alnum}\-_\s]/u, "").tr("_ ", "--").squeeze("-")
-        s = s.sub(/^-+/, "").sub(/-+$/, "") # Remove leading/trailing hyphens
-        s.empty? ? "untitled" : s
+        slug = slug.downcase if @config["slug_downcase"]
+        slug = slug.gsub(/[^\p{Alnum}\-_\s]/u, "").tr("_ ", "--").squeeze("-")
+        slug = slug.sub(/^-+/, "").sub(/-+$/, "")
+        slug.empty? ? "untitled" : slug
       end
     end
   end

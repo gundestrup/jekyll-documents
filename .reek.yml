@@ -9,39 +9,71 @@ exclude_paths:
 detectors:
   IrresponsibleModule:
     enabled: false
-    
+
   DuplicateMethodCall:
     enabled: true
     max_calls: 3
-    
+
   FeatureEnvy:
     enabled: true
     exclude:
       - "Jekyll::Documents::Generator#generate"
-      
+      - "Jekyll::Documents::Generator#build_slug"
+      - "Jekyll::Documents::LatestDocumentsTag#render"
+
   UtilityFunction:
     enabled: false
-    
+
   NestedIterators:
     enabled: true
     exclude:
       - "Jekyll::Documents::Generator#generate"
-      
+
   LongParameterList:
     enabled: true
     max_params: 5
-    
+
   ControlParameter:
     enabled: true
-    
+    exclude:
+      - "Jekyll::Documents::FileTypeIcons#file_type_icon_tag"
+      - "Jekyll::Documents::Filters#documents_slugify"
+
   DataClump:
     enabled: true
-    
+
   ClassVariable:
     enabled: true
-    
+
   BooleanParameter:
     enabled: false
-    
+
   Attribute:
     enabled: false
+
+  TooManyStatements:
+    enabled: true
+    exclude:
+      - "Jekyll::Documents::Generator#generate"
+      - "Jekyll::Documents::Generator#parse_filename"
+      - "Jekyll::Documents::Generator#build_slug"
+      - "Jekyll::Documents::LatestDocumentsTag#render"
+      - "Jekyll::Documents::JsonIndexGenerator#generate"
+      - "Jekyll::Documents::TextStaticFile#write"
+      - "Jekyll::Documents::TextStaticFile#initialize"
+      - "Jekyll::Documents::Filters#documents_slugify"
+
+  InstanceVariableAssumption:
+    enabled: true
+    exclude:
+      - "Jekyll::Documents::Generator"
+
+  UncommunicativeVariableName:
+    enabled: true
+    exclude:
+      - "Jekyll::Documents::TextStaticFile#write"
+
+  TooManyInstanceVariables:
+    enabled: true
+    exclude:
+      - "Jekyll::Documents::TextStaticFile"

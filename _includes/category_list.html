@@ -1,8 +1,10 @@
+{% assign first_doc = site.documents | first %}
+{% assign icon_set = first_doc.icon_set | default: 'color' %}
 {% assign cats = site.documents | map: "category" | uniq | sort %}
 <ul class="documents-category-list">
   {% for cat in cats %}
     <li>
-      <img src="/assets/icons/{{ site.documents.icon_set | default: 'color' }}/folder-svgrepo-com.svg" alt="Folder" class="folder-icon" />
+      <img src="{{ '/assets/icons/' | append: icon_set | append: '/folder-svgrepo-com.svg' | relative_url }}" alt="Folder" class="folder-icon" />
       <span class="category-name">{{ cat }}</span>
       <span class="category-count">({{ site.documents | where: "category", cat | size }})</span>
     </li>

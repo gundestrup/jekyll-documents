@@ -1,9 +1,9 @@
-{% assign count = include.count | default: site.config.documents.latest_default_count | default: 5 %}
+{% assign count = include.count | default: 5 %}
 {% assign docs = site.documents | sort: "date" | reverse | slice: 0, count %}
 <ul class="latest-documents">
   {% for doc in docs %}
     <li>
-      {{ doc.file_type | file_type_icon_tag }}
+      <img src="{{ doc.icon_url | relative_url }}" alt="{{ doc.file_type | upcase }} file" class="file-icon" />
       <a href="{{ doc.url | relative_url }}">{{ doc.title }}</a>
       <small>({{ doc.date | date: "%Y-%m-%d" }}, {{ doc.category }})</small>
     </li>

@@ -50,6 +50,31 @@ RSpec.describe Jekyll::Documents::Filters do
       result = filter.documents_slugify("  Board Meeting  ")
       expect(result).to eq("board-meeting")
     end
+
+    it "handles nil input" do
+      result = filter.documents_slugify(nil)
+      expect(result).to eq("")
+    end
+
+    it "handles empty string" do
+      result = filter.documents_slugify("")
+      expect(result).to eq("")
+    end
+
+    it "handles string with only special characters" do
+      result = filter.documents_slugify("@@@###!!!")
+      expect(result).to eq("")
+    end
+
+    it "handles string with only whitespace" do
+      result = filter.documents_slugify("   ")
+      expect(result).to eq("")
+    end
+
+    it "handles numeric input" do
+      result = filter.documents_slugify(123)
+      expect(result).to eq("123")
+    end
   end
 
   describe "#documents_title_from_filename" do
@@ -71,6 +96,21 @@ RSpec.describe Jekyll::Documents::Filters do
     it "converts underscores to spaces" do
       result = filter.documents_title_from_filename("Some_File_Name")
       expect(result).to eq("Some File Name")
+    end
+
+    it "handles nil input" do
+      result = filter.documents_title_from_filename(nil)
+      expect(result).to eq("")
+    end
+
+    it "handles empty string" do
+      result = filter.documents_title_from_filename("")
+      expect(result).to eq("")
+    end
+
+    it "handles date prefix with no title" do
+      result = filter.documents_title_from_filename("2026-03-01_")
+      expect(result).to eq("2026-03-01 ")
     end
   end
 end

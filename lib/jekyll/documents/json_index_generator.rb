@@ -16,15 +16,16 @@ module Jekyll
         docs = site.collections["documents"]&.docs || []
         return if docs.empty?
 
-        items = docs.map do |d|
+        items = docs.map do |doc|
+          data = doc.data
           {
-            "url" => d.url,
-            "title" => d.data["title"],
-            "category" => d.data["category"],
-            "date" => (d.data["date"] || Time.at(0)).strftime("%Y-%m-%d"),
-            "slug" => d.data["slug"],
-            "file_type" => d.data["file_type"],
-            "extension" => d.data["extension"]
+            "url" => doc.url,
+            "title" => data["title"],
+            "category" => data["category"],
+            "date" => (data["date"] || Time.at(0)).strftime("%Y-%m-%d"),
+            "slug" => data["slug"],
+            "file_type" => data["file_type"],
+            "extension" => data["extension"]
           }
         end
 

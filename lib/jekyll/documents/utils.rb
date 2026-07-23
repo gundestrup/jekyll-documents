@@ -4,12 +4,15 @@ module Jekyll
   module Documents
     # A tiny StaticFile subclass for writing text files during build.
     class TextStaticFile < ::Jekyll::StaticFile
+      attr_reader :data
+
       def initialize(site, base, rel_dest, content)
         @site = site
         @base = base
         @dir  = File.dirname(rel_dest)
         @name = File.basename(rel_dest)
         @content = content
+        @data = { "sitemap" => false }
         super(site, base, @dir, @name)
       end
 

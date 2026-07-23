@@ -48,5 +48,42 @@ RSpec.describe Jekyll::Documents::Configuration do
 
       expect(config["category_map"]).to eq({})
     end
+
+    it "handles missing documents key in site config" do
+      site = make_site
+      allow(site).to receive(:config).and_return({})
+
+      config = described_class.read(site)
+
+      expect(config["root"]).to eq("assets/documents")
+      expect(config["slug_downcase"]).to be true
+    end
+
+    it "handles nil documents config value" do
+      site = make_site
+      allow(site).to receive(:config).and_return("documents" => nil)
+
+      config = described_class.read(site)
+
+      expect(config["root"]).to eq("assets/documents")
+    end
+
+    it "merges icon_set from user config" do
+      site = make_site("documents" => { "icon_set" => "lines" })
+      config = described_class.read(site)
+
+      expect(config["icon_set"]).to eq("lines")
+    end
+
+    it "preserves all default keys when user config provides subset" do
+      site = make_site("documents" => { "root" => "custom" })
+      config = described_class.read(site)
+
+      expect(config.keys).to include("root", "permalink", "slug_downcase", "slug_danish_map",
+                                     "categories_from_path", "include_extensions", "layout",
+                                     "latest_default_count", "icon_set", "strict_filename",
+                                     "strict_extensions", "json_index", "json_index_path",
+                                     "category_map")
+    end
   end
 end
