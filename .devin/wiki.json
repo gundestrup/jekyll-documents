@@ -1,0 +1,58 @@
+{
+  "repo_notes": [
+    "Jekyll plugin (Ruby >= 3.1) that turns files in assets/documents/ into browsable document pages with icons, categories, and search.",
+    "Architecture: Generator scans files → parses YYYY-MM-DD_Title.ext filenames → bakes icon_url/icon_set into document data → creates Jekyll collection → JsonIndexGenerator builds /documents.json for Lunr search.",
+    "Key gotcha: Liquid filters don't receive context, so icon_set config can't be read in templates. Solution: icon data is baked into doc.data at generation time. Templates use {{ doc.icon_url }} not the file_type_icon_tag filter.",
+    "Key gotcha: Jekyll::Drops::SiteDrop#config always returns nil in Liquid. Config must be read via Ruby Configuration.read(site) in tags/generators, not via {{ site.config }} in templates.",
+    "Key gotcha: public_class_method :new is required in LatestDocumentsTag because Liquid::Tag makes .new private. Do not remove.",
+    "Quality gates: 0 RuboCop offenses, 0 Reek warnings, 100% test coverage (167 RSpec examples). Run 'rake quality' before commit.",
+    "Reek exclusions in .reek.yml are intentional for design-inherent warnings (Jekyll generator complexity, boolean params, inherited StaticFile).",
+    "See AI_INSTRUCTIONS.md for full project context, gotchas, and conventions."
+  ],
+  "pages": [
+    {
+      "title": "Architecture Overview",
+      "purpose": "High-level architecture of the jekyll-documents plugin: generators, Liquid tags/filters, template includes, and data flow from file scanning to rendered pages",
+      "page_notes": ["Include Mermaid diagram of data flow: Generator → Collection → JSON Index → Templates"]
+    },
+    {
+      "title": "Generator",
+      "purpose": "How the main Generator class scans assets/documents/, parses filenames, builds slugs, infers categories, and bakes icon data into Jekyll::Document objects",
+      "parent": "Architecture Overview"
+    },
+    {
+      "title": "JsonIndexGenerator",
+      "purpose": "How the JSON index is built from the documents collection for client-side Lunr search, including TextStaticFile with sitemap: false",
+      "parent": "Architecture Overview"
+    },
+    {
+      "title": "FileTypeIcons and Filters",
+      "purpose": "Icon set mappings (color/lines/minimal/ultra-minimal), the icon_for class method, and Liquid filters (file_type_icon, file_type_icon_tag, documents_slugify, documents_title_from_filename)",
+      "parent": "Architecture Overview"
+    },
+    {
+      "title": "LatestDocumentsTag",
+      "purpose": "The {% latest_documents %} Liquid tag: argument parsing, rendering, HTML escaping, and why public_class_method :new is required",
+      "parent": "Architecture Overview"
+    },
+    {
+      "title": "Templates and Includes",
+      "purpose": "How _includes/ and _layouts/ templates render documents using baked data (icon_url, icon_set, category, slug) instead of Liquid filters",
+      "parent": "Architecture Overview"
+    },
+    {
+      "title": "Configuration",
+      "purpose": "All configuration options in _config.yml under 'documents:' key, defaults, and how Configuration.read(site) merges user config with DEFAULTS",
+      "parent": "Architecture Overview"
+    },
+    {
+      "title": "Testing and Quality",
+      "purpose": "Test structure (unit, integration, system specs), quality tools (RuboCop, Reek, BundlerAudit, SimpleCov), and the rake quality command",
+      "parent": "Architecture Overview"
+    },
+    {
+      "title": "Release Process",
+      "purpose": "Version bumping with bump_version.sh, CHANGELOG.md updates, release.sh workflow, and GitHub Actions auto-publish to RubyGems"
+    }
+  ]
+}

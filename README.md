@@ -4,6 +4,8 @@ Turn files in `assets/documents/` into browsable document pages.
 
 **Features**: Auto-collection • File icons • Categories • Search
 
+[![DeepWiki](https://img.shields.io/badge/DeepWiki-docs-blue)](https://deepwiki.com/gundestrup/jekyll-documents)
+
 ## Quick Start
 
 ```ruby
@@ -83,9 +85,11 @@ rake quick        # Fast check
 rake help         # Show commands
 ```
 
-**Quality**: 98.99% coverage • 0 vulnerabilities • RuboCop • Reek
+**Quality**: 100% coverage • 0 vulnerabilities • 0 offenses • 0 warnings
 
 See [README.Development.md](README.Development.md) for details.
+
+**DeepWiki**: [https://deepwiki.com/gundestrup/jekyll-documents](https://deepwiki.com/gundestrup/jekyll-documents)
 
 ## Release
 

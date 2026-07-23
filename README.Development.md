@@ -1,5 +1,7 @@
 # Development Guide
 
+**DeepWiki**: [https://deepwiki.com/gundestrup/jekyll-documents](https://deepwiki.com/gundestrup/jekyll-documents)
+
 ## Quick Start
 
 ```bash
@@ -10,10 +12,10 @@ rake help         # Show all commands
 
 ## Quality Tools
 
-**Coverage**: 98.99% (197/199 lines)  
+**Coverage**: 100% (212/212 lines)  
 **Security**: 0 vulnerabilities  
-**Style**: 3 minor offenses (acceptable)  
-**Smells**: 23 warnings (acceptable)
+**Style**: 0 offenses  
+**Smells**: 0 warnings
 
 ## Commands
 
