@@ -12,10 +12,10 @@ rake help         # Show all commands
 
 ## Quality Tools
 
-**Coverage**: 100% (212/212 lines)  
-**Security**: 0 vulnerabilities  
-**Style**: 0 offenses  
-**Smells**: 0 warnings
+- **Ruby coverage**: 100% (275/275 lines)
+- **Security**: 0 vulnerabilities
+- **Style**: 0 offenses
+- **Smells**: 0 warnings
 
 ## Commands
 
@@ -23,9 +23,10 @@ rake help         # Show all commands
 # Testing
 rake              # All checks (default)
 rake quality      # All checks
-rake test         # Tests only
-rake spec         # Tests + coverage
-rake quick        # Fast check
+rake test         # Rebuild/install gem + Ruby + browser tests
+rake spec         # Rebuild/install gem + tests + coverage
+rake quick        # Rebuild/install gem + fast check
+rake browser_test  # Rebuild/install gem + browser E2E tests
 
 # Individual checks
 rake rubocop      # Code style
@@ -79,14 +80,19 @@ gem "jekyll-documents", path: "/path/to/this/repo"
 
 ### Run Tests
 ```bash
-bundle exec rspec              # All tests
-bundle exec rspec spec/filters # Specific file
+rake spec                         # Rebuild/install gem, then run all tests
+bundle exec rspec spec/filters    # Run one source-level spec file
+rake install_local                # Rebuild and force-install the gem
 ```
 
+System tests verify the packaged gem contents and run a Jekyll build using the installed gem.
+The full `rake quality` task rebuilds and force-installs the gem before running the Ruby test suite. Run `rake browser_test` for real browser coverage of the search UI; it requires Node.js and Chromium.
+
 ### Coverage
-- Target: 98%
-- Current: 98.99%
-- Integration tests for Liquid tags
+- Target: 100% Ruby line coverage
+- Current: 100% (275/275 lines)
+- Integration tests cover Liquid tags and the full Ruby build pipeline
+- Playwright browser tests cover search interaction, generated links, icons, baseurl, and network errors
 
 ## Troubleshooting
 

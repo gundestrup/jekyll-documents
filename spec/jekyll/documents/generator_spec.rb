@@ -47,7 +47,7 @@ RSpec.describe Jekyll::Documents::Generator do
 
         doc = site.collections["documents"].docs.first
         expect(doc.data["title"]).to match(/Board Meeting|Annual Report/)
-        expect(doc.data["date"]).to be_a(Date)
+        expect(doc.data["date"]).to be_a(Time)
       end
 
       it "sets category from folder name" do
@@ -79,7 +79,7 @@ RSpec.describe Jekyll::Documents::Generator do
         generator.generate(site)
 
         pdf_doc = site.collections["documents"].docs.find { |d| d.data["extension"] == ".pdf" }
-        expect(pdf_doc.data["icon_url"]).to eq("/assets/icons/lines/pdf-svgrepo-com.svg")
+        expect(pdf_doc.data["icon_url"]).to eq("/assets/icons/lines/pdf-file-type-svgrepo-com.svg")
       end
 
       it "sets icon_set on each document" do

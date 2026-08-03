@@ -1,6 +1,9 @@
 # jekyll-documents
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/gundestrup/jekyll-documents)
 
 Turn files in `assets/documents/` into browsable document pages.
+
+**Requirements**: Ruby 3.3+ • Jekyll 4.4+
 
 **Features**: Auto-collection • File icons • Categories • Search
 
@@ -54,9 +57,14 @@ documents:
   icon_set: "color"
 ```
 
+Render a document icon in templates with the context-aware tag:
+
 ```liquid
-{{ page.file_type | file_type_icon_tag }}
+{% document_icon page %}
 ```
+
+The tag applies the configured icon set and site `baseurl` automatically. The `file_type_icon` and
+`file_type_icon_tag` filters remain available for lower-level or Ruby-side use.
 
 ## Usage
 
@@ -80,8 +88,10 @@ See [configuration.rb](lib/jekyll/documents/configuration.rb) for all options.
 ## Development
 
 ```bash
-rake              # All quality checks
-rake quick        # Fast check
+rake              # Ruby quality checks
+rake test         # Rebuild/install gem + Ruby and browser tests
+rake browser_test # Browser search tests (Node.js + Chromium required)
+rake quick        # Fast Ruby check
 rake help         # Show commands
 ```
 

@@ -25,20 +25,20 @@ Gem::Specification.new do |spec|
     "rubygems_mfa_required" => "true"
   }
 
-  spec.required_ruby_version = ">= 3.2"
+  spec.required_ruby_version = ">= 3.3"
 
   spec.files         = Dir.glob("{lib,assets,_includes,_layouts}/**/*") +
                        ["README.md", "CHANGELOG.md", "LICENSE", "jekyll-documents.gemspec"]
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "jekyll", ">= 4.0"
+  spec.add_dependency "jekyll", ">= 4.4", "< 5.0"
 
   spec.add_development_dependency "bundler-audit", "~> 0.9"
   spec.add_development_dependency "rake", "~> 13.0"
-  spec.add_development_dependency "reek", "~> 6.1"
-  spec.add_development_dependency "rspec", "~> 3.12"
-  spec.add_development_dependency "rubocop", "~> 1.60"
-  spec.add_development_dependency "rubocop-performance", "~> 1.20"
+  spec.add_development_dependency "reek", "~> 6.5"
+  spec.add_development_dependency "rspec", "~> 3.13"
+  spec.add_development_dependency "rubocop", "~> 1.88"
+  spec.add_development_dependency "rubocop-performance", "~> 1.26"
   spec.add_development_dependency "simplecov", "~> 1.0"
   spec.add_development_dependency "yard", "~> 0.9"
 end

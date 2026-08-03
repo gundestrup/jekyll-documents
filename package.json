@@ -1,0 +1,30 @@
+{
+  "name": "jekyll-documents",
+  "version": "0.3.1",
+  "description": "Browser end-to-end tests for jekyll-documents",
+  "main": "index.js",
+  "directories": {
+    "example": "example",
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "npm run test:browser",
+    "test:browser": "playwright test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gundestrup/jekyll-documents.git"
+  },
+  "keywords": ["jekyll", "documents", "testing"],
+  "author": "Svend Gundestrup",
+  "license": "AGPL-3.0-only",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/gundestrup/jekyll-documents/issues"
+  },
+  "homepage": "https://github.com/gundestrup/jekyll-documents#readme",
+  "devDependencies": {
+    "@playwright/test": "1.62.1",
+    "lunr": "2.3.9"
+  }
+}

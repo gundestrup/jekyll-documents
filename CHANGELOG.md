@@ -1,5 +1,35 @@
 # Changelog
 
+## [Unreleased]
+
+## [0.3.1] - 2026-08-03
+
+### Added
+- Added the context-aware `{% document_icon page %}` Liquid tag for simple icon rendering
+- Added installed-gem system coverage for all supported document types and icon themes
+- Added Playwright browser coverage for search interaction, links, icons, baseurl, and network errors
+
+### Changed
+- Minimum Ruby version raised from `>= 3.2` to `>= 3.3`
+- Updated RuboCop target Ruby version to 3.3
+- Updated compatible development gems, including RuboCop, Reek, RSpec, and Playwright tooling
+- Test and quality tasks now rebuild and force-install the gem before testing
+- Added package-content checks to verify the built gem contains runtime templates, icons, JavaScript, and Liquid tags
+
+### Fixed
+- Corrected non-color icon mappings to reference packaged SVG assets
+- Registered packaged icons and search JavaScript for copying during Jekyll builds
+- Made document search respect the configured index path and site base URL
+- Hardened document search index validation and disabled the search include when JSON indexing is disabled
+- Escaped search-result URLs, icon URLs, titles, categories, and dates before rendering
+- Added the missing date conversion required for Jekyll 4.4 document publishing
+- Removed duplicate search scripts from the example site
+- Made Reek failures fail the quality task consistently
+
+### Verification
+- 186 Ruby/system examples passing with 100% Ruby line coverage
+- 3 Playwright browser tests passing
+- 0 RuboCop offenses, 0 Reek warnings, and 0 Bundler Audit vulnerabilities
 
 ## [0.3.0] - 2026-07-23
 

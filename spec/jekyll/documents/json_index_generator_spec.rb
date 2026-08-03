@@ -80,6 +80,7 @@ RSpec.describe Jekyll::Documents::JsonIndexGenerator do
         expect(first_doc).to have_key("slug")
         expect(first_doc).to have_key("file_type")
         expect(first_doc).to have_key("extension")
+        expect(first_doc).to have_key("icon_url")
       end
 
       it "includes correct title values" do
@@ -107,9 +108,11 @@ RSpec.describe Jekyll::Documents::JsonIndexGenerator do
 
         pdf_doc = data.find { |d| d["extension"] == ".pdf" }
         expect(pdf_doc["file_type"]).to eq("pdf")
+        expect(pdf_doc["icon_url"]).to eq("/assets/icons/color/pdf-document-svgrepo-com.svg")
 
         docx_doc = data.find { |d| d["extension"] == ".docx" }
         expect(docx_doc["file_type"]).to eq("docx")
+        expect(docx_doc["icon_url"]).to eq("/assets/icons/color/word-document-svgrepo-com.svg")
       end
 
       it "includes correct slug values" do

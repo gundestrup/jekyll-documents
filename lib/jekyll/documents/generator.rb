@@ -58,7 +58,7 @@ module Jekyll
           data = doc.data
           data["layout"]     = @config["layout"]
           data["title"]      = title
-          data["date"]       = date || File.mtime(path)
+          data["date"]       = date ? date.to_time : File.mtime(path)
           data["category"]   = remap_category(category)
           data["file_url"]   = "/#{rel_path}"
           data["extension"]  = ext

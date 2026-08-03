@@ -14,12 +14,20 @@ detectors:
     enabled: true
     max_calls: 3
 
+  ManualDispatch:
+    enabled: true
+    exclude:
+      - "Jekyll::Documents::DocumentIconTag#document_value"
+
   FeatureEnvy:
     enabled: true
     exclude:
       - "Jekyll::Documents::Generator#generate"
       - "Jekyll::Documents::Generator#build_slug"
+      - "Jekyll::Documents::AssetsGenerator#generate"
+      - "Jekyll::Documents::AssetsGenerator#register_asset"
       - "Jekyll::Documents::LatestDocumentsTag#render"
+      - "Jekyll::Documents::DocumentIconTag#document_value"
 
   UtilityFunction:
     enabled: false
@@ -28,6 +36,7 @@ detectors:
     enabled: true
     exclude:
       - "Jekyll::Documents::Generator#generate"
+      - "Jekyll::Documents::AssetsGenerator#register_assets"
 
   LongParameterList:
     enabled: true
@@ -55,6 +64,7 @@ detectors:
     enabled: true
     exclude:
       - "Jekyll::Documents::Generator#generate"
+      - "Jekyll::Documents::AssetsGenerator#register_asset"
       - "Jekyll::Documents::Generator#parse_filename"
       - "Jekyll::Documents::Generator#build_slug"
       - "Jekyll::Documents::LatestDocumentsTag#render"
@@ -62,6 +72,7 @@ detectors:
       - "Jekyll::Documents::TextStaticFile#write"
       - "Jekyll::Documents::TextStaticFile#initialize"
       - "Jekyll::Documents::Filters#documents_slugify"
+      - "Jekyll::Documents::DocumentIconTag#render"
 
   InstanceVariableAssumption:
     enabled: true

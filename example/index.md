@@ -31,6 +31,3 @@ This is a demonstration of the **jekyll-documents** plugin.
 ## Search Documents
 
 {% include documents_search.html %}
-
-<script src="https://unpkg.com/lunr/lunr.js"></script>
-<script src="{{ '/assets/js/documents-search.js' | relative_url }}"></script>

@@ -1,4 +1,5 @@
 /.bundle/
+node_modules/
 /pkg/
 /vendor/
 /tmp/
@@ -8,4 +9,7 @@ Gemfile.lock
 /.idea/
 /.vscode/
 /coverage/
+playwright-report/
+test-results/
+.browser-server-root
 spec/examples.txt

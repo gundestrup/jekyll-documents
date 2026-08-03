@@ -6,10 +6,10 @@
 
 Jekyll plugin that turns files in `assets/documents/` into browsable document pages with icons, categories, and search.
 
-- **Language**: Ruby (>= 3.2)
+- **Language**: Ruby (>= 3.3)
 - **Framework**: Jekyll 4.x plugin (generator + Liquid tags/filters)
 - **Gem name**: `jekyll-documents`
-- **Current version**: 0.3.0
+- **Current version**: 0.3.1
 
 ## Architecture
 
@@ -19,11 +19,14 @@ lib/jekyll/documents/
   version.rb                               # VERSION constant
   configuration.rb                         # DEFAULTS + Configuration.read(site)
   generator.rb                             # Main generator: scans files, creates collection docs
+  assets_generator.rb                      # Publishes gem assets as Jekyll static files
   json_index_generator.rb                  # Generates /documents.json for Lunr search
   file_type_icons.rb                       # Icon mappings + Liquid filters
   filters.rb                               # documents_slugify + documents_title_from_filename
   utils.rb                                 # TextStaticFile (writes JSON index, sitemap: false)
   tags/latest_documents.rb                 # {% latest_documents %} Liquid tag
+  tags/document_icon.rb                    # {% document_icon page %} Liquid tag
+spec/browser/                                # Playwright browser tests for the built gem
 ```
 
 ### Data flow
@@ -32,17 +35,18 @@ lib/jekyll/documents/
 2. Parses filenames (`YYYY-MM-DD_Title.ext`) → extracts date, title, slug, category
 3. Bakes `icon_url` and `icon_set` into each document's `data` hash
 4. Creates `Jekyll::Document` objects in the `documents` collection
-5. `JsonIndexGenerator` builds `/documents.json` from the collection
-6. Templates render using baked data (`{{ doc.icon_url }}`, `{{ doc.category }}`, etc.)
+5. `AssetsGenerator` registers packaged icons and JavaScript as static files
+6. `JsonIndexGenerator` builds `/documents.json` from the collection
+7. Templates render icons with `{% document_icon doc %}` or `{% document_icon page %}` and use baked document data for other fields
 
 ### Template files
 
 ```text
-_includes/latest_documents.html            # Recent docs list (uses baked icon_url)
-_includes/documents_list.html              # Full doc list (uses baked icon_url)
+_includes/latest_documents.html            # Recent docs list (uses document_icon tag)
+_includes/documents_list.html              # Full doc list (uses document_icon tag)
 _includes/category_list.html               # Category folders (reads icon_set from first doc)
 _includes/documents_search.html            # Search input + Lunr.js + documents-search.js
-_layouts/document.html                     # Single document page (uses page.icon_url)
+_layouts/document.html                     # Single document page (uses document_icon tag)
 assets/js/documents-search.js              # Client-side Lunr search
 assets/icons/{color,lines,minimal,ultra-minimal}/  # SVG icon sets
 ```
@@ -51,7 +55,7 @@ assets/icons/{color,lines,minimal,ultra-minimal}/  # SVG icon sets
 
 ### 1. Liquid context does not pass to filters
 
-`file_type_icon_tag` filter accepts a `context:` kwarg, but Liquid filters **never** receive context automatically. Templates must use baked `{{ doc.icon_url }}` instead. The `file_type_icon_tag` filter still works when called from Ruby code (tags, generators) but not from Liquid templates.
+`file_type_icon_tag` filter accepts a `context:` kwarg, but Liquid filters **never** receive context automatically. Templates should use `{% document_icon doc %}` or `{% document_icon page %}`, which applies the baked icon URL and site `baseurl` with full Liquid context. The `file_type_icon_tag` filter remains available for lower-level or Ruby-side use.
 
 ### 2. `SiteDrop#config` always returns nil in Liquid
 
@@ -63,7 +67,7 @@ assets/icons/{color,lines,minimal,ultra-minimal}/  # SVG icon sets
 
 ### 4. Icon data is baked at generation time
 
-The generator calls `FileTypeIcons.icon_for(file_type, icon_set)` and stores the result in `doc.data["icon_url"]`. Templates read `{{ doc.icon_url }}` — they do NOT call `file_type_icon_tag` filter. If you add new templates, use the baked data pattern.
+The generator calls `FileTypeIcons.icon_for(file_type, icon_set)` and stores the result in `doc.data["icon_url"]`. Templates should render icons with `{% document_icon doc %}` or `{% document_icon page %}` rather than manually constructing `<img>` tags. The tag handles the baked URL, `baseurl`, escaping, and defaults.
 
 ### 5. `category_list.html` reads icon_set from first document
 
@@ -75,9 +79,10 @@ All must pass before commit/release:
 
 ```bash
 rake quality          # Runs all 4 checks below
-bundle exec rubocop   # 0 offenses required (24 files)
-bundle exec reek --config .reek.yml lib/  # 0 warnings required (7 files)
-bundle exec rspec     # 167 examples, 0 failures, 100% coverage
+bundle exec rubocop   # 0 offenses required (26 files)
+bundle exec reek --config .reek.yml lib/  # 0 warnings required
+rake spec             # Rebuilds/installs gem, 186 Ruby examples, 0 failures, 100% coverage
+rake browser_test     # Rebuilds/installs gem and runs Playwright browser tests
 bundle exec bundler-audit check --update  # 0 vulnerabilities
 ```
 
@@ -137,7 +142,7 @@ Documents must follow `YYYY-MM-DD_Title.ext` format. Supported extensions: `.pdf
 - [README.Development.md](./README.Development.md) — Development workflow, commands, scripts, CI/CD
 - [readme.errors.md](./readme.errors.md) — Known bugs and issues with fix status markers
 - [CHANGELOG.md](./CHANGELOG.md) — Version history and release notes
-- [.rubocop.yml](./.rubocop.yml) — Code style rules (TargetRubyVersion 3.2)
+- [.rubocop.yml](./.rubocop.yml) — Code style rules (TargetRubyVersion 3.3)
 - [.reek.yml](./.reek.yml) — Code smell detection with intentional exclusions
 - [jekyll-documents.gemspec](./jekyll-documents.gemspec) — Gem spec and metadata
 - [.devin/wiki.json](./.devin/wiki.json) — DeepWiki steering file (controls wiki generation on deepwiki.com)

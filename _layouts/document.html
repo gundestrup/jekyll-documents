@@ -13,7 +13,7 @@ layout: default
 
   <p>
     <a href="{{ page.file_url | relative_url }}" class="document-download">
-      <img src="{{ page.icon_url | relative_url }}" alt="{{ page.file_type | upcase }} file" class="file-icon" />
+      {% document_icon page %}
       Download ({{ page.extension | remove: "." | upcase }})
     </a>
   </p>

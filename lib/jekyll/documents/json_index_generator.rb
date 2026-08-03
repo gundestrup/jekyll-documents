@@ -25,7 +25,8 @@ module Jekyll
             "date" => (data["date"] || Time.at(0)).strftime("%Y-%m-%d"),
             "slug" => data["slug"],
             "file_type" => data["file_type"],
-            "extension" => data["extension"]
+            "extension" => data["extension"],
+            "icon_url" => data["icon_url"]
           }
         end
 

@@ -1,6 +1,14 @@
+{% assign documents_config = site.data.jekyll_documents %}
+{% assign index_path = documents_config.json_index_path | default: '/documents.json' %}
+{% if documents_config.json_index != false %}
 <div class="documents-search">
   <input id="doc-search-input" type="search" placeholder="Search documents…" aria-label="Search documents" />
   <div id="doc-search-results" class="documents-search-results"></div>
 </div>
+<script>
+  window.__jekyllDocumentsIndexPath = {{ index_path | relative_url | jsonify }};
+  window.__jekyllDocumentsBaseurl = {{ site.baseurl | jsonify }};
+</script>
 <script src="https://unpkg.com/lunr/lunr.js"></script>
 <script src="{{ '/assets/js/documents-search.js' | relative_url }}"></script>
+{% endif %}

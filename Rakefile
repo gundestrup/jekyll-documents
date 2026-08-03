@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "English"
 require "bundler/gem_tasks"
 require "rspec/core/rake_task"
 require "yard"
@@ -11,15 +10,25 @@ YARD::Rake::YardocTask.new
 # Default task: run all quality checks (most common use case)
 task default: :quality
 
+desc "Build the gem"
+task :build do
+  sh "gem build jekyll-documents.gemspec"
+end
+
 desc "Run all tests with coverage"
-task test: :spec
+task test: %i[install_local spec browser_test]
 
 desc "Run all quality checks (style, smells, security, tests)"
-task quality: %i[rubocop reek bundler_audit spec]
+task quality: %i[install_local rubocop reek bundler_audit spec]
 
 desc "Run tests only (fast)"
-task :spec do
+task spec: :install_local do
   sh "bundle exec rspec"
+end
+
+desc "Run browser end-to-end tests"
+task browser_test: :install_local do
+  sh "npm run test:browser"
 end
 
 desc "Check code style with RuboCop"
@@ -34,10 +43,7 @@ end
 
 desc "Check code smells with Reek"
 task :reek do
-  sh "bundle exec reek --config .reek.yml lib/" do |ok, _|
-    # Reek warnings are acceptable, only fail on errors
-    ok || $CHILD_STATUS.exitstatus == 2
-  end
+  sh "bundle exec reek --config .reek.yml lib/"
 end
 
 desc "Run security audit"
@@ -46,7 +52,7 @@ task :bundler_audit do
 end
 
 desc "Run quick checks (style + tests only)"
-task :quick do
+task quick: :install_local do
   puts "🏃 Running quick checks..."
   begin
     sh "bundle exec rubocop"
@@ -64,9 +70,8 @@ task :doc do
 end
 
 desc "Build and install the gem locally"
-task :install_local do
-  sh "gem build jekyll-documents.gemspec"
-  sh "gem install jekyll-documents-*.gem"
+task install_local: :build do
+  sh "gem install --force jekyll-documents-*.gem"
 end
 
 # Display available tasks with descriptions
@@ -75,9 +80,10 @@ task :help do
   puts "🧪 Testing Tasks:"
   puts "  rake              # Run all quality checks (default)"
   puts "  rake quality      # Run all quality checks"
-  puts "  rake test         # Run tests only"
-  puts "  rake spec         # Run tests with coverage"
-  puts "  rake quick        # Quick check (style + tests)"
+  puts "  rake test         # Rebuild/install gem + Ruby + browser tests"
+  puts "  rake spec         # Rebuild/install gem + tests with coverage"
+  puts "  rake quick        # Rebuild/install gem + quick checks"
+  puts "  rake browser_test # Rebuild/install gem + browser tests"
   puts ""
   puts "🔧 Individual Checks:"
   puts "  rake rubocop      # Code style check"

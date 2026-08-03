@@ -11,7 +11,7 @@ RSpec.describe Jekyll::Documents::FileTypeIcons do
 
     it "returns set-specific icon for lines" do
       result = described_class.icon_for("docx", "lines")
-      expect(result).to eq("/assets/icons/lines/doc-svgrepo-com.svg")
+      expect(result).to eq("/assets/icons/lines/word-file-type-svgrepo-com.svg")
     end
 
     it "falls back to color for unknown icon set" do
@@ -27,6 +27,25 @@ RSpec.describe Jekyll::Documents::FileTypeIcons do
     it "handles nil file type" do
       result = described_class.icon_for(nil, "color")
       expect(result).to eq("/assets/icons/color/unknown-document-svgrepo-com.svg")
+    end
+
+    it "uses the color set for an unknown set and file type" do
+      result = described_class.icon_for("unknown", "nonsense")
+      expect(result).to eq("/assets/icons/color/unknown-document-svgrepo-com.svg")
+    end
+
+    it "maps every icon to a packaged asset" do
+      project_root = File.expand_path("../../..", __dir__)
+
+      [described_class::ICON_MAP, described_class::UNKNOWN_ICON_MAP].each do |icon_sets|
+        icon_sets.each_value do |icons|
+          urls = icons.is_a?(Hash) ? icons.values : [icons]
+          urls.each do |url|
+            asset_path = File.join(project_root, url.delete_prefix("/"))
+            expect(File).to exist(asset_path)
+          end
+        end
+      end
     end
   end
 
@@ -90,7 +109,7 @@ RSpec.describe Jekyll::Documents::FileTypeIcons do
 
       it "returns lines icon path" do
         result = filter.file_type_icon("pdf", context)
-        expect(result).to eq("/assets/icons/lines/pdf-svgrepo-com.svg")
+        expect(result).to eq("/assets/icons/lines/pdf-file-type-svgrepo-com.svg")
       end
     end
 
@@ -99,7 +118,9 @@ RSpec.describe Jekyll::Documents::FileTypeIcons do
 
       it "returns minimal icon path" do
         result = filter.file_type_icon("pdf", context)
-        expect(result).to eq("/assets/icons/minimal/pdf-svgrepo-com.svg")
+        expect(result).to eq(
+          "/assets/icons/minimal/extension-file-format-pdf-document-file-format-svgrepo-com.svg"
+        )
       end
     end
 

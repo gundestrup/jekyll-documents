@@ -13,6 +13,9 @@ module Jekyll
       # Lines: https://www.svgrepo.com/collection/simple-file-types-line-vectors/
       # Minimal: https://www.svgrepo.com/collection/file-type-minimal-icons/
       # Ultra-minimal: Based on simple document icons
+      LINES_ICON_PATH = "/assets/icons/lines/"
+      MINIMAL_ICON_PATH = "/assets/icons/minimal/"
+
       ICON_MAP = {
         "color" => {
           "pdf" => "/assets/icons/color/pdf-document-svgrepo-com.svg",
@@ -38,42 +41,59 @@ module Jekyll
           "rtf" => "/assets/icons/color/rtf-document-svgrepo-com.svg"
         },
         "lines" => {
-          "pdf" => "/assets/icons/lines/pdf-svgrepo-com.svg",
-          "docx" => "/assets/icons/lines/doc-svgrepo-com.svg",
-          "doc" => "/assets/icons/lines/doc-svgrepo-com.svg",
-          "pptx" => "/assets/icons/lines/ppt-svgrepo-com.svg",
-          "ppt" => "/assets/icons/lines/ppt-svgrepo-com.svg",
-          "xlsx" => "/assets/icons/lines/xls-svgrepo-com.svg",
-          "xls" => "/assets/icons/lines/xls-svgrepo-com.svg",
-          "odt" => "/assets/icons/lines/doc-svgrepo-com.svg",
-          "ods" => "/assets/icons/lines/xls-svgrepo-com.svg",
-          "odp" => "/assets/icons/lines/ppt-svgrepo-com.svg",
-          "txt" => "/assets/icons/lines/txt-svgrepo-com.svg",
-          "zip" => "/assets/icons/lines/zip-svgrepo-com.svg",
-          "mp3" => "/assets/icons/lines/mp3-svgrepo-com.svg",
-          "mp4" => "/assets/icons/lines/mp4-svgrepo-com.svg",
-          "jpg" => "/assets/icons/lines/jpg-svgrepo-com.svg",
-          "jpeg" => "/assets/icons/lines/jpg-svgrepo-com.svg",
-          "png" => "/assets/icons/lines/png-svgrepo-com.svg"
+          "pdf" => "#{LINES_ICON_PATH}pdf-file-type-svgrepo-com.svg",
+          "docx" => "#{LINES_ICON_PATH}word-file-type-svgrepo-com.svg",
+          "doc" => "#{LINES_ICON_PATH}word-file-type-svgrepo-com.svg",
+          "pptx" => "#{LINES_ICON_PATH}ppt-file-type-svgrepo-com.svg",
+          "ppt" => "#{LINES_ICON_PATH}ppt-file-type-svgrepo-com.svg",
+          "xlsx" => "#{LINES_ICON_PATH}excel-file-type-svgrepo-com.svg",
+          "xls" => "#{LINES_ICON_PATH}excel-file-type-svgrepo-com.svg",
+          "odt" => "#{LINES_ICON_PATH}word-file-type-svgrepo-com.svg",
+          "ods" => "#{LINES_ICON_PATH}excel-file-type-svgrepo-com.svg",
+          "odp" => "#{LINES_ICON_PATH}ppt-file-type-svgrepo-com.svg",
+          "txt" => "#{LINES_ICON_PATH}txt-file-type-svgrepo-com.svg",
+          "zip" => "#{LINES_ICON_PATH}zip-file-type-svgrepo-com.svg",
+          "mp3" => "#{LINES_ICON_PATH}mp3-file-type-svgrepo-com.svg",
+          "mp4" => "#{LINES_ICON_PATH}other-file-type-svgrepo-com.svg",
+          "jpg" => "#{LINES_ICON_PATH}jpg-file-type-svgrepo-com.svg",
+          "jpeg" => "#{LINES_ICON_PATH}jpg-file-type-svgrepo-com.svg",
+          "png" => "#{LINES_ICON_PATH}png-file-type-svgrepo-com.svg"
         },
         "minimal" => {
-          "pdf" => "/assets/icons/minimal/pdf-svgrepo-com.svg",
-          "docx" => "/assets/icons/minimal/doc-svgrepo-com.svg",
-          "doc" => "/assets/icons/minimal/doc-svgrepo-com.svg",
-          "pptx" => "/assets/icons/minimal/ppt-svgrepo-com.svg",
-          "ppt" => "/assets/icons/minimal/ppt-svgrepo-com.svg",
-          "xlsx" => "/assets/icons/minimal/xls-svgrepo-com.svg",
-          "xls" => "/assets/icons/minimal/xls-svgrepo-com.svg",
-          "odt" => "/assets/icons/minimal/doc-svgrepo-com.svg",
-          "ods" => "/assets/icons/minimal/xls-svgrepo-com.svg",
-          "odp" => "/assets/icons/minimal/ppt-svgrepo-com.svg",
-          "txt" => "/assets/icons/minimal/txt-svgrepo-com.svg",
-          "zip" => "/assets/icons/minimal/zip-svgrepo-com.svg",
-          "mp3" => "/assets/icons/minimal/mp3-svgrepo-com.svg",
-          "mp4" => "/assets/icons/minimal/mp4-svgrepo-com.svg",
-          "jpg" => "/assets/icons/minimal/jpg-svgrepo-com.svg",
-          "jpeg" => "/assets/icons/minimal/jpg-svgrepo-com.svg",
-          "png" => "/assets/icons/minimal/png-svgrepo-com.svg"
+          "pdf" => "#{MINIMAL_ICON_PATH}" \
+                   "extension-file-format-pdf-document-file-format-svgrepo-com.svg",
+          "docx" => "#{MINIMAL_ICON_PATH}" \
+                    "extension-file-format-document-file-format-svgrepo-com.svg",
+          "doc" => "#{MINIMAL_ICON_PATH}" \
+                   "extension-file-format-document-file-format-svgrepo-com.svg",
+          "pptx" => "#{MINIMAL_ICON_PATH}" \
+                    "extension-file-format-document-file-format-2-svgrepo-com.svg",
+          "ppt" => "#{MINIMAL_ICON_PATH}" \
+                   "extension-file-format-document-file-format-2-svgrepo-com.svg",
+          "xlsx" => "#{MINIMAL_ICON_PATH}" \
+                    "extension-file-format-document-file-format-2-svgrepo-com.svg",
+          "xls" => "#{MINIMAL_ICON_PATH}" \
+                   "extension-file-format-document-file-format-2-svgrepo-com.svg",
+          "odt" => "#{MINIMAL_ICON_PATH}" \
+                   "extension-file-format-document-file-format-svgrepo-com.svg",
+          "ods" => "#{MINIMAL_ICON_PATH}" \
+                   "extension-file-format-document-file-format-2-svgrepo-com.svg",
+          "odp" => "#{MINIMAL_ICON_PATH}" \
+                   "extension-file-format-document-file-format-2-svgrepo-com.svg",
+          "txt" => "#{MINIMAL_ICON_PATH}" \
+                   "extension-file-format-txt-document-file-format-svgrepo-com.svg",
+          "zip" => "#{MINIMAL_ICON_PATH}" \
+                   "extension-file-format-document-file-format-2-svgrepo-com.svg",
+          "mp3" => "#{MINIMAL_ICON_PATH}" \
+                   "extension-file-format-document-file-format-2-svgrepo-com.svg",
+          "mp4" => "#{MINIMAL_ICON_PATH}" \
+                   "extension-file-format-document-file-format-2-svgrepo-com.svg",
+          "jpg" => "#{MINIMAL_ICON_PATH}" \
+                   "extension-file-format-jpg-document-file-format-svgrepo-com.svg",
+          "jpeg" => "#{MINIMAL_ICON_PATH}" \
+                    "file-format-jpeg-document-extension-file-format-svgrepo-com.svg",
+          "png" => "#{MINIMAL_ICON_PATH}" \
+                   "extension-file-format-document-file-format-2-svgrepo-com.svg"
         },
         "ultra-minimal" => {
           "pdf" => "/assets/icons/ultra-minimal/pdf.svg",
@@ -95,16 +115,25 @@ module Jekyll
         }
       }.freeze
 
+      UNKNOWN_ICON_MAP = {
+        "color" => "/assets/icons/color/unknown-document-svgrepo-com.svg",
+        "lines" => "#{LINES_ICON_PATH}other-file-type-svgrepo-com.svg",
+        "minimal" => "#{MINIMAL_ICON_PATH}" \
+                     "extension-file-format-document-file-format-2-svgrepo-com.svg",
+        "ultra-minimal" => "/assets/icons/ultra-minimal/file.svg"
+      }.freeze
+
       # Returns the icon URL for a given file type and explicit icon set
       # @param file_type [String] the file extension (e.g., 'pdf', 'docx')
       # @param icon_set [String] the icon set name (defaults to 'color')
       # @return [String] the icon file URL
       # @example
-      #   FileTypeIcons.icon_for('pdf', 'lines') #=> "/assets/icons/lines/pdf-svgrepo-com.svg"
+      #   FileTypeIcons.icon_for('pdf', 'lines') #=>
+      #     "/assets/icons/lines/pdf-file-type-svgrepo-com.svg"
       def self.icon_for(file_type, icon_set = "color")
-        icons = ICON_MAP[icon_set] || ICON_MAP["color"]
-        icons[file_type.to_s.downcase] ||
-          "/assets/icons/#{icon_set}/unknown-document-svgrepo-com.svg"
+        selected_set = ICON_MAP.key?(icon_set) ? icon_set : "color"
+        icons = ICON_MAP[selected_set]
+        icons[file_type.to_s.downcase] || UNKNOWN_ICON_MAP[selected_set]
       end
 
       # Returns the icon URL for a given file type using configured icon set
