@@ -73,6 +73,7 @@ detectors:
       - "Jekyll::Documents::TextStaticFile#initialize"
       - "Jekyll::Documents::Filters#documents_slugify"
       - "Jekyll::Documents::DocumentIconTag#render"
+      - "Jekyll::Documents::LayoutRegistrar#copy_templates"
 
   InstanceVariableAssumption:
     enabled: true

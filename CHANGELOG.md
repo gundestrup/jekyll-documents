@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+- Auto-registration of gem-packaged `_layouts` and `_includes` via a `:site, :after_init` hook so Jekyll discovers the `document` layout and all includes without the gem being declared as a theme; user-provided files always take precedence
+- 7 RSpec examples for `LayoutRegistrar` covering copy, override, idempotency, and hook registration
+
 ## [0.3.1] - 2026-08-03
 
 ### Added

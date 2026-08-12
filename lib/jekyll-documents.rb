@@ -9,6 +9,7 @@ require_relative "jekyll/documents/file_type_icons"
 require_relative "jekyll/documents/generator"
 require_relative "jekyll/documents/assets_generator"
 require_relative "jekyll/documents/json_index_generator"
+require_relative "jekyll/documents/layout_registrar"
 
 # Liquid tag(s)
 require_relative "jekyll/documents/tags/latest_documents"

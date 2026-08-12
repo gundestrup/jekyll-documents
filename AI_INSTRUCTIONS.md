@@ -21,6 +21,7 @@ lib/jekyll/documents/
   generator.rb                             # Main generator: scans files, creates collection docs
   assets_generator.rb                      # Publishes gem assets as Jekyll static files
   json_index_generator.rb                  # Generates /documents.json for Lunr search
+  layout_registrar.rb                      # Copies gem _layouts/_includes into site source via :site, :after_init hook
   file_type_icons.rb                       # Icon mappings + Liquid filters
   filters.rb                               # documents_slugify + documents_title_from_filename
   utils.rb                                 # TextStaticFile (writes JSON index, sitemap: false)
@@ -37,7 +38,8 @@ spec/browser/                                # Playwright browser tests for the 
 4. Creates `Jekyll::Document` objects in the `documents` collection
 5. `AssetsGenerator` registers packaged icons and JavaScript as static files
 6. `JsonIndexGenerator` builds `/documents.json` from the collection
-7. Templates render icons with `{% document_icon doc %}` or `{% document_icon page %}` and use baked document data for other fields
+7. `LayoutRegistrar` copies gem `_layouts` and `_includes` into the site source via a `:site, :after_init` hook (user files take precedence)
+8. Templates render icons with `{% document_icon doc %}` or `{% document_icon page %}` and use baked document data for other fields
 
 ### Template files
 
@@ -72,6 +74,10 @@ The generator calls `FileTypeIcons.icon_for(file_type, icon_set)` and stores the
 ### 5. `category_list.html` reads icon_set from first document
 
 Since `site.documents` is an array (not config), `site.documents.icon_set` is nil. The include derives `icon_set` from `site.documents.first.icon_set` (baked by generator).
+
+### 6. Layouts and includes are auto-copied, not themed
+
+Jekyll only auto-discovers `_layouts` and `_includes` from **theme gems** (via the `theme:` config key). This gem is a plugin, not a theme, so `LayoutRegistrar` copies the gem's `_layouts/` and `_includes/` into the site source directory via a `:site, :after_init` hook. Files already present in the user's site are never overwritten. **Do not remove the hook** — without it, Jekyll cannot find the `document` layout and the includes.
 
 ## Quality Gates
 

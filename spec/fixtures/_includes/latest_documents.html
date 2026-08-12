@@ -1,0 +1,11 @@
+{% assign count = include.count | default: 5 %}
+{% assign docs = site.documents | sort: "date" | reverse | slice: 0, count %}
+<ul class="latest-documents">
+  {% for doc in docs %}
+    <li>
+      {% document_icon doc %}
+      <a href="{{ doc.url | relative_url }}">{{ doc.title }}</a>
+      <small>({{ doc.date | date: "%Y-%m-%d" }}, {{ doc.category }})</small>
+    </li>
+  {% endfor %}
+</ul>
