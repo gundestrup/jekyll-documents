@@ -2,9 +2,14 @@
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-08-12
+
 ### Added
 - Auto-registration of gem-packaged `_layouts` and `_includes` via a `:site, :after_init` hook so Jekyll discovers the `document` layout and all includes without the gem being declared as a theme; user-provided files always take precedence
 - 7 RSpec examples for `LayoutRegistrar` covering copy, override, idempotency, and hook registration
+
+### Fixed
+- Corrected publish workflow Ruby version from 3.2 to 3.3 to match the gemspec `required_ruby_version` so the gem builds and publishes to RubyGems successfully
 
 ## [0.3.1] - 2026-08-03
 
