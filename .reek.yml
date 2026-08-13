@@ -28,6 +28,7 @@ detectors:
       - "Jekyll::Documents::AssetsGenerator#register_asset"
       - "Jekyll::Documents::LatestDocumentsTag#render"
       - "Jekyll::Documents::DocumentIconTag#document_value"
+      - "Jekyll::Documents::DocLinkTag#compute_size"
 
   UtilityFunction:
     enabled: false
@@ -73,6 +74,10 @@ detectors:
       - "Jekyll::Documents::TextStaticFile#initialize"
       - "Jekyll::Documents::Filters#documents_slugify"
       - "Jekyll::Documents::DocumentIconTag#render"
+      - "Jekyll::Documents::DocLinkTag#render"
+      - "Jekyll::Documents::DocLinkTag#format_size"
+      - "Jekyll::Documents::DocCategoryTag#render"
+      - "Jekyll::Documents::DocCategoryTag#render_list"
       - "Jekyll::Documents::LayoutRegistrar#copy_templates"
 
   InstanceVariableAssumption:

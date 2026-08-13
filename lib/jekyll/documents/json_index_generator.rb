@@ -26,7 +26,9 @@ module Jekyll
             "slug" => data["slug"],
             "file_type" => data["file_type"],
             "extension" => data["extension"],
-            "icon_url" => data["icon_url"]
+            "icon_url" => data["icon_url"],
+            "file_url" => data["file_url"],
+            "file_size" => data["file_size"]
           }
         end
 

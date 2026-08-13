@@ -65,6 +65,7 @@ module Jekyll
           data["file_type"]  = file_type
           data["icon_set"]   = icon_set
           data["icon_url"]   = Jekyll::Documents::FileTypeIcons.icon_for(file_type, icon_set)
+          data["file_size"]  = File.size(path)
           data["slug"]       = slug
           data["permalink"]  = @config["permalink"]
                                .gsub(":category", data["category"].to_s)

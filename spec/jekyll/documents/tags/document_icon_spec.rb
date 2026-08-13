@@ -65,4 +65,12 @@ RSpec.describe Jekyll::Documents::DocumentIconTag do
   it "returns an empty string when the document is missing" do
     expect(render_tag("missing")).to eq("")
   end
+
+  it "falls back to unknown icon when document has no data or [] access" do
+    bare = Class.new do
+      def to_liquid = self
+    end.new
+    result = render_tag("page", "page" => bare)
+    expect(result).to include("unknown-document")
+  end
 end

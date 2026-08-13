@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-08-12
+
+### Added
+- `{% doc_link "title" %}` Liquid tag for linking to documents by partial title or slug match (case-insensitive); renders file icon, title, and human-readable file size; supports `text:"custom label"`, `icon:false`, and `size:false` options
+- `{% doc_category "name" %}` Liquid tag for linking to category pages or listing documents by category; supports `text:"label"`, `list:true`, and `limit:N` options
+- `file_size` attribute baked into each document's data at generation time
+- `file_url` and `file_size` fields included in the generated `/documents.json` index
+- 30 RSpec examples covering `DocLinkTag` and `DocCategoryTag` (exact/partial matching, slug matching, icon/size rendering, custom text, baseurl, HTML escaping, list mode, limit, sorting, empty collection handling)
+
 ## [0.3.2] - 2026-08-12
 
 ### Added

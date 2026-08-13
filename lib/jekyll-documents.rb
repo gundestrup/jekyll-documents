@@ -14,6 +14,8 @@ require_relative "jekyll/documents/layout_registrar"
 # Liquid tag(s)
 require_relative "jekyll/documents/tags/latest_documents"
 require_relative "jekyll/documents/tags/document_icon"
+require_relative "jekyll/documents/tags/doc_link"
+require_relative "jekyll/documents/tags/doc_category"
 
 module Jekyll
   module Documents

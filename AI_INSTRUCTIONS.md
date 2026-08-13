@@ -9,7 +9,7 @@ Jekyll plugin that turns files in `assets/documents/` into browsable document pa
 - **Language**: Ruby (>= 3.3)
 - **Framework**: Jekyll 4.x plugin (generator + Liquid tags/filters)
 - **Gem name**: `jekyll-documents`
-- **Current version**: 0.3.1
+- **Current version**: 0.3.3
 
 ## Architecture
 
@@ -27,6 +27,8 @@ lib/jekyll/documents/
   utils.rb                                 # TextStaticFile (writes JSON index, sitemap: false)
   tags/latest_documents.rb                 # {% latest_documents %} Liquid tag
   tags/document_icon.rb                    # {% document_icon page %} Liquid tag
+  tags/doc_link.rb                         # {% doc_link "title" %} Liquid tag
+  tags/doc_category.rb                     # {% doc_category "name" %} Liquid tag
 spec/browser/                                # Playwright browser tests for the built gem
 ```
 
@@ -40,6 +42,8 @@ spec/browser/                                # Playwright browser tests for the 
 6. `JsonIndexGenerator` builds `/documents.json` from the collection
 7. `LayoutRegistrar` copies gem `_layouts` and `_includes` into the site source via a `:site, :after_init` hook (user files take precedence)
 8. Templates render icons with `{% document_icon doc %}` or `{% document_icon page %}` and use baked document data for other fields
+9. `{% doc_link "title" %}` resolves a document by partial title or slug match and renders an `<a>` tag with the correct URL
+10. `{% doc_category "name" %}` renders a link to a category page, or with `list:true` renders a sorted list of all documents in that category (supports `limit:N` and `text:"label"`)
 
 ### Template files
 

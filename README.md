@@ -74,11 +74,40 @@ The tag applies the configured icon set and site `baseurl` automatically. The `f
 
 ## Usage
 
+### Includes
+
 ```liquid
 {% include latest_documents.html count=5 %}
 {% include documents_list.html %}
 {% include documents_search.html %}
 ```
+
+### Liquid Tags
+
+**Link to a document** by title or slug (partial match, case-insensitive):
+
+```liquid
+{% doc_link "Annual Report" %}
+{% doc_link "annual" text:"Read the report" %}
+{% doc_link "board-meeting" icon:false size:false %}
+```
+
+Renders an `<a>` tag with the file type icon, title, and human-readable file size.
+Use `text:"..."` to override the link text, `icon:false` to hide the icon,
+or `size:false` to hide the file size.
+
+**Link to or list a category**:
+
+```liquid
+{% doc_category "reports" %}
+{% doc_category "reports" text:"All reports" %}
+{% doc_category "reports" list:true %}
+{% doc_category "reports" list:true limit:5 %}
+```
+
+Link mode renders an `<a>` tag to the category page.
+List mode renders a `<ul>` of all documents in the category, sorted by date descending.
+Use `limit:N` to cap the number of items.
 
 ## Configuration
 
