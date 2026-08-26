@@ -1,6 +1,6 @@
 {
   "name": "jekyll-documents",
-  "version": "0.3.1",
+  "private": true,
   "description": "Browser end-to-end tests for jekyll-documents",
   "main": "index.js",
   "directories": {

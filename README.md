@@ -139,8 +139,13 @@ See [README.Development.md](README.Development.md) for details.
 ## Release
 
 ```bash
-./bump_version.sh patch
-./release.sh
+bundle exec rake "version:bump[patch]"
+# Edit CHANGELOG.md
+git add lib/jekyll/documents/version.rb CHANGELOG.md
+git commit -m "Release X.Y.Z: summary"
+git tag -a vX.Y.Z -m "Release X.Y.Z"
+git push origin main
+git push origin vX.Y.Z
 ```
 
 ## License

@@ -88,9 +88,8 @@ Jekyll only auto-discovers `_layouts` and `_includes` from **theme gems** (via t
 All must pass before commit/release:
 
 ```bash
-rake quality          # Runs all 4 checks below
+rake quality          # Runs all 3 checks below
 bundle exec rubocop   # 0 offenses required (26 files)
-bundle exec reek --config .reek.yml lib/  # 0 warnings required
 rake spec             # Rebuilds/installs gem, 186 Ruby examples, 0 failures, 100% coverage
 rake browser_test     # Rebuilds/installs gem and runs Playwright browser tests
 bundle exec bundler-audit check --update  # 0 vulnerabilities
@@ -105,11 +104,10 @@ rake quick            # RuboCop + RSpec only
 ## Code Conventions
 
 - **Frozen string literals**: All files have `# frozen_string_literal: true`
-- **Naming**: Descriptive variable names (not `s`, `d`, `m` — see reek config for exceptions)
+- **Naming**: Descriptive variable names (not `s`, `d`, `m`)
 - **Line length**: 100 chars max (RuboCop Layout/LineLength)
 - **Tests**: RSpec with SimpleCov. Target 100% line coverage.
 - **No comments** unless explaining non-obvious logic (frozen literals, rubocop disables)
-- **Reek exclusions**: `.reek.yml` has targeted exclusions for design-inherent warnings (Jekyll generator complexity, boolean params in filters, inherited StaticFile instance variables). These are intentional — do not remove without understanding why.
 
 ## Configuration
 
@@ -134,13 +132,19 @@ documents:
 ## Release Process
 
 ```bash
-./bump_version.sh minor               # Bump version + CHANGELOG template
-# Edit CHANGELOG.md with actual changes
-./release.sh --dry-run                # Verify everything passes
-./release.sh                          # Interactive: quality checks, commit, tag, push
+bundle exec rake "version:bump[minor]"  # Bump version in version.rb
+# Edit CHANGELOG.md with actual changes (## [X.Y.Z] - YYYY-MM-DD)
+bundle exec rake version:check_changelog # Verify CHANGELOG entry exists
+git add lib/jekyll/documents/version.rb CHANGELOG.md
+git commit -m "Release X.Y.Z: summary"
+git tag -a vX.Y.Z -m "Release X.Y.Z"
+git push origin main
+git push origin vX.Y.Z                  # Triggers release workflow
 ```
 
-GitHub Actions auto-publishes to RubyGems on tag push.
+Pushing the tag triggers the release workflow which builds the gem,
+attaches it to a GitHub release, and publishes to RubyGems via trusted
+publishing. No manual `gh release create` needed.
 
 ## File Naming
 
@@ -153,6 +157,5 @@ Documents must follow `YYYY-MM-DD_Title.ext` format. Supported extensions: `.pdf
 - [readme.errors.md](./readme.errors.md) — Known bugs and issues with fix status markers
 - [CHANGELOG.md](./CHANGELOG.md) — Version history and release notes
 - [.rubocop.yml](./.rubocop.yml) — Code style rules (TargetRubyVersion 3.3)
-- [.reek.yml](./.reek.yml) — Code smell detection with intentional exclusions
 - [jekyll-documents.gemspec](./jekyll-documents.gemspec) — Gem spec and metadata
 - [.devin/wiki.json](./.devin/wiki.json) — DeepWiki steering file (controls wiki generation on deepwiki.com)

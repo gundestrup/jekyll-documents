@@ -64,7 +64,7 @@ RSpec.describe "Gem packaging", type: :system do
 
   it "includes required documentation and excludes development files" do
     expect(gem_files).to include("README.md", "CHANGELOG.md", "LICENSE", "jekyll-documents.gemspec")
-    expect(gem_files).not_to include(".reek.yml", ".rubocop.yml", "Rakefile", "Gemfile")
+    expect(gem_files).not_to include(".rubocop.yml", "Rakefile", "Gemfile")
     expect(gem_files).not_to include("AI_INSTRUCTIONS.md")
     expect(gem_files).not_to match(%r{^spec/})
   end
@@ -80,6 +80,5 @@ RSpec.describe "Gem packaging", type: :system do
     expect(runtime_dependencies["jekyll"].satisfied_by?(Gem::Version.new("4.4.1"))).to be true
     expect(development_dependencies["rspec"].satisfied_by?(Gem::Version.new("3.13.2"))).to be true
     expect(development_dependencies["rubocop"].satisfied_by?(Gem::Version.new("1.88.2"))).to be true
-    expect(development_dependencies["reek"].satisfied_by?(Gem::Version.new("6.5.0"))).to be true
   end
 end

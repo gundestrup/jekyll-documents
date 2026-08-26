@@ -5,8 +5,7 @@
     "Key gotcha: Liquid filters don't receive context, so templates should use the context-aware {% document_icon doc %} tag. The tag uses baked icon data and applies the site baseurl automatically.",
     "Key gotcha: Jekyll::Drops::SiteDrop#config always returns nil in Liquid. Config must be read via Ruby Configuration.read(site) in tags/generators, not via {{ site.config }} in templates.",
     "Key gotcha: public_class_method :new is required in LatestDocumentsTag because Liquid::Tag makes .new private. Do not remove.",
-    "Quality gates: 0 RuboCop offenses, 0 Reek warnings, 100% Ruby line coverage (currently 186 RSpec examples). Run 'rake quality' before commit.",
-    "Reek exclusions in .reek.yml are intentional for design-inherent warnings (Jekyll generator complexity, boolean params, inherited StaticFile).",
+    "Quality gates: 0 RuboCop offenses, 100% Ruby line coverage (currently 186 RSpec examples). Run 'rake quality' before commit.",
     "See AI_INSTRUCTIONS.md for full project context, gotchas, and conventions."
   ],
   "pages": [
@@ -52,7 +51,7 @@
     },
     {
       "title": "Release Process",
-      "purpose": "Version bumping with bump_version.sh, CHANGELOG.md updates, release.sh workflow, and GitHub Actions auto-publish to RubyGems"
+      "purpose": "Version bumping with rake version:bump, CHANGELOG.md updates, tag-push release workflow, and GitHub Actions auto-publish to RubyGems via trusted publishing"
     }
   ]
 }

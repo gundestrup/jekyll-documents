@@ -15,7 +15,6 @@ rake help         # Show all commands
 - **Ruby coverage**: 100% (275/275 lines)
 - **Security**: 0 vulnerabilities
 - **Style**: 0 offenses
-- **Smells**: 0 warnings
 
 ## Commands
 
@@ -31,8 +30,12 @@ rake browser_test  # Rebuild/install gem + browser E2E tests
 # Individual checks
 rake rubocop      # Code style
 rake rubocop_fix  # Auto-fix
-rake reek         # Code smells
 rake bundler_audit # Security
+
+# Version management
+rake version:show              # Print current version
+rake "version:bump[patch]"     # Bump patch version
+rake version:check_changelog   # Verify CHANGELOG entry exists
 
 # Development
 rake doc          # Generate docs
@@ -43,7 +46,7 @@ rake install_local # Install locally
 
 ### 1. Setup
 ```bash
-./setup_hooks.sh  # Install pre-commit hooks (optional)
+bin/install-hooks.sh  # Install pre-commit and pre-push hooks
 ```
 
 ### 2. Make Changes
@@ -55,7 +58,8 @@ rake quick        # Fast check during development
 rake              # Full check before commit
 ```
 
-Pre-commit hook runs `rake quick` automatically.
+Pre-commit hook runs RuboCop only (fast, ~2s). Pre-push hook runs
+`rake quick` (RuboCop + RSpec) as a full quality gate before pushing.
 
 ### 4. Test in Real App
 ```ruby
@@ -65,16 +69,19 @@ gem "jekyll-documents", path: "/path/to/this/repo"
 
 ### 5. Release
 ```bash
-./bump_version.sh patch  # Update version + CHANGELOG template
-# Edit CHANGELOG.md to fill in changes
-./release.sh             # Release with all checks
-./release.sh --dry-run   # Preview without changes
+bundle exec rake "version:bump[patch]"  # Update version.rb
+# Edit CHANGELOG.md: add '## [X.Y.Z] - YYYY-MM-DD' section
+bundle exec rake version:check_changelog # Verify CHANGELOG entry
+git add lib/jekyll/documents/version.rb CHANGELOG.md
+git commit -m "Release X.Y.Z: summary"
+git tag -a vX.Y.Z -m "Release X.Y.Z"
+git push origin main
+git push origin vX.Y.Z                  # Triggers release workflow
 ```
 
-### 6. Rollback (if needed)
-```bash
-./rollback.sh v0.1.2     # Undo a release
-```
+Pushing the tag triggers the release workflow which builds the gem,
+attaches it to a GitHub release, and publishes to RubyGems via trusted
+publishing. No manual `gh release create` needed.
 
 ## Testing
 
@@ -108,44 +115,36 @@ bundle update jekyll-documents  # Path gem
 gem uninstall jekyll-documents  # Installed gem
 ```
 
-## Release Features
-
-**Automated Checks:**
-- ✅ Git status (uncommitted changes)
-- ✅ CHANGELOG validation
-- ✅ Version consistency
-- ✅ Dependency check
-- ✅ Quality checks (tests + style + security)
-- ✅ Gem build verification
-
-**Automated Actions:**
-- ✅ CHANGELOG template generation
-- ✅ Release notes extraction
-- ✅ Clipboard copy (macOS/Linux)
-- ✅ Post-release verification links
-
-**Safety Features:**
-- ✅ Dry-run mode (`--dry-run`)
-- ✅ Rollback script
-- ✅ Pre-commit hooks
-
 ## CI/CD
 
-GitHub Actions runs:
-1. Security audit
-2. Code style
-3. Code smells  
-4. Tests
+GitHub Actions runs on every push and pull request:
+1. Ruby quality suite (RuboCop, bundler-audit, RSpec) — Ruby 3.3/3.4
+2. Browser tests (Playwright + Chromium)
+3. Gem build verification
+4. npm audit (JavaScript dependency security)
+5. npm outdated (non-blocking — warns about outdated packages)
 
-## Scripts
+The release workflow triggers on tag push (`v*`), verifies the tag
+matches the gem version, checks the CHANGELOG has an entry for the
+version, builds the gem, uploads it to the GitHub release, and publishes
+to RubyGems via trusted publishing (OIDC).
 
-- `bump_version.sh` - Version bumping + CHANGELOG template
-- `release.sh` - Full release with validation
-- `rollback.sh` - Undo a release
-- `setup_hooks.sh` - Install git hooks
+## Git Hooks
+
+Install hooks locally after cloning:
+
+```bash
+bin/install-hooks.sh
+```
+
+| Hook | What it runs | When |
+| --- | --- | --- |
+| `pre-commit` | `rubocop` only (~2s) | Before each commit |
+| `pre-push` | `rubocop + rspec` (~15s) | Before each push |
+
+Skip with `git commit --no-verify` or `git push --no-verify`.
 
 ## Config Files
 
 - `.rubocop.yml` - Style rules
-- `.reek.yml` - Smell detection
 - `.bundler-audit.yml` - Security config
