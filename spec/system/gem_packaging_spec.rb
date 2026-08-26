@@ -65,7 +65,7 @@ RSpec.describe "Gem packaging", type: :system do
   it "includes required documentation and excludes development files" do
     expect(gem_files).to include("README.md", "CHANGELOG.md", "LICENSE", "jekyll-documents.gemspec")
     expect(gem_files).not_to include(".rubocop.yml", "Rakefile", "Gemfile")
-    expect(gem_files).not_to include("AI_INSTRUCTIONS.md")
+    expect(gem_files).not_to include("AGENTS.md")
     expect(gem_files).not_to match(%r{^spec/})
   end
 

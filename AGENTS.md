@@ -1,15 +1,18 @@
-# AI Instructions for jekyll-documents
+# AGENTS.md — jekyll-documents
 
-> Context file for LLM coding assistants working on this project.
+> **Single source of truth for all coding agents working on this project.**
+> Tool-specific files (`CLAUDE.md`, `.windsurfrules`) reference this document.
 
-## Project Overview
+## Project Summary
 
 Jekyll plugin that turns files in `assets/documents/` into browsable document pages with icons, categories, and search.
 
-- **Language**: Ruby (>= 3.3)
-- **Framework**: Jekyll 4.x plugin (generator + Liquid tags/filters)
-- **Gem name**: `jekyll-documents`
-- **Current version**: 0.3.3
+- **Language:** Ruby (>= 3.3)
+- **Framework:** Jekyll 4.x plugin (generator + Liquid tags/filters)
+- **Gem:** `jekyll-documents` (version is defined in `lib/jekyll/documents/version.rb`)
+- **License:** AGPL-3.0-only
+- **Author:** Svend Gundestrup (<svend@gundestrup.dk>)
+- **Repo:** <https://github.com/gundestrup/jekyll-documents>
 
 ## Architecture
 
@@ -153,9 +156,18 @@ Documents must follow `YYYY-MM-DD_Title.ext` format. Supported extensions: `.pdf
 ## Related Documents
 
 - [README.md](./README.md) — User-facing quick start and feature overview
-- [README.Development.md](./README.Development.md) — Development workflow, commands, scripts, CI/CD
+- [README.Development.md](./README.Development.md) — Development workflow, commands, CI/CD
 - [readme.errors.md](./readme.errors.md) — Known bugs and issues with fix status markers
 - [CHANGELOG.md](./CHANGELOG.md) — Version history and release notes
 - [.rubocop.yml](./.rubocop.yml) — Code style rules (TargetRubyVersion 3.3)
 - [jekyll-documents.gemspec](./jekyll-documents.gemspec) — Gem spec and metadata
-- [.devin/wiki.json](./.devin/wiki.json) — DeepWiki steering file (controls wiki generation on deepwiki.com)
+- [.devin/wiki.json](./.devin/wiki.json) — DeepWiki steering file
+
+## Do NOT
+
+- Do not remove `public_class_method :new` from `LatestDocumentsTag` (causes 29 test failures)
+- Do not remove the `:site, :after_init` hook in `LayoutRegistrar` (breaks layout/include discovery)
+- Do not add or remove comments unless explicitly requested
+- Do not bypass RuboCop rules — fix the code, not the config
+- Do not use `puts`/`print` in production code — use `Jekyll.logger`
+- Do not rescue `Exception` — rescue `StandardError` or specific error classes

@@ -1,3 +1,14 @@
-# Claude Code Instructions
+# CLAUDE.md
 
-See [AI_INSTRUCTIONS.md](./AI_INSTRUCTIONS.md) for all project context, architecture, gotchas, conventions, and quality gates.
+> **All project context, conventions, and instructions are in [AGENTS.md](AGENTS.md).**
+>
+> Claude should read that file as the single source of truth for:
+>
+> - Project structure and architecture
+> - Coding conventions (frozen strings, double quotes, max line 100, etc.)
+> - Development commands (`rake quick`, `rake quality`, `bundle exec rspec`)
+> - Code quality tools (RuboCop, RSpec, SimpleCov, bundler-audit)
+> - Testing conventions (186 examples, 100% coverage, no regressions)
+> - Critical gotchas and release process
+>
+> **Do not duplicate instructions here. Always refer to AGENTS.md.**

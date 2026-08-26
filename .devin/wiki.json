@@ -6,7 +6,7 @@
     "Key gotcha: Jekyll::Drops::SiteDrop#config always returns nil in Liquid. Config must be read via Ruby Configuration.read(site) in tags/generators, not via {{ site.config }} in templates.",
     "Key gotcha: public_class_method :new is required in LatestDocumentsTag because Liquid::Tag makes .new private. Do not remove.",
     "Quality gates: 0 RuboCop offenses, 100% Ruby line coverage (currently 186 RSpec examples). Run 'rake quality' before commit.",
-    "See AI_INSTRUCTIONS.md for full project context, gotchas, and conventions."
+    "See AGENTS.md for full project context, gotchas, and conventions."
   ],
   "pages": [
     {
