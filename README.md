@@ -120,6 +120,26 @@ documents:
 
 See [configuration.rb](lib/jekyll/documents/configuration.rb) for all options.
 
+## Search Integration
+
+Documents are compatible with [jekyll-client-search](https://github.com/gundestrup/jekyll-client-search)
+for client-side search. Each document has `categories` (plural array) and
+searchable `content` baked in at generation time, so search plugins can
+index uploaded files alongside posts.
+
+To include documents in the search index, add `documents` to the
+`collections` list in `_config.yml`:
+
+```yaml
+client_search:
+  collections:
+    - posts
+    - documents
+```
+
+See the [jekyll-client-search README](https://github.com/gundestrup/jekyll-client-search#configuration-reference)
+for all search configuration options.
+
 ## Development
 
 ```bash
