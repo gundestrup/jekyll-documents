@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-08-26
+
+### Added
+- `categories` array baked into each document's data (in addition to the existing singular `category`) for compatibility with search plugins like `jekyll-client-search` that expect the plural Jekyll convention
+- Searchable content string (title, category, file type, date) set as document content so client-side search engines can index uploaded documents
+
+### Changed
+- Refactored `Generator#generate` by extracting `bake_document_data` and `searchable_content` helper methods to keep method length within RuboCop limits
+
 ### Changed
 - Simplified release workflow to tag-push trigger (`push: tags: v*`) — no manual `gh release create` needed
 - Switched to RubyGems trusted publishing (`rubygems/release-gem@v1` with OIDC)

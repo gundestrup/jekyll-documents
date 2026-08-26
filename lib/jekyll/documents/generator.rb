@@ -55,24 +55,10 @@ module Jekyll
             collection: collection
           )
 
-          data = doc.data
-          data["layout"]     = @config["layout"]
-          data["title"]      = title
-          data["date"]       = date ? date.to_time : File.mtime(path)
-          data["category"]   = remap_category(category)
-          data["file_url"]   = "/#{rel_path}"
-          data["extension"]  = ext
-          data["file_type"]  = file_type
-          data["icon_set"]   = icon_set
-          data["icon_url"]   = Jekyll::Documents::FileTypeIcons.icon_for(file_type, icon_set)
-          data["file_size"]  = File.size(path)
-          data["slug"]       = slug
-          data["permalink"]  = @config["permalink"]
-                               .gsub(":category", data["category"].to_s)
-                               .gsub(":slug", slug)
-
-          doc.content = "Auto-generated document page."
-
+          file_info = { title: title, date: date, category: category,
+                        rel_path: rel_path, ext: ext, file_type: file_type,
+                        icon_set: icon_set, slug: slug, path: path }
+          bake_document_data(doc, file_info)
           collection.docs << doc
         end
       end
@@ -90,6 +76,33 @@ module Jekyll
           site.config["collections"][label] = { "output" => true }
         end
         site.collections[label]
+      end
+
+      def searchable_content(title, data, file_type)
+        date_str = data["date"].strftime("%Y-%m-%d")
+        "#{title} #{data['category']} #{file_type} #{date_str}"
+      end
+
+      def bake_document_data(doc, info)
+        data = doc.data
+        category = remap_category(info[:category])
+        data["layout"]     = @config["layout"]
+        data["title"]      = info[:title]
+        data["date"]       = info[:date] ? info[:date].to_time : File.mtime(info[:path])
+        data["category"]   = category
+        data["categories"] = [category] if category
+        data["file_url"]   = "/#{info[:rel_path]}"
+        data["extension"]  = info[:ext]
+        data["file_type"]  = info[:file_type]
+        data["icon_set"]   = info[:icon_set]
+        icon = FileTypeIcons.icon_for(info[:file_type], info[:icon_set])
+        data["icon_url"]   = icon
+        data["file_size"]  = File.size(info[:path])
+        data["slug"]       = info[:slug]
+        data["permalink"]  = @config["permalink"]
+                             .gsub(":category", category.to_s)
+                             .gsub(":slug", info[:slug])
+        doc.content = searchable_content(info[:title], data, info[:file_type])
       end
 
       # Creates a virtual source path for the document
