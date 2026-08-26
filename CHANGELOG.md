@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+### Changed
+- Simplified release workflow to tag-push trigger (`push: tags: v*`) — no manual `gh release create` needed
+- Switched to RubyGems trusted publishing (`rubygems/release-gem@v1` with OIDC)
+- Centralized version in `version.rb` as single source of truth — removed `version` field from `package.json` (was drifted to 0.3.1)
+- Added `rake version:bump` and `rake version:check_changelog` tasks
+- Added CHANGELOG gate to release workflow (fails if entry missing for the version)
+- Added `npm audit` and `npm outdated` (non-blocking) to CI
+- Replaced `setup_hooks.sh` with `bin/install-hooks.sh` (pre-commit: rubocop only, pre-push: rubocop + rspec)
+- Dropped reek from gemspec, Rakefile, and deleted `.reek.yml` (KISS)
+- Deleted `bump_version.sh`, `release.sh`, `rollback.sh` — replaced by rake tasks and release workflow
+- Renamed `AI_INSTRUCTIONS.md` to `AGENTS.md` (agents.md open convention)
+- Updated `CLAUDE.md` and `.windsurfrules` to point to `AGENTS.md`
+
 ## [0.3.3] - 2026-08-12
 
 ### Added
