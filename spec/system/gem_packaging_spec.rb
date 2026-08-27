@@ -23,8 +23,8 @@ RSpec.describe "Gem packaging", type: :system do
 
   it "declares the current version and Ruby requirement" do
     expect(specification.version.to_s).to eq(Jekyll::Documents::VERSION)
-    expect(specification.required_ruby_version.satisfied_by?(Gem::Version.new("3.3"))).to be true
-    expect(specification.required_ruby_version.satisfied_by?(Gem::Version.new("3.2"))).to be false
+    expect(specification.required_ruby_version.satisfied_by?(Gem::Version.new("3.4"))).to be true
+    expect(specification.required_ruby_version.satisfied_by?(Gem::Version.new("3.3"))).to be false
   end
 
   it "includes every runtime source file" do
@@ -33,8 +33,10 @@ RSpec.describe "Gem packaging", type: :system do
       lib/jekyll/documents/version.rb
       lib/jekyll/documents/configuration.rb
       lib/jekyll/documents/generator.rb
+      lib/jekyll/documents/text_extraction_manifest.rb
       lib/jekyll/documents/assets_generator.rb
       lib/jekyll/documents/json_index_generator.rb
+      lib/jekyll/documents/layout_registrar.rb
       lib/jekyll/documents/file_type_icons.rb
       lib/jekyll/documents/filters.rb
       lib/jekyll/documents/utils.rb
@@ -79,6 +81,6 @@ RSpec.describe "Gem packaging", type: :system do
 
     expect(runtime_dependencies["jekyll"].satisfied_by?(Gem::Version.new("4.4.1"))).to be true
     expect(development_dependencies["rspec"].satisfied_by?(Gem::Version.new("3.13.2"))).to be true
-    expect(development_dependencies["rubocop"].satisfied_by?(Gem::Version.new("1.88.2"))).to be true
+    expect(development_dependencies["rubocop"].satisfied_by?(Gem::Version.new("1.90.0"))).to be true
   end
 end

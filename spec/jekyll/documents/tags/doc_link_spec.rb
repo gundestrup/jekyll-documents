@@ -55,7 +55,7 @@ RSpec.describe Jekyll::Documents::DocLinkTag do
     it "includes the file icon by default" do
       result = render_tag(%("Board Meeting"), @site)
       expect(result).to include("<img")
-      expect(result).to include('class="file-icon doc-link-icon"')
+      expect(result).to include('class="document-file-icon doc-link-icon"')
     end
 
     it "includes the file size by default" do

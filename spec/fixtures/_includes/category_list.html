@@ -4,7 +4,7 @@
 <ul class="documents-category-list">
   {% for cat in cats %}
     <li>
-      <img src="{{ '/assets/icons/' | append: icon_set | append: '/folder-svgrepo-com.svg' | relative_url }}" alt="Folder" class="folder-icon" />
+      <img src="{{ '/assets/icons/' | append: icon_set | append: '/folder-svgrepo-com.svg' | relative_url }}" alt="Folder" class="folder-icon" style="width:1em;height:1em;vertical-align:middle;" />
       <span class="category-name">{{ cat }}</span>
       <span class="category-count">({{ site.documents | where: "category", cat | size }})</span>
     </li>

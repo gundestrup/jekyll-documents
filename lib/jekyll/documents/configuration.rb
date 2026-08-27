@@ -24,6 +24,11 @@ module Jekyll
         "json_index" => true,
         "json_index_path" => "/documents.json",
 
+        # Text extraction for search indexing (requires optional 'plaintext' gem)
+        "extract_text" => false,
+        "text_max_bytes" => 500_000,
+        "text_cache_dir" => ".cache/jekyll-documents",
+
         # Optional category mapping
         "category_map" => {}
       }.freeze

@@ -7,7 +7,7 @@
 
 Jekyll plugin that turns files in `assets/documents/` into browsable document pages with icons, categories, and search.
 
-- **Language:** Ruby (>= 3.3)
+- **Language:** Ruby (>= 3.4)
 - **Framework:** Jekyll 4.x plugin (generator + Liquid tags/filters)
 - **Gem:** `jekyll-documents` (version is defined in `lib/jekyll/documents/version.rb`)
 - **License:** AGPL-3.0-only
@@ -22,6 +22,7 @@ lib/jekyll/documents/
   version.rb                               # VERSION constant
   configuration.rb                         # DEFAULTS + Configuration.read(site)
   generator.rb                             # Main generator: scans files, creates collection docs
+  text_extraction_manifest.rb              # Persistent manifest for text extraction cache (SHA-256 digests, survives jekyll clean)
   assets_generator.rb                      # Publishes gem assets as Jekyll static files
   json_index_generator.rb                  # Generates /documents.json for Lunr search
   layout_registrar.rb                      # Copies gem _layouts/_includes into site source via :site, :after_init hook
@@ -40,13 +41,14 @@ spec/browser/                                # Playwright browser tests for the 
 1. `Generator#generate` scans `assets/documents/**/*` for files
 2. Parses filenames (`YYYY-MM-DD_Title.ext`) → extracts date, title, slug, category
 3. Bakes `icon_url` and `icon_set` into each document's `data` hash
-4. Creates `Jekyll::Document` objects in the `documents` collection
-5. `AssetsGenerator` registers packaged icons and JavaScript as static files
-6. `JsonIndexGenerator` builds `/documents.json` from the collection
-7. `LayoutRegistrar` copies gem `_layouts` and `_includes` into the site source via a `:site, :after_init` hook (user files take precedence)
-8. Templates render icons with `{% document_icon doc %}` or `{% document_icon page %}` and use baked document data for other fields
-9. `{% doc_link "title" %}` resolves a document by partial title or slug match and renders an `<a>` tag with the correct URL
-10. `{% doc_category "name" %}` renders a link to a category page, or with `list:true` renders a sorted list of all documents in that category (supports `limit:N` and `text:"label"`)
+4. If `extract_text: true`, extracts text from each file via the optional `plaintext` gem, using `TextExtractionManifest` for persistent SHA-256-keyed caching (survives `jekyll clean`, cleans up deleted files)
+5. Creates `Jekyll::Document` objects in the `documents` collection
+6. `AssetsGenerator` registers packaged icons and JavaScript as static files
+7. `JsonIndexGenerator` builds `/documents.json` from the collection
+8. `LayoutRegistrar` copies gem `_layouts` and `_includes` into the site source via a `:site, :after_init` hook (user files take precedence); also excludes the text cache dir from Jekyll output
+9. Templates render icons with `{% document_icon doc %}` or `{% document_icon page %}` and use baked document data for other fields
+10. `{% doc_link "title" %}` resolves a document by partial title or slug match and renders an `<a>` tag with the correct URL
+11. `{% doc_category "name" %}` renders a link to a category page, or with `list:true` renders a sorted list of all documents in that category (supports `limit:N` and `text:"label"`)
 
 ### Template files
 
@@ -57,6 +59,7 @@ _includes/category_list.html               # Category folders (reads icon_set fr
 _includes/documents_search.html            # Search input + Lunr.js + documents-search.js
 _layouts/document.html                     # Single document page (uses document_icon tag)
 assets/js/documents-search.js              # Client-side Lunr search
+assets/css/documents.css                   # Framework-agnostic icon sizing (icon-x1 through icon-x9)
 assets/icons/{color,lines,minimal,ultra-minimal}/  # SVG icon sets
 ```
 
@@ -76,7 +79,7 @@ assets/icons/{color,lines,minimal,ultra-minimal}/  # SVG icon sets
 
 ### 4. Icon data is baked at generation time
 
-The generator calls `FileTypeIcons.icon_for(file_type, icon_set)` and stores the result in `doc.data["icon_url"]`. Templates should render icons with `{% document_icon doc %}` or `{% document_icon page %}` rather than manually constructing `<img>` tags. The tag handles the baked URL, `baseurl`, escaping, and defaults.
+The generator calls `FileTypeIcons.icon_for(file_type, icon_set)` and stores the result in `doc.data["icon_url"]`. Templates should render icons with `{% document_icon doc %}` or `{% document_icon page %}` rather than manually constructing `<img>` tags. The tag handles the baked URL, `baseurl`, escaping, and defaults. Icons use the `document-file-icon` CSS class (not `file-icon`, which collides with Bulma's flex-based class) with inline `1em` sizing. A framework-agnostic CSS file (`assets/css/documents.css`) provides `icon-x1` through `icon-x9` utility classes (16px–512px) for fixed sizes.
 
 ### 5. `category_list.html` reads icon_set from first document
 
@@ -129,6 +132,9 @@ documents:
   json_index: true                    # Generate /documents.json
   json_index_path: "/documents.json"
   latest_default_count: 5
+  extract_text: false                 # Enable text extraction (requires 'plaintext' gem)
+  text_max_bytes: 500000              # Truncate extracted text
+  text_cache_dir: ".cache/jekyll-documents"  # Persistent cache dir (survives jekyll clean)
   category_map: {}                    # Optional: { "minutes" => "referater" }
 ```
 
@@ -159,7 +165,7 @@ Documents must follow `YYYY-MM-DD_Title.ext` format. Supported extensions: `.pdf
 - [README.Development.md](./README.Development.md) — Development workflow, commands, CI/CD
 - [readme.errors.md](./readme.errors.md) — Known bugs and issues with fix status markers
 - [CHANGELOG.md](./CHANGELOG.md) — Version history and release notes
-- [.rubocop.yml](./.rubocop.yml) — Code style rules (TargetRubyVersion 3.3)
+- [.rubocop.yml](./.rubocop.yml) — Code style rules (TargetRubyVersion 3.4)
 - [jekyll-documents.gemspec](./jekyll-documents.gemspec) — Gem spec and metadata
 - [.devin/wiki.json](./.devin/wiki.json) — DeepWiki steering file
 

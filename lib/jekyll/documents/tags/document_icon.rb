@@ -21,10 +21,11 @@ module Jekyll
         url = relative_url(icon_url)
         file_type = document_value(document, "file_type").to_s
         alt = @options["alt"] || "#{file_type.upcase} file"
-        css_class = @options["class"] || "file-icon"
+        css_class = @options["class"] || "document-file-icon"
 
-        %(<img src="#{escape_html(url)}" alt="#{escape_html(alt)}" ) \
-          + %(class="#{escape_html(css_class)}" />)
+        style = "width:1em;height:1em;vertical-align:middle;"
+        "<img src=\"#{escape_html(url)}\" alt=\"#{escape_html(alt)}\" " \
+          "class=\"#{escape_html(css_class)}\" style=\"#{style}\" />"
       end
 
       private

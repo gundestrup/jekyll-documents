@@ -20,12 +20,11 @@ Gem::Specification.new do |spec|
     "source_code_uri" => "https://github.com/gundestrup/jekyll-documents",
     "bug_tracker_uri" => "https://github.com/gundestrup/jekyll-documents/issues",
     "changelog_uri" => "https://github.com/gundestrup/jekyll-documents/blob/main/CHANGELOG.md",
-    "documentation_uri" => "https://github.com/gundestrup/jekyll-documents",
-    "homepage_uri" => "https://github.com/gundestrup/jekyll-documents",
+    "documentation_uri" => "https://deepwiki.com/gundestrup/jekyll-documents",
     "rubygems_mfa_required" => "true"
   }
 
-  spec.required_ruby_version = ">= 3.3"
+  spec.required_ruby_version = ">= 3.4"
 
   spec.files         = Dir.glob("{lib,assets,_includes,_layouts}/**/*") +
                        ["README.md", "CHANGELOG.md", "LICENSE", "jekyll-documents.gemspec"]
@@ -34,10 +33,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency "jekyll", ">= 4.4", "< 5.0"
 
   spec.add_development_dependency "bundler-audit", "~> 0.9"
-  spec.add_development_dependency "rake", "~> 13.0"
+  spec.add_development_dependency "plaintext", "~> 0.3"
+  spec.add_development_dependency "rake", "~> 13.4"
   spec.add_development_dependency "rspec", "~> 3.13"
-  spec.add_development_dependency "rubocop", "~> 1.88"
-  spec.add_development_dependency "rubocop-performance", "~> 1.26"
-  spec.add_development_dependency "simplecov", "~> 1.0"
+  spec.add_development_dependency "rubocop", "~> 1.90"
+  spec.add_development_dependency "rubocop-performance", "~> 1.27"
+  spec.add_development_dependency "simplecov", "~> 1.1"
   spec.add_development_dependency "yard", "~> 0.9"
 end

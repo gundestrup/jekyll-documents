@@ -129,7 +129,7 @@ RSpec.describe "Installed gem Jekyll build", type: :system do
       'href="/manual/assets/documents/reports/2026-03-01_Annual_Report.pdf"'
     )
     expect(content).to include("<img")
-    expect(content).to include("file-icon")
+    expect(content).to include("document-file-icon")
     expect(content).to include("/manual/assets/icons/#{icon_set}/")
   end
 

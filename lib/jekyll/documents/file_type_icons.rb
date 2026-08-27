@@ -154,11 +154,13 @@ module Jekyll
       # @return [String] HTML img tag
       # @example
       #   file_type_icon_tag('pdf') #=> \
-      #     '<img src="/assets/icons/color/pdf.svg" alt="PDF file" class="file-icon" />'
-      def file_type_icon_tag(file_type, css_class: "file-icon", alt: nil, context: nil)
+      #     '<img src="..." alt="PDF file" class="document-file-icon" ... />'
+      def file_type_icon_tag(file_type, css_class: "document-file-icon", alt: nil, context: nil)
         url = file_type_icon(file_type, context)
         alt_text = alt || "#{file_type.to_s.upcase} file"
-        %(<img src="#{url}" alt="#{alt_text}" class="#{css_class}" />)
+        style = "width:1em;height:1em;vertical-align:middle;"
+        "<img src=\"#{url}\" alt=\"#{alt_text}\" " \
+          "class=\"#{css_class}\" style=\"#{style}\" />"
       end
 
       private

@@ -165,22 +165,24 @@ RSpec.describe Jekyll::Documents::FileTypeIcons do
   end
 
   describe "#file_type_icon_tag" do
+    let(:style) { 'style="width:1em;height:1em;vertical-align:middle;"' }
+
     it "returns an img tag with correct attributes" do
       result = filter.file_type_icon_tag("pdf")
-      expected = %(<img src="/assets/icons/color/pdf-document-svgrepo-com.svg" ) +
-                 %(alt="PDF file" class="file-icon" />)
+      expected = '<img src="/assets/icons/color/pdf-document-svgrepo-com.svg" ' \
+                 "alt=\"PDF file\" class=\"document-file-icon\" #{style} />"
       expect(result).to eq(expected)
     end
 
     it "uses default CSS class" do
       result = filter.file_type_icon_tag("pdf")
-      expect(result).to include('class="file-icon"')
+      expect(result).to include('class="document-file-icon"')
     end
 
     it "allows custom CSS class" do
       result = filter.file_type_icon_tag("pdf", css_class: "custom-class")
-      expected = %(<img src="/assets/icons/color/pdf-document-svgrepo-com.svg" ) +
-                 %(alt="PDF file" class="custom-class" />)
+      expected = '<img src="/assets/icons/color/pdf-document-svgrepo-com.svg" ' \
+                 "alt=\"PDF file\" class=\"custom-class\" #{style} />"
       expect(result).to eq(expected)
     end
 
@@ -191,8 +193,8 @@ RSpec.describe Jekyll::Documents::FileTypeIcons do
 
     it "allows custom alt text" do
       result = filter.file_type_icon_tag("pdf", alt: "Custom alt")
-      expected = %(<img src="/assets/icons/color/pdf-document-svgrepo-com.svg" ) +
-                 %(alt="Custom alt" class="file-icon" />)
+      expected = '<img src="/assets/icons/color/pdf-document-svgrepo-com.svg" ' \
+                 "alt=\"Custom alt\" class=\"document-file-icon\" #{style} />"
       expect(result).to eq(expected)
     end
 
@@ -202,9 +204,12 @@ RSpec.describe Jekyll::Documents::FileTypeIcons do
     end
 
     it "passes context to file_type_icon" do
-      allow(filter).to receive(:file_type_icon).with("pdf", context).and_return("/test/icon.svg")
+      allow(filter).to receive(:file_type_icon).with("pdf", context)
+                                               .and_return("/test/icon.svg")
       result = filter.file_type_icon_tag("pdf", context: context)
-      expect(result).to eq(%(<img src="/test/icon.svg" alt="PDF file" class="file-icon" />))
+      expected = "<img src=\"/test/icon.svg\" alt=\"PDF file\" " \
+                 "class=\"document-file-icon\" #{style} />"
+      expect(result).to eq(expected)
     end
 
     it "handles unknown file type" do

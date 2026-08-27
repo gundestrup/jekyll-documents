@@ -9,6 +9,7 @@ end
 
 require "jekyll"
 require "rspec"
+require "plaintext"
 require_relative "../lib/jekyll-documents"
 
 Dir.glob(File.expand_path("support/**/*.rb", __dir__), sort: true).each { |f| require f }

@@ -63,7 +63,9 @@ module Jekyll
 
         url = relative_url(icon_url)
         file_type = doc.data["file_type"].to_s.upcase
-        "<img src=\"#{escape_html(url)}\" alt=\"#{file_type}\" class=\"file-icon doc-link-icon\" />"
+        "<img src=\"#{escape_html(url)}\" alt=\"#{file_type}\" " \
+          "class=\"document-file-icon doc-link-icon\" " \
+          "style=\"width:1em;height:1em;vertical-align:middle;\" />"
       end
 
       def size_html(doc)

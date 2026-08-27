@@ -9,7 +9,7 @@
 
 Turn files in `assets/documents/` into browsable document pages.
 
-**Requirements**: Ruby 3.3+ • Jekyll 4.4+
+**Requirements**: Ruby 3.4+ • Jekyll 4.4+
 
 **Features**: Auto-collection • File icons • Categories • Search
 
@@ -120,6 +120,43 @@ documents:
 
 See [configuration.rb](lib/jekyll/documents/configuration.rb) for all options.
 
+## Icon sizing
+
+Icons default to `1em` (line-height) so they scale with surrounding text.
+A framework-agnostic CSS file with fixed-size utility classes is included:
+
+```html
+<link rel="stylesheet" href="{{ '/assets/css/documents.css' | relative_url }}">
+```
+
+| Class | Size |
+| --- | --- |
+| (default) | `1em` — scales with line height |
+| `icon-x1` | 16px |
+| `icon-x2` | 32px |
+| `icon-x3` | 48px |
+| `icon-x4` | 64px |
+| `icon-x5` | 96px |
+| `icon-x6` | 128px |
+| `icon-x7` | 150px |
+| `icon-x8` | 256px |
+| `icon-x9` | 512px |
+
+Usage with the `document_icon` tag:
+
+```liquid
+{% document_icon page class:"document-file-icon icon-x2" %}
+```
+
+Or with any `<img>`:
+
+```html
+<img src="..." class="document-file-icon icon-x3" />
+```
+
+The CSS uses `display: inline-block` and `vertical-align: middle` — no
+dependency on Bulma, Bootstrap, Tailwind, or any other framework.
+
 ## Search Integration
 
 Documents are compatible with [jekyll-client-search](https://github.com/gundestrup/jekyll-client-search)
@@ -137,8 +174,118 @@ client_search:
     - documents
 ```
 
-See the [jekyll-client-search README](https://github.com/gundestrup/jekyll-client-search#configuration-reference)
-for all search configuration options.
+### Icons and file-type metadata in search results
+
+jekyll-documents bakes `file_type`, `icon_url`, and `icon_set` into each
+document's data at generation time. When jekyll-client-search is installed
+and `documents` is in the search collections, these fields are
+**auto-injected** into the search index — no extra configuration needed:
+
+```yaml
+client_search:
+  collections:
+    - posts
+    - documents
+```
+
+This makes jekyll-client-search render:
+
+- `data-file-type`, `data-icon-set` attributes on each result `<article>`
+  (for CSS-based badges and theme-aware styling)
+- An `<img class="client-search-result-icon">` before the title, using the
+  icon from the configured `icon_set` (color, lines, minimal, or ultra-minimal)
+
+The icon automatically matches the `icon_set` configured in your `documents`
+section — no extra configuration needed for theme consistency.
+
+**Field renaming** (for integration with other search conventions):
+
+```yaml
+client_search:
+  passthrough_fields:
+    - file_type: doctype      # rename in the search index
+    - icon_url: thumbnail
+  icon_field: thumbnail
+```
+
+**CSS examples:**
+
+```css
+/* File-type badge */
+.client-search-result[data-file-type="pdf"]::before {
+  content: "PDF";
+  background: #e74c3c; color: white;
+  padding: 0 0.3em; font-size: 0.7em; margin-right: 0.3em;
+}
+
+/* Theme-aware icon sizing */
+.client-search-result[data-icon-set="color"] .client-search-result-icon { width: 2em; }
+.client-search-result[data-icon-set="ultra-minimal"] .client-search-result-icon { width: 1em; }
+```
+
+See the [jekyll-client-search README](https://github.com/gundestrup/jekyll-client-search#customizing-search-results-with-css)
+for all CSS customization options.
+
+## Text Extraction
+
+Extract text from PDF/DOCX/XLSX/PPTX/ODT/ODS/ODP files so search engines
+can index document contents, not just metadata.
+
+### Setup
+
+Add the optional [`plaintext`](https://github.com/planio-gmbh/plaintext) gem
+to your Gemfile:
+
+```ruby
+# Gemfile
+gem "plaintext", group: :jekyll_plugins
+```
+
+Enable extraction in `_config.yml`:
+
+```yaml
+documents:
+  extract_text: true
+```
+
+### How it works
+
+- Extracted text is stored in `doc.content`, which `jekyll-client-search`
+  indexes automatically — no extra configuration needed
+- Text is cached in `.cache/jekyll-documents/` (in your site source,
+  not `.jekyll-cache/`), so it **survives `jekyll clean`**
+- Cache invalidation uses **SHA-256 file digests** — only changed files
+  are re-extracted
+- Stale cache entries for deleted files are cleaned up automatically
+  at the start of each build
+- Falls back to metadata-only content (title, category, file type, date)
+  if the `plaintext` gem is missing or extraction fails
+
+### Configuration
+
+```yaml
+documents:
+  extract_text: true                    # Enable text extraction
+  text_max_bytes: 500000                # Truncate extracted text (default 500KB)
+  text_cache_dir: ".cache/jekyll-documents"  # Cache directory in site source
+```
+
+Add the cache directory to `.gitignore`:
+
+```
+.cache/jekyll-documents/
+```
+
+### CLI tool dependencies
+
+The `plaintext` gem uses the `rubyzip` Ruby gem for Office formats (no CLI
+tools needed). PDF extraction shells out to a system command:
+
+| Format | Tool |
+|--------|------|
+| PDF | `pdftotext` (poppler-utils) |
+| DOCX/PPTX/XLSX | rubyzip (Ruby gem, no CLI needed) |
+| ODT/ODS/ODP | rubyzip (Ruby gem, no CLI needed) |
 
 ## Development
 

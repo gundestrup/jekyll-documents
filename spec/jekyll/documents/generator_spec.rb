@@ -126,6 +126,138 @@ RSpec.describe Jekyll::Documents::Generator do
       end
     end
 
+    context "with extract_text enabled" do
+      include_context "with temp documents directory"
+
+      let(:fake_resolver) { instance_double(Plaintext::Resolver) }
+
+      before do
+        create_document("referat", "2026-03-01_Board_Meeting.pdf")
+        allow(Plaintext::Resolver).to receive(:new).and_return(fake_resolver)
+        allow(fake_resolver).to receive(:text)
+          .and_return("Extracted text from the PDF document about board meeting minutes.")
+      end
+
+      it "uses extracted text as document content" do
+        site = site_with_documents("documents" => { "extract_text" => true })
+        generator.generate(site)
+
+        doc = site.collections["documents"].docs.first
+        expect(doc.content).to include("Extracted text from the PDF")
+      end
+
+      it "caches extracted text in the manifest" do
+        site = site_with_documents("documents" => { "extract_text" => true })
+        generator.generate(site)
+
+        manifest = generator.send(:text_manifest)
+        expect(manifest.size).to eq(1)
+      end
+
+      it "uses cached text on second build without re-extraction" do
+        site = site_with_documents("documents" => { "extract_text" => true })
+        generator.generate(site)
+
+        # Second build — resolver should not be called (cache hit)
+        allow(fake_resolver).to receive(:text)
+          .and_raise("SHOULD NOT BE CALLED — cache miss")
+
+        generator2 = Jekyll::Documents::Generator.new
+        generator2.generate(site)
+
+        doc = site.collections["documents"].docs.last
+        expect(doc.content).to include("Extracted text from the PDF")
+      end
+
+      it "falls back to metadata when extraction returns nil" do
+        allow(fake_resolver).to receive(:text).and_return(nil)
+
+        site = site_with_documents("documents" => { "extract_text" => true })
+        generator.generate(site)
+
+        doc = site.collections["documents"].docs.first
+        expect(doc.content).to include("Board Meeting")
+        expect(doc.content).to include("referat")
+      end
+
+      it "falls back to metadata when plaintext gem is not available" do
+        hide_const("Plaintext")
+        error = LoadError.new("cannot load such file -- plaintext")
+        allow(generator).to receive(:require).with("plaintext").and_raise(error)
+
+        site = site_with_documents("documents" => { "extract_text" => true })
+        generator.generate(site)
+
+        doc = site.collections["documents"].docs.first
+        expect(doc.content).to include("Board Meeting")
+        expect(doc.content).to include("referat")
+      end
+
+      it "loads plaintext gem via require when not yet defined" do
+        hide_const("Plaintext")
+        allow(generator).to receive(:require).with("plaintext").and_return(true)
+
+        expect(generator.send(:load_plaintext)).to be true
+      end
+
+      it "falls back to metadata when extraction raises an error" do
+        allow(fake_resolver).to receive(:text).and_raise("pdftotext not found")
+
+        site = site_with_documents("documents" => { "extract_text" => true })
+        generator.generate(site)
+
+        doc = site.collections["documents"].docs.first
+        expect(doc.content).to include("Board Meeting")
+      end
+
+      it "cleans up manifest entries for deleted documents" do
+        create_document("referat", "2026-02-15_Annual_Report.docx")
+
+        site = site_with_documents("documents" => { "extract_text" => true })
+        generator.generate(site)
+
+        manifest = generator.send(:text_manifest)
+        expect(manifest.size).to eq(2)
+
+        # Delete one file and rebuild
+        docs = site.collections["documents"].docs
+        deleted_path = docs.find { |d| d.data["title"] == "Annual Report" }.data["file_url"]
+        deleted_rel = deleted_path.delete_prefix("/")
+        File.delete(File.join(site.source, deleted_rel))
+
+        generator2 = Jekyll::Documents::Generator.new
+        generator2.generate(site)
+
+        manifest2 = generator2.send(:text_manifest)
+        expect(manifest2.size).to eq(1)
+      end
+    end
+
+    context "with extract_text disabled (default)" do
+      include_context "with temp documents directory"
+
+      before do
+        create_document("referat", "2026-03-01_Board_Meeting.pdf")
+      end
+
+      it "uses metadata-only content" do
+        site = site_with_documents
+        generator.generate(site)
+
+        doc = site.collections["documents"].docs.first
+        expect(doc.content).to include("Board Meeting")
+        expect(doc.content).to include("referat")
+        expect(doc.content).to include("pdf")
+      end
+
+      it "does not attempt text extraction" do
+        site = site_with_documents
+        allow(generator).to receive(:extract_file_content).and_call_original
+        generator.generate(site)
+        expect(generator).not_to have_received(:extract_file_content)
+      end
+    end
+
     context "with strict_extensions enabled" do
       include_context "with temp documents directory"
 
@@ -416,6 +548,51 @@ RSpec.describe Jekyll::Documents::Generator do
       generator.instance_variable_set(:@config, { "category_map" => nil })
       result = generator.send(:remap_category, "referat")
       expect(result).to eq("referat")
+    end
+  end
+
+  describe "#configure_client_search" do
+    it "injects passthrough_fields and icon_field when documents is in search collections" do
+      site = make_site("client_search" => { "collections" => %w[posts documents] })
+      generator.send(:configure_client_search, site)
+
+      config = site.config["client_search"]
+      expect(config["passthrough_fields"]).to include("file_type", "icon_url", "icon_set")
+      expect(config["icon_field"]).to eq("icon_url")
+    end
+
+    it "does nothing when client_search is not configured" do
+      site = make_site
+      expect { generator.send(:configure_client_search, site) }.not_to raise_error
+      expect(site.config["client_search"]).to be_nil
+    end
+
+    it "does nothing when documents is not in search collections" do
+      site = make_site("client_search" => { "collections" => %w[posts] })
+      generator.send(:configure_client_search, site)
+
+      expect(site.config["client_search"]).not_to have_key("passthrough_fields")
+    end
+
+    it "preserves existing passthrough_fields and adds missing ones" do
+      site = make_site("client_search" => {
+                         "collections" => %w[posts documents],
+                         "passthrough_fields" => ["file_type", { "author" => "creator" }]
+                       })
+      generator.send(:configure_client_search, site)
+
+      fields = site.config["client_search"]["passthrough_fields"]
+      expect(fields).to include("file_type", { "author" => "creator" }, "icon_url", "icon_set")
+    end
+
+    it "does not overwrite an existing icon_field" do
+      site = make_site("client_search" => {
+                         "collections" => %w[posts documents],
+                         "icon_field" => "thumbnail"
+                       })
+      generator.send(:configure_client_search, site)
+
+      expect(site.config["client_search"]["icon_field"]).to eq("thumbnail")
     end
   end
 end

@@ -2,6 +2,43 @@
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-08-27
+
+### Added
+- Auto-inject `file_type`, `icon_url`, and `icon_set` into jekyll-client-search's `passthrough_fields` config when `documents` is in the search collections — zero extra config needed for icons in search results
+- Documented field renaming in jekyll-client-search for integration with other search conventions
+- Framework-agnostic CSS file (`assets/css/documents.css`) with icon scaling utility classes (`icon-x1` through `icon-x9`: 16px to 512px) — no dependency on Bulma, Bootstrap, or Tailwind
+- Icons default to `1em` (line-height) so they scale with surrounding text
+
+### Changed
+- Renamed icon CSS class from `file-icon` to `document-file-icon` to avoid collision with Bulma's `.file-icon` (which uses `display: flex` and breaks inline SVG icons onto a separate line)
+- Inline `1em` sizing added to JS-rendered and folder icons as a fallback when the CSS file is not included
+
+## [0.5.0] - 2026-08-27
+
+### Added
+- Text extraction from PDF, DOCX, XLSX, PPTX, ODT, ODS, and ODP files via the optional `plaintext` gem, enabling full-text search of document contents through `jekyll-client-search`
+- `extract_text` configuration option to enable text extraction (disabled by default)
+- `text_max_bytes` configuration option to control extracted text truncation (default 500KB)
+- `text_cache_dir` configuration option for the persistent cache directory (default `.cache/jekyll-documents`)
+- `TextExtractionManifest` class with SHA-256 content-based cache invalidation, atomic writes, sharded text file storage, and automatic cleanup of entries for deleted source files
+- Cache directory excluded from Jekyll build output via a `:site, :after_init` hook
+- 9 integration tests with real DOCX and ODT fixtures validating extraction, caching, manifest persistence, and cleanup
+- `plaintext` as a development dependency for testing extraction
+
+### Changed
+- Minimum Ruby version raised from 3.3 to 3.4 (tested on Ruby 3.4.10)
+- RuboCop target version updated from 3.3 to 3.4
+- Updated development dependencies: `rubocop` ~> 1.90, `rubocop-performance` ~> 1.27, `simplecov` ~> 1.1, `rake` ~> 13.4
+- Updated Gemfile pins: `google-protobuf` ~> 4.36, `sass-embedded` ~> 1.103
+- CI workflow matrix simplified to Ruby 3.4 only (dropped 3.3)
+- `documentation_uri` in gemspec metadata now points to DeepWiki instead of duplicating the GitHub repo URL
+- Removed redundant `homepage_uri` from gemspec metadata (already covered by `spec.homepage`)
+- Suppressed ActiveSupport deprecation warnings from the `plaintext` gem (`String#mb_chars`, deprecated in Rails 8.2)
+
+### Fixed
+- `CHANGELOG.md` file permissions corrected to be world-readable (was `600`, now `644`)
+
 ## [0.4.0] - 2026-08-26
 
 ### Added

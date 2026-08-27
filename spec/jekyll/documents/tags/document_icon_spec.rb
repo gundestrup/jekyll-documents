@@ -22,7 +22,8 @@ RSpec.describe Jekyll::Documents::DocumentIconTag do
 
     expect(result).to eq(
       '<img src="/assets/icons/color/pdf-document-svgrepo-com.svg" ' \
-      'alt="PDF file" class="file-icon" />'
+      'alt="PDF file" class="document-file-icon" ' \
+      'style="width:1em;height:1em;vertical-align:middle;" />'
     )
   end
 
@@ -41,7 +42,8 @@ RSpec.describe Jekyll::Documents::DocumentIconTag do
                         })
 
     expect(result).to eq(
-      '<img src="/assets/icons/test.svg" alt="PDF document" class="icon" />'
+      '<img src="/assets/icons/test.svg" alt="PDF document" class="icon" ' \
+      'style="width:1em;height:1em;vertical-align:middle;" />'
     )
   end
 

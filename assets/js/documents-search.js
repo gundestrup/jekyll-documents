@@ -32,7 +32,7 @@
     if (!iconUrl) return "";
     const altText = `${String(fileType || "file").toUpperCase()} file`;
     const url = escapeHtml(withBaseurl(iconUrl));
-    return `<img src="${url}" alt="${escapeHtml(altText)}" class="file-icon" />`;
+    return `<img src="${url}" alt="${escapeHtml(altText)}" class="document-file-icon" style="width:1em;height:1em;vertical-align:middle;" />`;
   }
 
   function render(matches) {

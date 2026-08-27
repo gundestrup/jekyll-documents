@@ -10,6 +10,18 @@ module Jekyll
       safe true
       priority :normal
 
+      CONTENT_TYPES = {
+        ".pdf" => "application/pdf",
+        ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        ".pptx" => "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        ".odt" => "application/vnd.oasis.opendocument.text",
+        ".ods" => "application/vnd.oasis.opendocument.spreadsheet",
+        ".odp" => "application/vnd.oasis.opendocument.presentation"
+      }.freeze
+
+      private_constant :CONTENT_TYPES
+
       # Generates document collection from files in configured root directory
       # @param site [Jekyll::Site] the Jekyll site instance
       # @return [void]
@@ -25,6 +37,8 @@ module Jekyll
 
         collection = ensure_collection(site, "documents")
 
+        current_paths = []
+
         Dir.glob("#{root}/**/*").each do |path|
           next unless File.file?(path)
 
@@ -36,6 +50,7 @@ module Jekyll
           next unless @config["include_extensions"].include?(ext)
 
           rel_path = path.delete_prefix("#{site.source}/")
+          current_paths << rel_path
           category = infer_category_from(rel_path)
           basename = File.basename(path, ext)
 
@@ -61,9 +76,30 @@ module Jekyll
           bake_document_data(doc, file_info)
           collection.docs << doc
         end
+
+        cleanup_manifest(current_paths) if @config["extract_text"]
+        configure_client_search(site)
       end
 
       private
+
+      # Auto-injects passthrough_fields into client_search config when the
+      # documents collection is indexed. Only acts if client_search is already
+      # configured with +documents+ in its collections list — does nothing if
+      # jekyll-client-search is not installed or not used.
+      def configure_client_search(site)
+        search_config = site.config["client_search"]
+        return unless search_config.is_a?(Hash)
+        return unless Array(search_config["collections"]).include?("documents")
+
+        fields = search_config["passthrough_fields"] || []
+        existing = fields.flat_map { |f| f.is_a?(Hash) ? f.keys : [f.to_s] }
+        %w[file_type icon_url icon_set].each do |field|
+          fields << field unless existing.include?(field)
+        end
+        search_config["passthrough_fields"] = fields
+        search_config["icon_field"] = "icon_url" unless search_config.key?("icon_field")
+      end
 
       # Ensures a collection exists and is configured for output
       # @param site [Jekyll::Site] the Jekyll site instance
@@ -81,6 +117,55 @@ module Jekyll
       def searchable_content(title, data, file_type)
         date_str = data["date"].strftime("%Y-%m-%d")
         "#{title} #{data['category']} #{file_type} #{date_str}"
+      end
+
+      def extract_file_content(info)
+        return nil unless load_plaintext
+
+        content_type = CONTENT_TYPES[info[:ext]]
+        return nil unless content_type
+
+        manifest = text_manifest
+        rel_path = info[:rel_path]
+        digest = ::Digest::SHA256.file(info[:path]).hexdigest
+
+        cached = manifest.get(rel_path, digest)
+        return cached if cached
+
+        # Suppress ActiveSupport deprecation warnings from the plaintext gem
+        # (it uses String#mb_chars, deprecated in Rails 8.2).
+        # We apply our own truncation below, so the gem's internal limit is redundant.
+        text = ActiveSupport::Deprecation._instance.silence do
+          ::Plaintext::Resolver.new(File.open(info[:path]), content_type).text
+        end
+        text = text&.truncate(@config["text_max_bytes"]) if text
+        manifest.set(rel_path, digest, text) if text
+        text
+      rescue StandardError => e
+        ::Jekyll.logger.warn "jekyll-documents",
+                             "Text extraction failed for #{info[:path]}: #{e.message}"
+        nil
+      end
+
+      def load_plaintext
+        return true if defined?(::Plaintext)
+
+        require "plaintext"
+        true
+      rescue LoadError
+        ::Jekyll.logger.warn "jekyll-documents",
+                             "extract_text is enabled but the 'plaintext' gem is not installed. " \
+                             "Run: gem install plaintext"
+        false
+      end
+
+      def text_manifest
+        @text_manifest ||= TextExtractionManifest.new(@site, @config["text_cache_dir"])
+      end
+
+      def cleanup_manifest(current_rel_paths)
+        text_manifest.cleanup_deleted(current_rel_paths)
+        text_manifest.save
       end
 
       def bake_document_data(doc, info)
@@ -102,7 +187,12 @@ module Jekyll
         data["permalink"]  = @config["permalink"]
                              .gsub(":category", category.to_s)
                              .gsub(":slug", info[:slug])
-        doc.content = searchable_content(info[:title], data, info[:file_type])
+        doc.content = if @config["extract_text"]
+                        extract_file_content(info) || searchable_content(info[:title], data,
+                                                                         info[:file_type])
+                      else
+                        searchable_content(info[:title], data, info[:file_type])
+                      end
       end
 
       # Creates a virtual source path for the document
