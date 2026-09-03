@@ -16,6 +16,3 @@ gem "parser", "~> 3.3"
 gem "regexp_parser", "~> 2.12"
 gem "rubocop-ast", "~> 1.50"
 gem "sass-embedded", "~> 1.103"
-
-# Optional dependency for text extraction tests
-gem "plaintext", "~> 0.3", group: :development

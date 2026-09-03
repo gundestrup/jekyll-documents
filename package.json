@@ -2,11 +2,6 @@
   "name": "jekyll-documents",
   "private": true,
   "description": "Browser end-to-end tests for jekyll-documents",
-  "main": "index.js",
-  "directories": {
-    "example": "example",
-    "lib": "lib"
-  },
   "scripts": {
     "test": "npm run test:browser",
     "test:browser": "playwright test"

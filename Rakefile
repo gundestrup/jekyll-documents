@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 require "bundler/gem_tasks"
-require "rspec/core/rake_task"
 require "yard"
 
-RSpec::Core::RakeTask.new(:spec)
 YARD::Rake::YardocTask.new
 
 VERSION_FILE = File.expand_path("lib/jekyll/documents/version.rb", __dir__)
@@ -12,11 +10,6 @@ CHANGELOG_FILE = File.expand_path("CHANGELOG.md", __dir__)
 
 # Default task: run all quality checks (most common use case)
 task default: :quality
-
-desc "Build the gem"
-task :build do
-  sh "gem build jekyll-documents.gemspec"
-end
 
 desc "Run all tests with coverage"
 task test: %i[install_local spec browser_test]
@@ -69,7 +62,8 @@ end
 
 desc "Build and install the gem locally"
 task install_local: :build do
-  sh "gem install --force jekyll-documents-*.gem"
+  version = File.read(VERSION_FILE)[/VERSION = "([^"]+)"/, 1]
+  sh "gem install --force pkg/jekyll-documents-#{version}.gem"
 end
 
 # Display available tasks with descriptions

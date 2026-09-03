@@ -95,8 +95,8 @@ All must pass before commit/release:
 
 ```bash
 rake quality          # Runs all 3 checks below
-bundle exec rubocop   # 0 offenses required (26 files)
-rake spec             # Rebuilds/installs gem, 186 Ruby examples, 0 failures, 100% coverage
+bundle exec rubocop   # 0 offenses required (40 files)
+rake spec             # Rebuilds/installs gem, 280 Ruby examples, 0 failures, 99.52% coverage
 rake browser_test     # Rebuilds/installs gem and runs Playwright browser tests
 bundle exec bundler-audit check --update  # 0 vulnerabilities
 ```

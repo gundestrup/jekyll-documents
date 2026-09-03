@@ -60,7 +60,7 @@ Jekyll::Hooks.register :site, :after_init do |site|
 
   # Exclude the text extraction cache directory from Jekyll output
   config = Jekyll::Documents::Configuration.read(site)
-  if config["extract_text"] && config["text_cache_dir"]
+  if config["text_cache_dir"]
     site.config["exclude"] = Array(site.config["exclude"])
     unless site.config["exclude"].include?(config["text_cache_dir"])
       site.config["exclude"] << config["text_cache_dir"]

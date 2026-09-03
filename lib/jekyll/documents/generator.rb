@@ -28,6 +28,7 @@ module Jekyll
       def generate(site)
         @site   = site
         @config = Configuration.read(site)
+        @text_manifest = nil
 
         root = File.join(site.source, @config["root"])
         unless Dir.exist?(root)
@@ -128,23 +129,37 @@ module Jekyll
         manifest = text_manifest
         rel_path = info[:rel_path]
         digest = ::Digest::SHA256.file(info[:path]).hexdigest
+        metadata = extraction_cache_metadata
 
-        cached = manifest.get(rel_path, digest)
+        cached = manifest.get(rel_path, digest, metadata)
         return cached if cached
 
-        # Suppress ActiveSupport deprecation warnings from the plaintext gem
-        # (it uses String#mb_chars, deprecated in Rails 8.2).
-        # We apply our own truncation below, so the gem's internal limit is redundant.
-        text = ActiveSupport::Deprecation._instance.silence do
-          ::Plaintext::Resolver.new(File.open(info[:path]), content_type).text
+        configure_pdf_extractor(content_type)
+        text = ActiveSupport.deprecator.silence do
+          File.open(info[:path], "rb") do |file|
+            ::Plaintext::Resolver.new(file, content_type).text
+          end
         end
-        text = text&.truncate(@config["text_max_bytes"]) if text
-        manifest.set(rel_path, digest, text) if text
+        text = truncate_bytes(text, @config["text_max_bytes"]) if text
+        manifest.set(rel_path, digest, text, metadata) if text
         text
       rescue StandardError => e
         ::Jekyll.logger.warn "jekyll-documents",
                              "Text extraction failed for #{info[:path]}: #{e.message}"
         nil
+      end
+
+      def configure_pdf_extractor(content_type)
+        return unless content_type == "application/pdf"
+        return unless ::Plaintext::Configuration["pdftotext"].nil?
+
+        executable = ENV.fetch("PATH", "").split(File::PATH_SEPARATOR)
+                        .map { |directory| File.join(directory, "pdftotext") }
+                        .find { |path| File.executable?(path) }
+        return unless executable
+
+        ::Plaintext::Configuration.config["pdftotext"] =
+          [executable, "-enc", "UTF-8", "__FILE__", "-"]
       end
 
       def load_plaintext
@@ -161,6 +176,26 @@ module Jekyll
 
       def text_manifest
         @text_manifest ||= TextExtractionManifest.new(@site, @config["text_cache_dir"])
+      end
+
+      def extraction_cache_metadata
+        {
+          "schema_version" => 1,
+          "text_max_bytes" => @config["text_max_bytes"],
+          "plaintext_version" => if ::Plaintext.const_defined?(:VERSION)
+                                   ::Plaintext::VERSION.to_s
+                                 else
+                                   "unknown"
+                                 end
+        }
+      end
+
+      def truncate_bytes(text, max_bytes)
+        bytes = text.to_s.encode("UTF-8", invalid: :replace, undef: :replace)
+                    .byteslice(0, max_bytes)
+        bytes = bytes.to_s.force_encoding("UTF-8")
+        bytes = bytes.byteslice(0, bytes.bytesize - 1) until bytes.valid_encoding?
+        bytes
       end
 
       def cleanup_manifest(current_rel_paths)
@@ -187,11 +222,16 @@ module Jekyll
         data["permalink"]  = @config["permalink"]
                              .gsub(":category", category.to_s)
                              .gsub(":slug", info[:slug])
+        metadata_content = searchable_content(info[:title], data, info[:file_type])
         doc.content = if @config["extract_text"]
-                        extract_file_content(info) || searchable_content(info[:title], data,
-                                                                         info[:file_type])
+                        extracted_content = extract_file_content(info)
+                        if extracted_content && !extracted_content.empty?
+                          "#{metadata_content} #{extracted_content}"
+                        else
+                          metadata_content
+                        end
                       else
-                        searchable_content(info[:title], data, info[:file_type])
+                        metadata_content
                       end
       end
 

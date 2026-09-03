@@ -6,10 +6,13 @@ require "rubygems/package"
 
 RSpec.describe "Gem packaging", type: :system do
   let(:gem_path) do
-    paths = Dir.glob("jekyll-documents-*.gem")
-    raise "No built gem found. Run `rake spec` or `rake install_local` first." if paths.empty?
+    version = Jekyll::Documents::VERSION
+    path = File.join("pkg", "jekyll-documents-#{version}.gem")
+    unless File.file?(path)
+      raise "No built gem found. Run `rake spec` or `rake install_local` first."
+    end
 
-    paths.max_by { |path| File.mtime(path) }
+    path
   end
 
   let(:package) { Gem::Package.new(gem_path) }

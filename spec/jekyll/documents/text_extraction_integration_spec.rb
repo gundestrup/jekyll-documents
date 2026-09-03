@@ -3,7 +3,6 @@
 require "spec_helper"
 require "tmpdir"
 require "fileutils"
-require "digest"
 require "json"
 
 RSpec.describe "Text extraction integration", :integration do
@@ -23,6 +22,20 @@ RSpec.describe "Text extraction integration", :integration do
     dest = File.join(dest_dir, filename)
     FileUtils.cp(src, dest)
     dest
+  end
+
+  describe "real PDF extraction" do
+    before do
+      copy_fixture("2026-01-15_Annual_Report.pdf", "reports")
+    end
+
+    it "extracts known text content from the PDF file" do
+      generator.generate(site)
+
+      doc = site.collections["documents"].docs.first
+      expect(doc.content).to include("Annual Report")
+      expect(doc.content).to include("2026")
+    end
   end
 
   describe "real DOCX extraction" do
@@ -165,6 +178,7 @@ RSpec.describe "Text extraction integration", :integration do
       expect(File.file?(manifest_path)).to be true
 
       # Create a new site and generator (simulating a fresh jekyll build)
+      expect(Plaintext::Resolver).not_to receive(:new)
       site2 = make_site("source" => temp_dir, "documents" => { "extract_text" => true })
       generator2 = Jekyll::Documents::Generator.new
       generator2.generate(site2)

@@ -2,6 +2,28 @@
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-09-03
+
+### Changed
+- Text extraction cache keys now include the source digest, extraction configuration, Plaintext version, and cache schema version so configuration or extractor changes invalidate stale results
+- Extracted document content now retains searchable metadata for title, category, file type, and date
+- Text cache cleanup now preserves shared digest files and removes orphaned files safely
+- Text extraction now enforces `text_max_bytes` as a UTF-8 byte limit and closes source files after reading
+- PDF extraction now discovers `pdftotext` from `PATH`; added macOS and Debian/Ubuntu setup instructions and CI coverage with `poppler-utils`
+- Configured text cache directories are excluded from Jekyll output regardless of the `extract_text` setting
+- Rake packaging and test tasks no longer perform duplicate work and install only the current package artifact
+- Removed redundant package metadata and duplicate development dependency declarations
+
+### Fixed
+- Replaced use of the private ActiveSupport deprecation API with the public `ActiveSupport.deprecator` API
+- Empty extraction results now fall back to metadata-only searchable content
+- Manifest loading now validates entries, logs filesystem read failures, and resets dirty state after successful saves
+- Updated stale CI, development, cache-cleanup, and package-lock documentation
+
+### Tests
+- Added real PDF extraction coverage and stronger cache-hit/persistence assertions
+- Added tests for cache configuration invalidation, UTF-8 byte truncation, shared cache references, orphan cleanup, and conditional cache exclusion
+
 ## [0.6.0] - 2026-08-27
 
 ### Added

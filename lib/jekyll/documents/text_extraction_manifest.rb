@@ -6,6 +6,61 @@ require "digest"
 
 module Jekyll
   module Documents
+    module TextExtractionManifestSupport
+      private
+
+      def load_manifest
+        return {} unless File.file?(@manifest_path)
+
+        data = JSON.parse(File.read(@manifest_path, encoding: "UTF-8"))
+        data.is_a?(Hash) ? data.select { |_path, entry| valid_entry?(entry) } : {}
+      rescue JSON::ParserError => e
+        ::Jekyll.logger.warn "jekyll-documents",
+                             "Corrupt text extraction manifest, starting fresh: #{e.message}"
+        {}
+      rescue StandardError => e
+        ::Jekyll.logger.warn "jekyll-documents",
+                             "Text extraction manifest read failed: #{e.message}"
+        {}
+      end
+
+      def valid_entry?(entry)
+        entry.is_a?(Hash) && entry.values_at("digest", "cache_key", "text_file").all?(String)
+      end
+
+      def cache_key(digest, metadata)
+        Digest::SHA256.hexdigest(JSON.generate("digest" => digest, "metadata" => metadata))
+      end
+
+      def text_file_path(text_file)
+        return unless text_file.is_a?(String)
+
+        path = File.expand_path(File.join(@text_dir, text_file))
+        root = File.expand_path(@text_dir)
+        path.start_with?("#{root}#{File::SEPARATOR}") ? path : nil
+      end
+
+      def write_text_file(digest, text)
+        shard = digest[0, 2]
+        subdir = File.join(@text_dir, shard)
+        FileUtils.mkdir_p(subdir)
+        filename = "#{digest}.txt"
+        File.write(File.join(subdir, filename), text, encoding: "UTF-8")
+        File.join(shard, filename)
+      end
+
+      def cleanup_unreferenced_text_files
+        referenced = @manifest.values.filter_map do |entry|
+          text_file_path(entry["text_file"]) if valid_entry?(entry)
+        end.to_set
+        Dir.glob(File.join(@text_dir, "**", "*.txt")).each do |path|
+          File.delete(path) unless referenced.include?(File.expand_path(path))
+        end
+      rescue StandardError
+        nil
+      end
+    end
+
     # Manages the text extraction manifest — a persistent JSON file that tracks
     # which documents have had their text extracted, keyed by SHA-256 digest.
     #
@@ -19,6 +74,8 @@ module Jekyll
     # - Cleanup of entries for deleted source files
     # - Survives `jekyll clean` (stored in site source, not .jekyll-cache/)
     class TextExtractionManifest
+      include TextExtractionManifestSupport
+
       MANIFEST_FILENAME = "text-extraction-manifest.json"
       TEXT_SUBDIR = "text"
 
@@ -40,13 +97,13 @@ module Jekyll
       # @param rel_path [String] relative path of the source document
       # @param digest [String] SHA-256 hex digest of the source file
       # @return [String, nil] extracted text if cache hit, nil otherwise
-      def get(rel_path, digest)
+      def get(rel_path, digest, metadata = {})
         entry = @manifest[rel_path]
-        return nil unless entry
-        return nil unless entry["digest"] == digest
+        return nil unless valid_entry?(entry)
+        return nil unless entry["cache_key"] == cache_key(digest, metadata)
 
         text_file = text_file_path(entry["text_file"])
-        return nil unless File.file?(text_file)
+        return nil unless text_file && File.file?(text_file)
 
         File.read(text_file, encoding: "UTF-8")
       rescue StandardError => e
@@ -60,13 +117,15 @@ module Jekyll
       # @param digest [String] SHA-256 hex digest of the source file
       # @param text [String] the extracted text
       # @return [void]
-      def set(rel_path, digest, text)
+      def set(rel_path, digest, text, metadata = {})
         text_file = write_text_file(digest, text)
         @manifest[rel_path] = {
           "digest" => digest,
+          "cache_key" => cache_key(digest, metadata),
           "text_file" => text_file,
           "extracted_at" => Time.now.to_i
         }
+        cleanup_unreferenced_text_files
         @dirty = true
       end
 
@@ -81,12 +140,11 @@ module Jekyll
         @manifest.each_key do |rel_path|
           next if current_set.include?(rel_path)
 
-          entry = @manifest[rel_path]
-          delete_text_file(entry["text_file"]) if entry
           @manifest.delete(rel_path)
           removed += 1
           @dirty = true
         end
+        cleanup_unreferenced_text_files
 
         removed
       end
@@ -98,7 +156,10 @@ module Jekyll
         return unless @dirty
 
         content = JSON.pretty_generate(@manifest)
-        return if File.exist?(@manifest_path) && File.binread(@manifest_path) == content
+        if File.exist?(@manifest_path) && File.binread(@manifest_path) == content
+          @dirty = false
+          return
+        end
 
         FileUtils.mkdir_p(@cache_root)
         temporary_path = "#{@manifest_path}.tmp-#{Process.pid}-#{Thread.current.object_id}"
@@ -108,6 +169,7 @@ module Jekyll
           file.fsync
         end
         File.rename(temporary_path, @manifest_path)
+        @dirty = false
       ensure
         FileUtils.rm_f(temporary_path) if defined?(temporary_path) && temporary_path
       end
@@ -116,53 +178,15 @@ module Jekyll
       # @param rel_path [String] relative path of the source document
       # @param digest [String] SHA-256 hex digest of the source file
       # @return [Boolean]
-      def cached?(rel_path, digest)
+      def cached?(rel_path, digest, metadata = {})
         entry = @manifest[rel_path]
-        !!(entry && entry["digest"] == digest)
+        !!(valid_entry?(entry) && entry["cache_key"] == cache_key(digest, metadata))
       end
 
       # Number of entries in the manifest.
       # @return [Integer]
       def size
         @manifest.size
-      end
-
-      private
-
-      def load_manifest
-        return {} unless File.file?(@manifest_path)
-
-        data = JSON.parse(File.read(@manifest_path, encoding: "UTF-8"))
-        data.is_a?(Hash) ? data : {}
-      rescue JSON::ParserError => e
-        ::Jekyll.logger.warn "jekyll-documents",
-                             "Corrupt text extraction manifest, starting fresh: #{e.message}"
-        {}
-      rescue StandardError
-        {}
-      end
-
-      def text_file_path(text_file)
-        File.join(@text_dir, text_file)
-      end
-
-      def write_text_file(digest, text)
-        shard = digest[0, 2]
-        subdir = File.join(@text_dir, shard)
-        FileUtils.mkdir_p(subdir)
-        filename = "#{digest}.txt"
-        path = File.join(subdir, filename)
-        File.write(path, text, encoding: "UTF-8")
-        File.join(shard, filename)
-      end
-
-      def delete_text_file(text_file)
-        return unless text_file
-
-        path = text_file_path(text_file)
-        File.delete(path) if File.file?(path)
-      rescue StandardError
-        nil
       end
     end
   end

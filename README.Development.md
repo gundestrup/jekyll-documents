@@ -97,7 +97,7 @@ The full `rake quality` task rebuilds and force-installs the gem before running 
 
 ### Coverage
 - Target: 100% Ruby line coverage
-- Current: 100% (275/275 lines)
+- Current: 99.52% (623/626 lines)
 - Integration tests cover Liquid tags and the full Ruby build pipeline
 - Playwright browser tests cover search interaction, generated links, icons, baseurl, and network errors
 
@@ -118,7 +118,7 @@ gem uninstall jekyll-documents  # Installed gem
 ## CI/CD
 
 GitHub Actions runs on every push and pull request:
-1. Ruby quality suite (RuboCop, bundler-audit, RSpec) — Ruby 3.3/3.4
+1. Ruby quality suite (RuboCop, bundler-audit, RSpec) — Ruby 3.4
 2. Browser tests (Playwright + Chromium)
 3. Gem build verification
 4. npm audit (JavaScript dependency security)

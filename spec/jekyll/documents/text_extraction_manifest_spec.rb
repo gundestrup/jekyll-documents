@@ -98,6 +98,39 @@ RSpec.describe Jekyll::Documents::TextExtractionManifest do
 
       expect(manifest.get("test.pdf", digest)).to eq("second text")
     end
+
+    it "invalidates cached text when extraction metadata changes" do
+      digest = digest_of("content")
+      first_metadata = { "text_max_bytes" => 10, "plaintext_version" => "1" }
+      second_metadata = { "text_max_bytes" => 20, "plaintext_version" => "1" }
+
+      manifest.set("test.pdf", digest, "short text", first_metadata)
+
+      expect(manifest.get("test.pdf", digest, first_metadata)).to eq("short text")
+      expect(manifest.get("test.pdf", digest, second_metadata)).to be_nil
+    end
+
+    it "retains shared text files while another entry references them" do
+      digest = digest_of("content")
+      manifest.set("first.pdf", digest, "shared text")
+      manifest.set("second.pdf", digest, "shared text")
+      manifest.cleanup_deleted(["second.pdf"])
+
+      expect(manifest.get("first.pdf", digest)).to be_nil
+      expect(manifest.get("second.pdf", digest)).to eq("shared text")
+    end
+
+    it "removes the old text file when a document digest changes" do
+      old_digest = digest_of("old content")
+      new_digest = digest_of("new content")
+      manifest.set("test.pdf", old_digest, "old text")
+      old_path = File.join(temp_dir, cache_dir, "text", old_digest[0, 2], "#{old_digest}.txt")
+
+      manifest.set("test.pdf", new_digest, "new text")
+
+      expect(File).not_to exist(old_path)
+      expect(manifest.get("test.pdf", new_digest)).to eq("new text")
+    end
   end
 
   describe "#cached?" do

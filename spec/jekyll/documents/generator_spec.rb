@@ -138,12 +138,26 @@ RSpec.describe Jekyll::Documents::Generator do
           .and_return("Extracted text from the PDF document about board meeting minutes.")
       end
 
-      it "uses extracted text as document content" do
+      it "uses extracted text and searchable metadata as document content" do
         site = site_with_documents("documents" => { "extract_text" => true })
         generator.generate(site)
 
         doc = site.collections["documents"].docs.first
         expect(doc.content).to include("Extracted text from the PDF")
+        expect(doc.content).to include("Board Meeting referat pdf")
+      end
+
+      it "truncates extracted text by UTF-8 bytes" do
+        allow(fake_resolver).to receive(:text).and_return("åäöabc")
+        site = site_with_documents("documents" => {
+                                     "extract_text" => true, "text_max_bytes" => 5
+                                   })
+
+        generator.generate(site)
+
+        extracted = generator.send(:truncate_bytes, "åäöabc", 5)
+        expect(extracted).to eq("åä")
+        expect(extracted.bytesize).to be <= 5
       end
 
       it "caches extracted text in the manifest" do
@@ -158,9 +172,8 @@ RSpec.describe Jekyll::Documents::Generator do
         site = site_with_documents("documents" => { "extract_text" => true })
         generator.generate(site)
 
-        # Second build — resolver should not be called (cache hit)
-        allow(fake_resolver).to receive(:text)
-          .and_raise("SHOULD NOT BE CALLED — cache miss")
+        # Second build — resolver should not be instantiated (cache hit)
+        expect(Plaintext::Resolver).not_to receive(:new)
 
         generator2 = Jekyll::Documents::Generator.new
         generator2.generate(site)

@@ -257,7 +257,7 @@ documents:
 - Cache invalidation uses **SHA-256 file digests** — only changed files
   are re-extracted
 - Stale cache entries for deleted files are cleaned up automatically
-  at the start of each build
+  at the end of each build
 - Falls back to metadata-only content (title, category, file type, date)
   if the `plaintext` gem is missing or extraction fails
 
@@ -286,6 +286,20 @@ tools needed). PDF extraction shells out to a system command:
 | PDF | `pdftotext` (poppler-utils) |
 | DOCX/PPTX/XLSX | rubyzip (Ruby gem, no CLI needed) |
 | ODT/ODS/ODP | rubyzip (Ruby gem, no CLI needed) |
+
+Install `pdftotext` for PDF extraction:
+
+```bash
+# macOS
+brew install poppler
+
+# Debian/Ubuntu
+sudo apt-get install poppler-utils
+```
+
+On macOS and other non-standard installations, the executable is discovered
+from `PATH`. You can also configure a custom `pdftotext` command through the
+`plaintext` gem configuration.
 
 ## Development
 

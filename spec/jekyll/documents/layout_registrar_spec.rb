@@ -73,6 +73,18 @@ RSpec.describe Jekyll::Documents::LayoutRegistrar do
     expect(File.exist?(File.join(temp_source, "_layouts", "document.html"))).to be true
   end
 
+  it "excludes the configured cache directory even when extraction is disabled" do
+    fresh_source = Dir.mktmpdir
+    fresh_site = make_site("source" => fresh_source,
+                           "documents" => { "text_cache_dir" => "document-cache" })
+
+    Jekyll::Hooks.trigger(:site, :after_init, fresh_site)
+
+    expect(fresh_site.config["exclude"]).to include("document-cache")
+  ensure
+    FileUtils.rm_rf(fresh_source) if defined?(fresh_source)
+  end
+
   it "registers a :site, :after_init hook" do
     fresh_source = Dir.mktmpdir
     fresh_site = make_site("source" => fresh_source)
