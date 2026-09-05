@@ -126,6 +126,142 @@ RSpec.describe Jekyll::Documents::Generator do
       end
     end
 
+    context "with unique path metadata" do
+      include_context "with temp documents directory"
+
+      it "retains normalized source and category paths" do
+        create_document("Departments/Europe/Research", "2026-01-01_Rivals.pdf")
+        create_document_at_root("2026-02-01_Root_Notes.pdf")
+        site = site_with_documents("documents" => {
+                                     "permalink" => "/documents/:category_path/:date/:slug/"
+                                   })
+
+        generator.generate(site)
+
+        docs = site.collections["documents"].docs.to_h do |doc|
+          [doc.data["source_path"], doc.data]
+        end
+        nested = docs["Departments/Europe/Research/2026-01-01_Rivals.pdf"]
+        expect(nested["category_path"]).to eq("Departments/Europe/Research")
+        expect(docs["2026-02-01_Root_Notes.pdf"]["category_path"]).to eq("uncategorized")
+      end
+
+      it "keeps equal basenames in different branches as distinct documents" do
+        create_document("Departments/Europe/Research", "2026-01-01_Rivals.pdf")
+        create_document("Departments/America/Research", "2026-01-01_Rivals.pdf")
+        site = site_with_documents("documents" => {
+                                     "permalink" => "/documents/:category_path/:slug/"
+                                   })
+
+        generator.generate(site)
+
+        source_paths = site.collections["documents"].docs.map { |doc| doc.data["source_path"] }
+        expect(source_paths.uniq.size).to eq(2)
+      end
+
+      it "keeps equal basenames with different extensions as distinct documents" do
+        create_document("Reports", "2026-01-01_Rivals.pdf")
+        create_document("Reports", "2026-01-01_Rivals.docx")
+        site = site_with_documents("documents" => {
+                                     "permalink" => "/documents/:source_path/"
+                                   })
+
+        generator.generate(site)
+
+        paths = site.collections["documents"].docs.map(&:path)
+        expect(paths.uniq.size).to eq(2)
+      end
+
+      it "applies full-path category mappings before leaf mappings" do
+        create_document("Departments/Europe/Research", "2026-01-01_Rivals.pdf")
+        create_document("Departments/America/Research", "2026-01-01_Rivals.pdf")
+        site = site_with_documents("documents" => {
+                                     "category_map" => {
+                                       "Departments/Europe/Research" => "European Research",
+                                       "Research" => "Global Research"
+                                     }
+                                   })
+
+        generator.generate(site)
+
+        categories = site.collections["documents"].docs.to_h do |doc|
+          [doc.data["category_path"], doc.data["category"]]
+        end
+        expect(categories["Departments/Europe/Research"]).to eq("European Research")
+        expect(categories["Departments/America/Research"]).to eq("Global Research")
+      end
+
+      it "retains source identity when path-based categories are disabled" do
+        create_document("Departments/Europe/Research", "2026-01-01_Rivals.pdf")
+        site = site_with_documents("documents" => { "categories_from_path" => false })
+
+        generator.generate(site)
+
+        data = site.collections["documents"].docs.first.data
+        expect(data["source_path"])
+          .to eq("Departments/Europe/Research/2026-01-01_Rivals.pdf")
+        expect(data["category_path"]).to eq("uncategorized")
+        expect(data["category"]).to eq("uncategorized")
+      end
+    end
+
+    context "with permalink identity placeholders" do
+      include_context "with temp documents directory"
+
+      it "expands category path and date placeholders" do
+        create_document("Departments/Europe/Research", "2026-03-04_Annual_Report.pdf")
+        site = site_with_documents("documents" => {
+                                     "permalink" =>
+                                       "/docs/:category_path/:year/:month/:day/:date/:slug/"
+                                   })
+
+        generator.generate(site)
+
+        permalink = site.collections["documents"].docs.first.data["permalink"]
+        expect(permalink).to eq(
+          "/docs/departments/europe/research/2026/03/04/2026-03-04/annual-report/"
+        )
+      end
+
+      it "expands source_path with a normalized extension" do
+        create_document("Reports", "2026-03-04_Annual_Report.PDF")
+        site = site_with_documents("documents" => {
+                                     "permalink" => "/docs/:source_path/"
+                                   })
+
+        generator.generate(site)
+
+        permalink = site.collections["documents"].docs.first.data["permalink"]
+        expect(permalink).to eq("/docs/reports/2026-03-04-annual-report.pdf/")
+      end
+    end
+
+    context "with permalink collisions" do
+      include_context "with temp documents directory"
+
+      it "aborts and identifies every conflicting source path" do
+        create_document("Research", "2026-01-01_Quarter_Report.pdf")
+        create_document("Research", "2026-04-01_Quarter_Report.pdf")
+        site = site_with_documents
+        candidates = /Permalink collision.*2026-01-01_Quarter_Report.*2026-04-01_Quarter_Report/m
+
+        expect(Jekyll.logger).to receive(:abort_with)
+          .with("jekyll-documents", candidates).and_call_original
+
+        expect { generator.generate(site) }.to raise_error(SystemExit)
+      end
+
+      it "allows collision-safe configured permalinks" do
+        create_document("Research", "2026-01-01_Quarter_Report.pdf")
+        create_document("Research", "2026-04-01_Quarter_Report.pdf")
+        site = site_with_documents("documents" => {
+                                     "permalink" => "/documents/:category/:date/:slug/"
+                                   })
+
+        expect { generator.generate(site) }.not_to raise_error
+      end
+    end
+
     context "with extract_text enabled" do
       include_context "with temp documents directory"
 
@@ -385,12 +521,12 @@ RSpec.describe Jekyll::Documents::Generator do
   end
 
   describe "#source_stub_for" do
-    it "creates a virtual source path with category and basename" do
+    it "creates a unique virtual path including the source extension" do
       generator.instance_variable_set(:@config, Jekyll::Documents::Configuration::DEFAULTS)
 
-      path = generator.send(:source_stub_for, "2026-03-01_Board_Meeting", "referat")
+      path = generator.send(:source_stub_for, "Reports/2026-03-01_Board_Meeting.pdf")
 
-      expect(path).to eq("_documents/referat-2026-03-01_Board_Meeting.md")
+      expect(path).to eq("_documents/Reports/2026-03-01_Board_Meeting.pdf.md")
     end
   end
 
@@ -496,6 +632,34 @@ RSpec.describe Jekyll::Documents::Generator do
                                       defaults.merge("slug_danish_map" => false))
       slug = generator.send(:build_slug, "Møde_om_Økonomi")
       expect(slug).to eq("møde-om-økonomi")
+    end
+  end
+
+  describe "path identity helpers" do
+    before do
+      generator.instance_variable_set(:@config, Jekyll::Documents::Configuration::DEFAULTS)
+    end
+
+    it "normalizes Windows separators" do
+      path = generator.send(:normalize_path, "Departments\\Europe\\Research\\file.pdf")
+      expect(path).to eq("Departments/Europe/Research/file.pdf")
+    end
+
+    it "derives a source path relative to the documents root" do
+      path = generator.send(
+        :source_path_for,
+        "C:\\site\\assets\\documents\\Research\\2026-01-01_Report.pdf",
+        "C:\\site\\assets\\documents"
+      )
+      expect(path).to eq("Research/2026-01-01_Report.pdf")
+    end
+
+    it "derives hierarchical and root category paths" do
+      nested = generator.send(:category_path_for, "Departments/Europe/2026-01-01_Report.pdf")
+      root = generator.send(:category_path_for, "2026-01-01_Report.pdf")
+
+      expect(nested).to eq("Departments/Europe")
+      expect(root).to eq("uncategorized")
     end
   end
 

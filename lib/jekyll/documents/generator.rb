@@ -37,23 +37,26 @@ module Jekyll
         end
 
         collection = ensure_collection(site, "documents")
-
         current_paths = []
+        generated_docs = []
 
         Dir.glob("#{root}/**/*").each do |path|
           next unless File.file?(path)
 
-          ext = File.extname(path).downcase
+          source_extension = File.extname(path)
+          ext = source_extension.downcase
           if @config["strict_extensions"] && !@config["include_extensions"].include?(ext)
             ::Jekyll.logger.abort_with "jekyll-documents",
                                        "Unsupported file type: #{path} (#{ext})"
           end
           next unless @config["include_extensions"].include?(ext)
 
-          rel_path = path.delete_prefix("#{site.source}/")
+          source_path = source_path_for(path, root)
+          category_path = document_category_path(source_path)
+          category = remap_category(category_path)
+          rel_path = normalize_path(File.join(@config["root"], source_path))
           current_paths << rel_path
-          category = infer_category_from(rel_path)
-          basename = File.basename(path, ext)
+          basename = File.basename(path, source_extension)
 
           date, title, valid = parse_filename(basename)
           if !valid && @config["strict_filename"]
@@ -61,23 +64,23 @@ module Jekyll
                                        "Filename must be 'YYYY-MM-DD_Title.ext' → #{rel_path}"
           end
 
-          slug = build_slug(basename)
-          file_type = ext.sub(".", "").downcase
-          icon_set = @config["icon_set"]
-
           doc = ::Jekyll::Document.new(
-            source_stub_for(basename, category),
+            source_stub_for(source_path),
             site: site,
             collection: collection
           )
-
-          file_info = { title: title, date: date, category: category,
-                        rel_path: rel_path, ext: ext, file_type: file_type,
-                        icon_set: icon_set, slug: slug, path: path }
+          file_info = {
+            title: title, date: date, category: category, category_path: category_path,
+            category_slug: slugify(category, "uncategorized"), source_path: source_path,
+            rel_path: rel_path, ext: ext, file_type: ext.delete_prefix("."),
+            icon_set: @config["icon_set"], slug: build_slug(basename), path: path
+          }
           bake_document_data(doc, file_info)
           collection.docs << doc
+          generated_docs << doc
         end
 
+        detect_permalink_collisions(generated_docs)
         cleanup_manifest(current_paths) if @config["extract_text"]
         configure_client_search(site)
       end
@@ -205,23 +208,22 @@ module Jekyll
 
       def bake_document_data(doc, info)
         data = doc.data
-        category = remap_category(info[:category])
-        data["layout"]     = @config["layout"]
-        data["title"]      = info[:title]
-        data["date"]       = info[:date] ? info[:date].to_time : File.mtime(info[:path])
-        data["category"]   = category
-        data["categories"] = [category] if category
-        data["file_url"]   = "/#{info[:rel_path]}"
-        data["extension"]  = info[:ext]
-        data["file_type"]  = info[:file_type]
-        data["icon_set"]   = info[:icon_set]
-        icon = FileTypeIcons.icon_for(info[:file_type], info[:icon_set])
-        data["icon_url"]   = icon
-        data["file_size"]  = File.size(info[:path])
-        data["slug"]       = info[:slug]
-        data["permalink"]  = @config["permalink"]
-                             .gsub(":category", category.to_s)
-                             .gsub(":slug", info[:slug])
+        data["layout"]        = @config["layout"]
+        data["title"]         = info[:title]
+        data["date"]          = info[:date] ? info[:date].to_time : File.mtime(info[:path])
+        data["category"]      = info[:category]
+        data["category_path"] = info[:category_path]
+        data["category_slug"] = info[:category_slug]
+        data["categories"]    = [info[:category]] if info[:category]
+        data["source_path"]   = info[:source_path]
+        data["file_url"]      = "/#{info[:rel_path]}"
+        data["extension"]     = info[:ext]
+        data["file_type"]     = info[:file_type]
+        data["icon_set"]      = info[:icon_set]
+        data["icon_url"]      = FileTypeIcons.icon_for(info[:file_type], info[:icon_set])
+        data["file_size"]     = File.size(info[:path])
+        data["slug"]          = info[:slug]
+        data["permalink"]     = expand_permalink(data)
         metadata_content = searchable_content(info[:title], data, info[:file_type])
         doc.content = if @config["extract_text"]
                         extracted_content = extract_file_content(info)
@@ -236,11 +238,10 @@ module Jekyll
       end
 
       # Creates a virtual source path for the document
-      # @param basename [String] the file basename
-      # @param category [String] the document category
+      # @param source_path [String] the unique path below the documents root
       # @return [String] virtual source path
-      def source_stub_for(basename, category)
-        File.join("_documents", "#{category}-#{basename}.md")
+      def source_stub_for(source_path)
+        File.join("_documents", "#{normalize_path(source_path)}.md")
       end
 
       # Infers category from the file's directory path
@@ -249,16 +250,80 @@ module Jekyll
       def infer_category_from(rel_path)
         return "uncategorized" unless @config["categories_from_path"]
 
-        category_dir = File.dirname(rel_path).sub(@config["root"].to_s, "")
-        category_dir.split("/").reject(&:empty?).last || "uncategorized"
+        source_path = source_path_for(rel_path, @config["root"])
+        category_path_for(source_path).split("/").last || "uncategorized"
       end
 
       # Remaps category name using category_map configuration
       # @param cat [String] the original category
-      # @return [String] the remapped category (lowercased)
+      # @return [String] the mapped display category or lowercased directory name
       def remap_category(cat)
         map = @config["category_map"] || {}
-        (map[cat] || cat).to_s.downcase
+        leaf = cat.to_s.split("/").last || "uncategorized"
+        mapped = map[cat] || map[leaf]
+        mapped ? mapped.to_s : leaf.downcase
+      end
+
+      def normalize_path(path)
+        path.to_s.tr("\\", "/").squeeze("/").delete_prefix("/").delete_suffix("/")
+      end
+
+      def source_path_for(path, root)
+        normalized_path = normalize_path(path)
+        normalized_root = normalize_path(root)
+        normalized_path.delete_prefix("#{normalized_root}/")
+      end
+
+      def category_path_for(source_path)
+        path = normalize_path(source_path)
+        path.include?("/") ? path.rpartition("/").first : "uncategorized"
+      end
+
+      def document_category_path(source_path)
+        @config["categories_from_path"] ? category_path_for(source_path) : "uncategorized"
+      end
+
+      def expand_permalink(data)
+        values = permalink_values(data)
+        @config["permalink"].gsub(/:([a-z_]+)/) do |placeholder|
+          values.fetch(Regexp.last_match(1), placeholder)
+        end
+      end
+
+      def permalink_values(data)
+        date = data["date"]
+        {
+          "category" => data["category_slug"],
+          "category_path" => slugify_path(data["category_path"]),
+          "slug" => data["slug"],
+          "date" => date.strftime("%Y-%m-%d"),
+          "year" => date.strftime("%Y"),
+          "month" => date.strftime("%m"),
+          "day" => date.strftime("%d"),
+          "source_path" => source_path_url(data["source_path"])
+        }
+      end
+
+      def slugify_path(path)
+        normalize_path(path).split("/").map { |segment| slugify(segment, "untitled") }.join("/")
+      end
+
+      def source_path_url(source_path)
+        extension = File.extname(source_path)
+        stem = source_path.delete_suffix(extension)
+        "#{slugify_path(stem)}#{extension.downcase}"
+      end
+
+      def detect_permalink_collisions(docs)
+        collisions = docs.group_by(&:url).select { |_url, matches| matches.size > 1 }
+        return if collisions.empty?
+
+        details = collisions.sort.map do |url, matches|
+          paths = matches.map { |doc| doc.data["source_path"] }.sort.join(", ")
+          "#{url}: #{paths}"
+        end
+        ::Jekyll.logger.abort_with "jekyll-documents",
+                                   "Permalink collision detected:\n#{details.join("\n")}"
       end
 
       # Parses filename to extract date and title
@@ -283,7 +348,11 @@ module Jekyll
       # @param basename [String] the filename without extension
       # @return [String] the generated slug
       def build_slug(basename)
-        slug = basename.sub(/^\d{4}-\d{2}-\d{2}_/, "")
+        slugify(basename.sub(/^\d{4}-\d{2}-\d{2}_/, ""), "untitled")
+      end
+
+      def slugify(value, fallback)
+        slug = value.to_s
         if @config["slug_danish_map"]
           slug = slug.gsub(/[æøåÆØÅ]/,
                            { "æ" => "ae", "ø" => "oe", "å" => "aa", "Æ" => "Ae", "Ø" => "Oe",
@@ -292,7 +361,7 @@ module Jekyll
         slug = slug.downcase if @config["slug_downcase"]
         slug = slug.gsub(/[^\p{Alnum}\-_\s]/u, "").tr("_ ", "--").squeeze("-")
         slug = slug.sub(/^-+/, "").sub(/-+$/, "")
-        slug.empty? ? "untitled" : slug
+        slug.empty? ? fallback : slug
       end
     end
   end

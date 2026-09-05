@@ -1,6 +1,16 @@
 # Changelog
 
-## [Unreleased]
+## [0.7.0] - 2026-09-05
+
+### Added
+- Added stable `source_path`, `category_path`, and `category_slug` document metadata and JSON index fields
+- Added exact `path:` resolution for document and category tags plus explicit category aggregation
+- Added path/date permalink placeholders and full-path-first category mappings
+- Added configurable `warn` or `strict` handling for unresolved and ambiguous tag references
+
+### Fixed
+- Ambiguous tags no longer silently select the first match
+- Duplicate generated permalinks now abort the build and identify every conflicting source file
 
 ## [0.6.1] - 2026-09-03
 

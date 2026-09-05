@@ -90,24 +90,27 @@ The tag applies the configured icon set and site `baseurl` automatically. The `f
 {% doc_link "Annual Report" %}
 {% doc_link "annual" text:"Read the report" %}
 {% doc_link "board-meeting" icon:false size:false %}
+{% doc_link path:"Reports/2026-03-01_Annual_Report.pdf" %}
 ```
 
 Renders an `<a>` tag with the file type icon, title, and human-readable file size.
 Use `text:"..."` to override the link text, `icon:false` to hide the icon,
-or `size:false` to hide the file size.
+or `size:false` to hide the file size. A `path:` lookup is exact and case-sensitive after
+normalizing `/` and `\` separators; use it when a title or slug matches multiple documents.
 
 **Link to or list a category**:
 
 ```liquid
 {% doc_category "reports" %}
 {% doc_category "reports" text:"All reports" %}
-{% doc_category "reports" list:true %}
 {% doc_category "reports" list:true limit:5 %}
+{% doc_category path:"Departments/Europe/Reports" list:true %}
+{% doc_category "reports" aggregate:true list:true %}
 ```
 
-Link mode renders an `<a>` tag to the category page.
-List mode renders a `<ul>` of all documents in the category, sorted by date descending.
-Use `limit:N` to cap the number of items.
+Link mode renders an `<a>` tag to the category page. List mode renders a `<ul>` sorted by date.
+Use `path:` for an exact, case-sensitive category path, `limit:N` to cap the list, and
+`aggregate:true list:true` to explicitly combine repeated short category names.
 
 ## Configuration
 
@@ -116,7 +119,28 @@ documents:
   root: "assets/documents"
   icon_set: "color"
   strict_filename: true
+  resolution_mode: "warn"
 ```
+
+`resolution_mode` controls ambiguous or unknown path references. The default `warn` mode logs
+all matching candidates and renders nothing. Set it to `strict` to log the same diagnostic and
+abort the build.
+
+Generated documents expose `source_path`, `category_path`, and `category_slug`. Category mappings
+check the complete `category_path` before falling back to its final directory component.
+Permalinks support `:category`, `:category_path`, `:slug`, `:source_path`, `:date`, `:year`,
+`:month`, and `:day`. For example:
+
+```yaml
+documents:
+  permalink: "/documents/:category_path/:date/:slug/"
+  category_map:
+    Departments/Europe/Research: "European Research"
+    Research: "Research"
+```
+
+The default permalink remains backward compatible. Any duplicate final permalink is fatal and
+the build error lists every conflicting `source_path`.
 
 See [configuration.rb](lib/jekyll/documents/configuration.rb) for all options.
 

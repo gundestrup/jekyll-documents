@@ -63,6 +63,94 @@ RSpec.describe Jekyll::Documents::DocCategoryTag do
       expect(result).to include('href="/documents/skibladet/"')
     end
 
+    it "prefers a unique exact match over partial matches" do
+      create_document("report", "2026-01-01_Exact.pdf")
+      create_document("annual-report", "2026-01-01_Annual.pdf")
+      site = site_with_documents
+      generate_documents(site)
+
+      result = render_tag(%("report"), site)
+
+      expect(result).to include('href="/documents/report/"')
+    end
+
+    it "logs a warning and renders nothing for ambiguous partial matches" do
+      create_document("annual-reports", "2026-01-01_Annual.pdf")
+      create_document("board-reports", "2026-01-01_Board.pdf")
+      site = site_with_documents
+      generate_documents(site)
+
+      expect(Jekyll.logger).to receive(:warn)
+        .with("jekyll-documents", /Ambiguous doc_category.*reports.*annual-reports.*board-reports/)
+
+      expect(render_tag(%("reports"), site)).to eq("")
+    end
+
+    it "aborts with all matching categories in strict resolution mode" do
+      create_document("annual-reports", "2026-01-01_Annual.pdf")
+      create_document("board-reports", "2026-01-01_Board.pdf")
+      site = site_with_documents("documents" => { "resolution_mode" => "strict" })
+      generate_documents(site)
+
+      expect(Jekyll.logger).to receive(:abort_with)
+        .with("jekyll-documents", /Ambiguous doc_category.*annual-reports.*board-reports/)
+        .and_call_original
+
+      expect { render_tag(%("reports"), site) }.to raise_error(SystemExit)
+    end
+
+    it "resolves an exact hierarchical category path" do
+      create_document("Departments/Europe/Research", "2026-01-01_Europe.pdf")
+      site = site_with_documents
+      generate_documents(site)
+
+      result = render_tag(
+        %(path:"Departments/Europe/Research" text:"European Research"), site
+      )
+
+      expect(result).to include('href="/documents/research/"')
+      expect(result).to include(">European Research</a>")
+    end
+
+    it "resolves the uncategorized root category path" do
+      create_document_at_root("2026-01-01_Root.pdf")
+      site = site_with_documents
+      generate_documents(site)
+
+      result = render_tag(%(path:"uncategorized"), site)
+
+      expect(result).to include('href="/documents/uncategorized/"')
+    end
+
+    it "normalizes separators for exact category path resolution" do
+      create_document("Departments/Europe/Research", "2026-01-01_Europe.pdf")
+      site = site_with_documents
+      generate_documents(site)
+
+      result = render_tag(%(path:"Departments\\Europe\\Research"), site)
+
+      expect(result).to include('href="/documents/research/"')
+    end
+
+    it "logs an unknown category path and renders nothing" do
+      expect(Jekyll.logger).to receive(:warn)
+        .with("jekyll-documents", %r{Unknown doc_category path.*Missing/Research})
+
+      expect(render_tag(%(path:"Missing/Research"), @site)).to eq("")
+    end
+
+    it "reports repeated short category names from different paths" do
+      create_document("Departments/Europe/Research", "2026-01-01_Europe.pdf")
+      create_document("Departments/America/Research", "2026-01-01_America.pdf")
+      site = site_with_documents
+      generate_documents(site)
+
+      expect(Jekyll.logger).to receive(:warn)
+        .with("jekyll-documents", %r{Ambiguous doc_category.*Departments/America/Research.*Europe})
+
+      expect(render_tag(%("research"), site)).to eq("")
+    end
+
     it "uses custom text when provided" do
       result = render_tag(%("referat" text:"Referater"), @site)
       expect(result).to include(">Referater</a>")
@@ -131,6 +219,34 @@ RSpec.describe Jekyll::Documents::DocCategoryTag do
       result = render_tag(%("skibladet" list:true), @site)
       expect(result).to include("Skiblad nr 60")
       expect(result).not_to include("Board Meeting")
+    end
+
+    it "lists only documents from an exact category path" do
+      create_document("Departments/Europe/Research", "2026-04-01_Europe_New.pdf")
+      create_document("Departments/Europe/Research", "2026-01-01_Europe_Old.pdf")
+      create_document("Departments/America/Research", "2026-03-01_America.pdf")
+      site = site_with_documents
+      generate_documents(site)
+
+      result = render_tag(
+        %(path:"Departments/Europe/Research" list:true limit:1), site
+      )
+
+      expect(result).to include("Europe New")
+      expect(result).not_to include("Europe Old")
+      expect(result).not_to include("America")
+    end
+
+    it "aggregates repeated short categories explicitly" do
+      create_document("Departments/Europe/Research", "2026-01-01_Europe.pdf")
+      create_document("Departments/America/Research", "2026-02-01_America.pdf")
+      site = site_with_documents
+      generate_documents(site)
+
+      result = render_tag(%("research" aggregate:true list:true), site)
+
+      expect(result).to include("Europe")
+      expect(result).to include("America")
     end
   end
 end

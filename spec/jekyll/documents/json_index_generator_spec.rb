@@ -76,11 +76,27 @@ RSpec.describe Jekyll::Documents::JsonIndexGenerator do
         expect(first_doc).to have_key("url")
         expect(first_doc).to have_key("title")
         expect(first_doc).to have_key("category")
+        expect(first_doc).to have_key("category_path")
+        expect(first_doc).to have_key("category_slug")
+        expect(first_doc).to have_key("source_path")
         expect(first_doc).to have_key("date")
         expect(first_doc).to have_key("slug")
         expect(first_doc).to have_key("file_type")
         expect(first_doc).to have_key("extension")
         expect(first_doc).to have_key("icon_url")
+      end
+
+      it "includes normalized path identity values" do
+        create_document("Departments/Europe/Research", "2026-01-01_Rivals.pdf")
+        create_document_at_root("2026-01-02_Root.pdf")
+        site = site_with_documents
+        generate_all(site)
+        data = json_data(site).to_h { |item| [item["source_path"], item] }
+
+        nested = data["Departments/Europe/Research/2026-01-01_Rivals.pdf"]
+        expect(nested["category_path"]).to eq("Departments/Europe/Research")
+        expect(nested["category_slug"]).to eq("research")
+        expect(data["2026-01-02_Root.pdf"]["category_path"]).to eq("uncategorized")
       end
 
       it "includes correct title values" do

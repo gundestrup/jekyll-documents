@@ -40,15 +40,16 @@ spec/browser/                                # Playwright browser tests for the 
 
 1. `Generator#generate` scans `assets/documents/**/*` for files
 2. Parses filenames (`YYYY-MM-DD_Title.ext`) → extracts date, title, slug, category
-3. Bakes `icon_url` and `icon_set` into each document's `data` hash
-4. If `extract_text: true`, extracts text from each file via the optional `plaintext` gem, using `TextExtractionManifest` for persistent SHA-256-keyed caching (survives `jekyll clean`, cleans up deleted files)
-5. Creates `Jekyll::Document` objects in the `documents` collection
-6. `AssetsGenerator` registers packaged icons and JavaScript as static files
-7. `JsonIndexGenerator` builds `/documents.json` from the collection
-8. `LayoutRegistrar` copies gem `_layouts` and `_includes` into the site source via a `:site, :after_init` hook (user files take precedence); also excludes the text cache dir from Jekyll output
-9. Templates render icons with `{% document_icon doc %}` or `{% document_icon page %}` and use baked document data for other fields
-10. `{% doc_link "title" %}` resolves a document by partial title or slug match and renders an `<a>` tag with the correct URL
-11. `{% doc_category "name" %}` renders a link to a category page, or with `list:true` renders a sorted list of all documents in that category (supports `limit:N` and `text:"label"`)
+3. Bakes stable `source_path`, `category_path`, URL-safe `category_slug`, and icon data
+4. Expands permalink identity/date placeholders and aborts on duplicate final URLs
+5. If `extract_text: true`, extracts text from each file via the optional `plaintext` gem, using `TextExtractionManifest` for persistent SHA-256-keyed caching (survives `jekyll clean`, cleans up deleted files)
+6. Creates `Jekyll::Document` objects in the `documents` collection
+7. `AssetsGenerator` registers packaged icons and JavaScript as static files
+8. `JsonIndexGenerator` builds `/documents.json` from the collection
+9. `LayoutRegistrar` copies gem `_layouts` and `_includes` into the site source via a `:site, :after_init` hook (user files take precedence); also excludes the text cache dir from Jekyll output
+10. Templates render icons with `{% document_icon doc %}` or `{% document_icon page %}` and use baked document data for other fields
+11. `{% doc_link "title" %}` resolves unique title/slug matches; `path:` resolves exact `source_path`
+12. `{% doc_category "name" %}` resolves unique category paths; `path:` is exact and `aggregate:true list:true` explicitly combines repeated names
 
 ### Template files
 
@@ -94,10 +95,10 @@ Jekyll only auto-discovers `_layouts` and `_includes` from **theme gems** (via t
 All must pass before commit/release:
 
 ```bash
-rake quality          # Runs all 3 checks below
-bundle exec rubocop   # 0 offenses required (40 files)
-rake spec             # Rebuilds/installs gem, 280 Ruby examples, 0 failures, 99.52% coverage
-rake browser_test     # Rebuilds/installs gem and runs Playwright browser tests
+rake quality          # Rebuild/install + RuboCop + bundler-audit + RSpec
+bundle exec rubocop   # 0 offenses required
+rake spec             # All Ruby examples pass with at least 98% coverage
+rake browser_test     # Separate Playwright browser test gate
 bundle exec bundler-audit check --update  # 0 vulnerabilities
 ```
 
@@ -123,12 +124,13 @@ User config in `_config.yml`:
 documents:
   root: "assets/documents"           # Source directory
   icon_set: "color"                   # color | lines | minimal | ultra-minimal
-  permalink: "/documents/:category/:slug/"
+  permalink: "/documents/:category/:slug/"  # Also supports path/date placeholders
   slug_downcase: true
   slug_danish_map: true
   categories_from_path: true
   strict_filename: true               # Abort on non-YYYY-MM-DD filenames
   strict_extensions: true             # Abort on unsupported file types
+  resolution_mode: "warn"             # warn | strict for ambiguous tag references
   json_index: true                    # Generate /documents.json
   json_index_path: "/documents.json"
   latest_default_count: 5

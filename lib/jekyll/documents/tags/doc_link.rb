@@ -2,9 +2,60 @@
 
 module Jekyll
   module Documents
+    module DocumentResolver
+      include ResolutionReporter
+
+      private
+
+      def find_document(docs, query, options, site)
+        return find_document_by_path(docs, options["path"], site) if options["path"]
+
+        normalized = query.to_s.strip.downcase
+        return nil if normalized.empty?
+
+        exact = docs.select { |doc| document_values(doc).include?(normalized) }
+        matches = if exact.empty?
+                    docs.select do |doc|
+                      document_values(doc).any? { |value| value.include?(normalized) }
+                    end
+                  else
+                    exact
+                  end
+        return matches.first if matches.one?
+        return nil if matches.empty?
+
+        paths = matches.map { |doc| doc.data["source_path"] || doc.path }.sort.join(", ")
+        message = "Ambiguous doc_link #{query.inspect}; matches: #{paths}. Rendering nothing."
+        report_resolution_issue(site, message)
+        nil
+      end
+
+      def find_document_by_path(docs, path, site)
+        normalized = normalize_identifier_path(path)
+        matches = docs.select { |doc| doc.data["source_path"].to_s == normalized }
+        return matches.first if matches.one?
+
+        issue = matches.empty? ? "Unknown" : "Ambiguous"
+        candidates = matches.map { |doc| doc.data["source_path"] }.sort.join(", ")
+        detail = candidates.empty? ? normalized : candidates
+        report_resolution_issue(site, "#{issue} doc_link path #{path.inspect}: #{detail}")
+        nil
+      end
+
+      def normalize_identifier_path(path)
+        path.to_s.strip.tr("\\", "/").squeeze("/").delete_prefix("./").delete_prefix("/")
+            .delete_suffix("/")
+      end
+
+      def document_values(doc)
+        [doc.data["title"], doc.data["slug"]].map { |value| value.to_s.downcase }
+      end
+    end
+
     class DocLinkTag < Liquid::Tag
       public_class_method :new
 
+      include DocumentResolver
       include Jekyll::Filters::URLFilters
 
       SIZE_UNITS = %w[B KB MB GB].freeze
@@ -18,7 +69,7 @@ module Jekyll
         docs = documents_from(context)
         return "" if docs.empty?
 
-        match = find_document(docs, @query)
+        match = find_document(docs, @query, @options, context.registers[:site])
         return "" unless match
 
         @context = context
@@ -33,20 +84,6 @@ module Jekyll
       def documents_from(context)
         site = context.registers[:site]
         site.collections["documents"]&.docs || []
-      end
-
-      def find_document(docs, query)
-        normalized = query.to_s.strip.downcase
-        return nil if normalized.empty?
-
-        docs.find { |doc| matches?(doc, normalized) }
-      end
-
-      def matches?(doc, query)
-        title = doc.data["title"].to_s.downcase
-        slug = doc.data["slug"].to_s.downcase
-        title == query || slug == query ||
-          title.include?(query) || slug.include?(query)
       end
 
       def build_link(doc, url, text)
@@ -99,6 +136,8 @@ module Jekyll
       end
 
       def extract_query(text)
+        return [nil, text] if text.strip.match?(/\Apath\s*:/)
+
         quoted = text.match(/\A["']([^"']+)["']/)
         return [quoted[1], text[quoted.end(0)..]] if quoted
 

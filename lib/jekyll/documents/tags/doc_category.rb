@@ -2,9 +2,63 @@
 
 module Jekyll
   module Documents
+    module CategoryResolver
+      include ResolutionReporter
+
+      private
+
+      def resolve_category(query, options, categories, site)
+        return resolve_category_path(options["path"], categories, site) if options["path"]
+
+        normalized = query.to_s.strip.downcase
+        return nil if normalized.empty?
+
+        exact = categories.select do |category|
+          category_values(category).include?(normalized)
+        end
+        matches = exact.empty? ? partial_categories(categories, normalized) : exact
+        aggregate = options["aggregate"] == "true" && options["list"] == "true"
+        return matches if matches.one? || (aggregate && matches.any?)
+        return nil if matches.empty?
+
+        paths = matches.map { |category| category["path"] }.sort.join(", ")
+        message = "Ambiguous doc_category #{query.inspect}; matches: #{paths}. Rendering nothing."
+        report_resolution_issue(site, message)
+        nil
+      end
+
+      def resolve_category_path(path, categories, site)
+        normalized = normalize_category_path(path)
+        matches = categories.select { |category| category["path"] == normalized }
+        return matches if matches.one?
+
+        issue = matches.empty? ? "Unknown" : "Ambiguous"
+        report_resolution_issue(site,
+                                "#{issue} doc_category path #{path.inspect}: #{normalized}")
+        nil
+      end
+
+      def partial_categories(categories, query)
+        categories.select do |category|
+          category_values(category).any? { |value| value.include?(query) }
+        end
+      end
+
+      def category_values(category)
+        leaf = category["path"].split("/").last.to_s.downcase
+        [category["category"], category["slug"], leaf].map { |value| value.to_s.downcase }.uniq
+      end
+
+      def normalize_category_path(path)
+        path.to_s.strip.tr("\\", "/").squeeze("/").delete_prefix("./").delete_prefix("/")
+            .delete_suffix("/")
+      end
+    end
+
     class DocCategoryTag < Liquid::Tag
       public_class_method :new
 
+      include CategoryResolver
       include Jekyll::Filters::URLFilters
 
       def initialize(tag_name, markup, tokens)
@@ -17,13 +71,13 @@ module Jekyll
         return "" if docs.empty?
 
         categories = available_categories(docs)
-        category = resolve_category(@category, categories)
-        return "" unless category
+        matches = resolve_category(@category, @options, categories, context.registers[:site])
+        return "" unless matches
 
         @context = context
-        return render_list(docs, category) if @options["list"] == "true"
+        return render_list(docs, matches) if @options["list"] == "true"
 
-        render_link(category)
+        render_link(matches)
       end
 
       private
@@ -34,36 +88,39 @@ module Jekyll
       end
 
       def available_categories(docs)
-        docs.map { |doc| doc.data["category"].to_s }.uniq.sort
+        categories = docs.group_by { |doc| doc.data["category_path"] || doc.data["category"] }
+                         .map do |path, matches|
+          data = matches.first.data
+          { "path" => path.to_s, "category" => data["category"],
+            "slug" => data["category_slug"] || data["category"] }
+        end
+        categories.sort_by { |category| category["path"] }
       end
 
-      def resolve_category(query, categories)
-        normalized = query.to_s.strip.downcase
-        return nil if normalized.empty?
-
-        categories.find { |cat| cat.downcase == normalized } ||
-          categories.find { |cat| cat.downcase.include?(normalized) }
-      end
-
-      def render_link(category)
-        url = relative_url("/documents/#{category}/")
-        text = @options["text"] || category
+      def render_link(matches)
+        category = matches.first
+        url = relative_url("/documents/#{category['slug']}/")
+        text = @options["text"] || category["category"]
         %(<a href="#{escape_html(url)}">#{escape_html(text)}</a>)
       end
 
-      def render_list(docs, category)
-        cat_docs = sorted_category_docs(docs, category)
+      def render_list(docs, matches)
+        paths = matches.map { |category| category["path"] }
+        cat_docs = sorted_category_docs(docs, paths)
         limit = @options["limit"]&.to_i
         cat_docs = cat_docs.first(limit) if limit&.positive?
 
+        category = paths.join(",")
         out = %(<ul class="doc-category-list" data-category="#{escape_html(category)}">\n)
         out << list_items(cat_docs)
         out << "</ul>\n"
       end
 
-      def sorted_category_docs(docs, category)
-        docs.select { |doc| doc.data["category"].to_s == category }
-            .sort_by { |doc| doc.data["date"] || Time.at(0) }.reverse
+      def sorted_category_docs(docs, paths)
+        matches = docs.select do |doc|
+          paths.include?((doc.data["category_path"] || doc.data["category"]).to_s)
+        end
+        matches.sort_by { |doc| doc.data["date"] || Time.at(0) }.reverse
       end
 
       def list_items(cat_docs)
@@ -83,6 +140,8 @@ module Jekyll
       end
 
       def extract_category(text)
+        return [nil, text] if text.strip.match?(/\Apath\s*:/)
+
         quoted = text.match(/\A["']([^"']+)["']/)
         return [quoted[1], text[quoted.end(0)..]] if quoted
 
