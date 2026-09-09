@@ -31,13 +31,4 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "jekyll", ">= 4.4", "< 5.0"
-
-  spec.add_development_dependency "bundler-audit", "~> 0.9"
-  spec.add_development_dependency "plaintext", "~> 0.3"
-  spec.add_development_dependency "rake", "~> 13.4"
-  spec.add_development_dependency "rspec", "~> 3.13"
-  spec.add_development_dependency "rubocop", "~> 1.90"
-  spec.add_development_dependency "rubocop-performance", "~> 1.27"
-  spec.add_development_dependency "simplecov", "~> 1.1"
-  spec.add_development_dependency "yard", "~> 0.9"
 end

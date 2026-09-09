@@ -4,7 +4,6 @@ node_modules/
 /vendor/
 /tmp/
 .DS_Store
-Gemfile.lock
 *.gem
 /.idea/
 /.vscode/

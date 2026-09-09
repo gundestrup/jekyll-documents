@@ -12,9 +12,20 @@ rake help         # Show all commands
 
 ## Quality Tools
 
-- **Ruby coverage**: 100% (275/275 lines)
-- **Security**: 0 vulnerabilities
-- **Style**: 0 offenses
+- **Ruby coverage**: at least 98% required by SimpleCov
+- **Security**: 0 vulnerabilities required
+- **Style**: 0 offenses required
+
+## Dependency Layout
+
+Runtime dependencies belong in `jekyll-documents.gemspec` and are imported locally with
+`gemspec` in `Gemfile`. Development-only tools are declared directly in `Gemfile`, while
+`Gemfile.lock` records the exact development environment used by CI. The Gemfile reads the
+exact local Ruby version from `.ruby-version`; the gemspec keeps the broader supported Ruby
+range for published consumers. Do not add transitive Jekyll or RuboCop dependencies to
+`Gemfile` unless the project directly requires them.
+
+Use `bundle update` to refresh compatible locked versions, then run the full quality checks.
 
 ## Commands
 
@@ -118,7 +129,7 @@ gem uninstall jekyll-documents  # Installed gem
 ## CI/CD
 
 GitHub Actions runs on every push and pull request:
-1. Ruby quality suite (RuboCop, bundler-audit, RSpec) — Ruby 3.4
+1. Ruby quality suite (RuboCop, bundler-audit, RSpec) — Ruby from `.ruby-version`
 2. Browser tests (Playwright + Chromium)
 3. Gem build verification
 4. npm audit (JavaScript dependency security)

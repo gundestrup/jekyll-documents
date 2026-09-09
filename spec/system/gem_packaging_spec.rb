@@ -78,12 +78,8 @@ RSpec.describe "Gem packaging", type: :system do
     runtime_dependencies = specification.runtime_dependencies.to_h do |dependency|
       [dependency.name, dependency.requirement]
     end
-    development_dependencies = specification.development_dependencies.to_h do |dependency|
-      [dependency.name, dependency.requirement]
-    end
-
+    expect(runtime_dependencies.keys).to eq(["jekyll"])
     expect(runtime_dependencies["jekyll"].satisfied_by?(Gem::Version.new("4.4.1"))).to be true
-    expect(development_dependencies["rspec"].satisfied_by?(Gem::Version.new("3.13.2"))).to be true
-    expect(development_dependencies["rubocop"].satisfied_by?(Gem::Version.new("1.90.0"))).to be true
+    expect(specification.development_dependencies).to be_empty
   end
 end

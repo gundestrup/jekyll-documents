@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.1] - 2026-09-09
+
+### Changed
+- Development dependencies now live in `Gemfile`; the gemspec declares runtime dependencies only
+- Removed redundant transitive dependency pins and made `Gemfile` read the exact Ruby version from `.ruby-version`
+- Refreshed compatible locked dependency versions and tracked `Gemfile.lock` for reproducible CI development environments
+- Updated CI and release workflows to use `.ruby-version`
+
 ## [0.7.0] - 2026-09-05
 
 ### Added

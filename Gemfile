@@ -2,17 +2,15 @@
 
 source "https://rubygems.org"
 
+ruby File.read(File.expand_path(".ruby-version", __dir__)).strip
+
 gemspec
 
-gem "addressable", "~> 2.9"
-gem "bigdecimal", "~> 4.1"
-gem "concurrent-ruby", "~> 1.3"
-gem "ffi", "~> 1.17"
-gem "google-protobuf", "~> 4.36"
-gem "i18n", "~> 1.15"
-gem "json", "~> 2.21"
-gem "language_server-protocol", "~> 3.17"
-gem "parser", "~> 3.3"
-gem "regexp_parser", "~> 2.12"
-gem "rubocop-ast", "~> 1.50"
-gem "sass-embedded", "~> 1.103"
+gem "bundler-audit", "~> 0.9"
+gem "plaintext", "~> 0.3"
+gem "rake", "~> 13.4"
+gem "rspec", "~> 3.13"
+gem "rubocop", "~> 1.90"
+gem "rubocop-performance", "~> 1.27"
+gem "simplecov", "~> 1.1"
+gem "yard", "~> 0.9"
