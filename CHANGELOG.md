@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+- Updated CI to Node.js 26 and current Node 24-based GitHub Actions runtimes
+
 ## [0.7.2] - 2026-09-09
 
 ### Fixed
