@@ -148,13 +148,7 @@ module Jekyll
       end
 
       def extract_options(text)
-        options = {}
-        text.to_s.scan(
-          /(\w+)\s*:\s*(?:'([^']*)'|"([^"]*)"|([^\s]+))/
-        ) do |key, single, double, bare|
-          options[key] = single || double || bare
-        end
-        options
+        OptionsParser.parse_options(text)
       end
 
       def escape_html(value)

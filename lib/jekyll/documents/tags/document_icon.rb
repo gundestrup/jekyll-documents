@@ -45,13 +45,7 @@ module Jekyll
 
       def parse_markup(markup)
         expression = markup.to_s.strip[/\A[^\s]+/]
-        options = {}
-        markup.to_s.scan(
-          /(\w+)\s*:\s*(?:'([^']*)'|"([^"]*)"|([^\s]+))/
-        ) do |key, single, double, bare|
-          options[key] = single || double || bare
-        end
-        [expression, options]
+        [expression, OptionsParser.parse_options(markup)]
       end
 
       def escape_html(value)

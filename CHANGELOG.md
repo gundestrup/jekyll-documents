@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.2] - 2026-09-09
+
+### Fixed
+- Replaced polynomial-time Liquid tag option regexes with a shared linear-time parser
+
 ## [0.7.1] - 2026-09-09
 
 ### Changed

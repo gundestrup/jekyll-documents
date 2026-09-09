@@ -11,6 +11,7 @@ require_relative "jekyll/documents/text_extraction_manifest"
 require_relative "jekyll/documents/assets_generator"
 require_relative "jekyll/documents/json_index_generator"
 require_relative "jekyll/documents/layout_registrar"
+require_relative "jekyll/documents/options_parser"
 
 # Liquid tag(s)
 require_relative "jekyll/documents/tags/latest_documents"
