@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+- Added Semgrep CE security scanning with a custom ReDoS detection rule for pre-commit and CI
+- Added CodeFactor code quality analysis badge and integration
+
 ### Changed
 - Updated CI to Node.js 26 and current Node 24-based GitHub Actions runtimes
 

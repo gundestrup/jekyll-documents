@@ -40,6 +40,9 @@ jobs:
     - name: Run Ruby quality suite
       run: bundle exec rake quality
 
+    - name: Run Semgrep security scan
+      run: semgrep scan --config .semgrep.yml --error lib/
+
     - name: Audit JavaScript dependencies
       run: npm audit --audit-level=high
 

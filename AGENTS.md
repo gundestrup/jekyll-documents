@@ -100,6 +100,7 @@ bundle exec rubocop   # 0 offenses required
 rake spec             # All Ruby examples pass with at least 98% coverage
 rake browser_test     # Separate Playwright browser test gate
 bundle exec bundler-audit check --update  # 0 vulnerabilities
+semgrep scan --config .semgrep.yml --error lib/  # 0 security findings
 ```
 
 Quick check during development:
