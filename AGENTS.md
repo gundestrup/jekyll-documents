@@ -155,15 +155,21 @@ documents:
 ## Release Process
 
 ```bash
-bundle exec rake "version:bump[minor]"  # Bump version in version.rb
+bundle exec rake "version:bump[minor]"  # Bump version + update Gemfile.lock
 # Edit CHANGELOG.md with actual changes (## [X.Y.Z] - YYYY-MM-DD)
 bundle exec rake version:pre_release    # Security scan + CHANGELOG check (FORCE=1 to override findings)
-git add lib/jekyll/documents/version.rb CHANGELOG.md
+git add lib/jekyll/documents/version.rb Gemfile.lock CHANGELOG.md
 git commit -m "Release X.Y.Z: summary"
 git tag -a vX.Y.Z -m "Release X.Y.Z"
 git push origin main
 git push origin vX.Y.Z                  # Triggers release workflow
 ```
+
+`rake version:bump` automatically runs `bundle lock` to update
+`Gemfile.lock` with the new version. CI runs in frozen bundler mode,
+so a stale lockfile will fail. Always commit `Gemfile.lock` with the
+version bump. Use `SKIP_LOCK=1 rake version:bump[patch]` to skip the
+lockfile update if needed.
 
 `rake version:pre_release` runs Semgrep security scanning and verifies
 the CHANGELOG entry. If Semgrep finds issues, the task aborts. Use

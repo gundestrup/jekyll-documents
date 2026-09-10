@@ -118,6 +118,8 @@ namespace :version do
     updated = content.sub(/VERSION = "[^"]+"/, "VERSION = \"#{next_version}\"")
     File.write(VERSION_FILE, updated)
 
+    sh "bundle lock" unless ENV["SKIP_LOCK"]
+
     puts "Bumped #{current} -> #{next_version}"
     puts "Updated: #{VERSION_FILE}"
     puts "Add a '## [#{next_version}] - YYYY-MM-DD' entry to CHANGELOG.md before committing."
