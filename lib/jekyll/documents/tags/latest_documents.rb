@@ -13,17 +13,23 @@ module Jekyll
       def render(context)
         site = context.registers[:site]
         cfg  = Configuration.read(site)
-        count = (@args["count"] || cfg["latest_default_count"] || 5).to_i
-        category = @args["category"]
-
-        docs = site.collections["documents"]&.docs || []
-        docs = docs.select { |doc| doc.data["category"] == category } if category
-        docs = docs.sort_by { |doc| doc.data["date"] || Time.at(0) }.reverse.first(count)
+        count = resolve_count(cfg)
+        docs = select_documents(site, @args["category"], count)
 
         render_list(docs)
       end
 
       private
+
+      def resolve_count(cfg)
+        (@args["count"] || cfg["latest_default_count"] || 5).to_i
+      end
+
+      def select_documents(site, category, count)
+        docs = site.collections["documents"]&.docs || []
+        docs = docs.select { |doc| doc.data["category"] == category } if category
+        docs.sort_by { |doc| doc.data["date"] || Time.at(0) }.reverse.first(count)
+      end
 
       def render_list(docs)
         out = +"<ul class=\"latest-documents\">\n"
