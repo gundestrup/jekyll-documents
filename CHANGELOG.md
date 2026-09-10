@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.7.3] - 2026-09-10
 
 ### Added
 - Added Semgrep CE security scanning with a custom ReDoS detection rule for pre-commit and CI
@@ -13,6 +13,7 @@
 - Pinned all GitHub Actions to commit SHAs to prevent supply-chain attacks
 - Added cooldown period to Dependabot configuration
 - Pinned Lunr.js CDN to version 2.3.9 with SRI integrity hash
+- Bumped actions/checkout to v7.0.1 (SHA-pinned)
 - Reduced method complexity across 6 flagged CodeFactor findings:
   - `generator.rb`: Extracted `process_file` and `merge_passthrough_fields` from `generate` and `configure_client_search`
   - `doc_link.rb`: Extracted `match_documents` and `report_ambiguous` from `find_document`
