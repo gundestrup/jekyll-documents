@@ -7,6 +7,7 @@
 [![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-blue)](LICENSE)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/gundestrup/jekyll-documents)
 [![CodeFactor](https://www.codefactor.io/repository/github/gundestrup/jekyll-documents/badge)](https://www.codefactor.io/repository/github/gundestrup/jekyll-documents)
+[![Semgrep CE](https://img.shields.io/badge/Semgrep_CE-security-success)](https://github.com/gundestrup/jekyll-documents/security/code-scanning)
 
 Turn files in `assets/documents/` into browsable document pages.
 

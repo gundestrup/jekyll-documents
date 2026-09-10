@@ -109,6 +109,17 @@ Quick check during development:
 rake quick            # RuboCop + RSpec only
 ```
 
+### Security and Quality Tools
+
+| Tool | Where | Purpose |
+|------|-------|---------|
+| RuboCop | Pre-commit, pre-push, CI | Code style and lint |
+| Semgrep CE | Pre-commit, CI | Security scanning (ReDoS, injection patterns) via `.semgrep.yml` |
+| bundler-audit | CI | Ruby dependency vulnerabilities |
+| CodeQL | GitHub (post-push) | Deep security analysis |
+| CodeFactor | Cloud (automatic) | Code quality grading, complexity, duplication |
+| Playwright | CI | Browser E2E tests |
+
 ## Code Conventions
 
 - **Frozen string literals**: All files have `# frozen_string_literal: true`
