@@ -2,6 +2,7 @@
 
 require "bundler/gem_tasks"
 require "yard"
+require "json"
 
 YARD::Rake::YardocTask.new
 
@@ -82,6 +83,12 @@ task :help do
   puts "  rake rubocop_fix  # Auto-fix style issues"
   puts "  rake bundler_audit # Security scan"
   puts ""
+  puts "📦 Release:"
+  puts "  rake version:show         # Print current version"
+  puts "  rake version:bump[patch]  # Bump version"
+  puts "  rake version:check_changelog # Verify CHANGELOG entry"
+  puts "  rake version:pre_release  # Pre-release security + quality gate (FORCE=1 to override)"
+  puts ""
   puts "📦 Other:"
   puts "  rake doc          # Generate documentation"
   puts "  rake install_local # Install gem locally"
@@ -124,5 +131,40 @@ namespace :version do
       abort "CHANGELOG.md has no '## [#{version}]' entry. Add one before releasing."
     end
     puts "✅ CHANGELOG.md has an entry for version #{version}"
+  end
+
+  desc "Run pre-release security and quality checks (use FORCE=1 to override findings)"
+  task pre_release: :check_changelog do
+    version = File.read(VERSION_FILE)[/VERSION = "([^"]+)"/, 1]
+    puts "🔍 Pre-release checks for version #{version}"
+    puts ""
+
+    semgrep = `which semgrep 2>/dev/null`.strip
+    if semgrep.empty?
+      warn "⚠️  Semgrep not installed — skipping security scan"
+    else
+      puts "Running Semgrep security scan..."
+      output = `semgrep scan --config .semgrep.yml --json lib/ 2>/dev/null`
+      findings = JSON.parse(output)["results"]
+      if findings.empty?
+        puts "✅ Semgrep: 0 findings"
+      elsif ENV["FORCE"] == "1"
+        warn "⚠️  Semgrep: #{findings.length} findings (FORCE=1 — overriding)"
+        findings.each do |f|
+          warn "  #{f['check_id']}: #{f['path']}:#{f['start']['line']}"
+        end
+      else
+        warn "❌ Semgrep: #{findings.length} findings"
+        findings.each do |f|
+          warn "  #{f['check_id']}: #{f['path']}:#{f['start']['line']}"
+        end
+        abort "Fix findings or use FORCE=1 rake version:pre_release to override"
+      end
+    end
+
+    puts ""
+    puts "📋 CodeFactor: check https://www.codefactor.io/repository/github/gundestrup/jekyll-documents"
+    puts ""
+    puts "✅ Pre-release checks complete for version #{version}"
   end
 end

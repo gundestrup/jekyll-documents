@@ -6,6 +6,7 @@
 - Added Semgrep CE security scanning with a custom ReDoS detection rule for pre-commit and CI
 - Added CodeFactor code quality analysis badge and integration
 - Added SEMGREP_APP_TOKEN integration for Cloud dashboard sync from CI
+- Added `rake version:pre_release` task for pre-release security gate with FORCE=1 override
 
 ### Changed
 - Updated CI to Node.js 26 and current Node 24-based GitHub Actions runtimes

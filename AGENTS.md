@@ -157,13 +157,20 @@ documents:
 ```bash
 bundle exec rake "version:bump[minor]"  # Bump version in version.rb
 # Edit CHANGELOG.md with actual changes (## [X.Y.Z] - YYYY-MM-DD)
-bundle exec rake version:check_changelog # Verify CHANGELOG entry exists
+bundle exec rake version:pre_release    # Security scan + CHANGELOG check (FORCE=1 to override findings)
 git add lib/jekyll/documents/version.rb CHANGELOG.md
 git commit -m "Release X.Y.Z: summary"
 git tag -a vX.Y.Z -m "Release X.Y.Z"
 git push origin main
 git push origin vX.Y.Z                  # Triggers release workflow
 ```
+
+`rake version:pre_release` runs Semgrep security scanning and verifies
+the CHANGELOG entry. If Semgrep finds issues, the task aborts. Use
+`FORCE=1 rake version:pre_release` to override and release anyway.
+
+Also check the CodeFactor dashboard before release:
+https://www.codefactor.io/repository/github/gundestrup/jekyll-documents
 
 Pushing the tag triggers the release workflow which builds the gem,
 attaches it to a GitHub release, and publishes to RubyGems via trusted
