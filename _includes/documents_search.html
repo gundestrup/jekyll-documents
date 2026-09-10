@@ -9,6 +9,8 @@
   window.__jekyllDocumentsIndexPath = {{ index_path | relative_url | jsonify }};
   window.__jekyllDocumentsBaseurl = {{ site.baseurl | jsonify }};
 </script>
-<script src="https://unpkg.com/lunr/lunr.js"></script>
+<script src="https://unpkg.com/lunr@2.3.9/lunr.js"
+        integrity="sha384-Mrc0XsDxndfJgV5jLnEeThch4j9dNEXAE1vbWeyzmERxSvF8siQfuEczzgUelQQH"
+        crossorigin="anonymous"></script>
 <script src="{{ '/assets/js/documents-search.js' | relative_url }}"></script>
 {% endif %}

@@ -5,9 +5,16 @@
 ### Added
 - Added Semgrep CE security scanning with a custom ReDoS detection rule for pre-commit and CI
 - Added CodeFactor code quality analysis badge and integration
+- Added SEMGREP_APP_TOKEN integration for Cloud dashboard sync from CI
 
 ### Changed
 - Updated CI to Node.js 26 and current Node 24-based GitHub Actions runtimes
+- Pinned all GitHub Actions to commit SHAs to prevent supply-chain attacks
+- Added cooldown period to Dependabot configuration
+- Pinned Lunr.js CDN to version 2.3.9 with SRI integrity hash
+
+### Fixed
+- Replaced dangerous subshell in system spec with Open3.capture2
 
 ## [0.7.2] - 2026-09-09
 

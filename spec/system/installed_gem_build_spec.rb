@@ -4,6 +4,7 @@ require "spec_helper"
 require "json"
 require "tmpdir"
 require "fileutils"
+require "open3"
 
 INSTALLED_GEM_ICON_SETS = %w[color lines minimal ultra-minimal].freeze
 INSTALLED_GEM_DOCUMENTS = {
@@ -112,8 +113,10 @@ RSpec.describe "Installed gem Jekyll build", type: :system do
 
   def build_site(site_dir, icon_set)
     destination = File.join(site_dir, "_site-#{icon_set}")
-    output = `cd "#{site_dir}" && jekyll build --destination "#{destination}" 2>&1`
-    raise "Jekyll build failed for #{icon_set}:\n#{output}" unless $CHILD_STATUS.success?
+    output, status = Open3.capture2("jekyll", "build",
+                                    "--source", site_dir,
+                                    "--destination", destination)
+    raise "Jekyll build failed for #{icon_set}:\n#{output}" unless status.success?
 
     destination
   end

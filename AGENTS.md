@@ -114,7 +114,7 @@ rake quick            # RuboCop + RSpec only
 | Tool | Where | Purpose |
 |------|-------|---------|
 | RuboCop | Pre-commit, pre-push, CI | Code style and lint |
-| Semgrep CE | Pre-commit, CI | Security scanning (ReDoS, injection patterns) via `.semgrep.yml` |
+| Semgrep CE | Pre-commit, CI | Security scanning (ReDoS, injection patterns) via `.semgrep.yml`; CI uses `semgrep ci` with Cloud sync |
 | bundler-audit | CI | Ruby dependency vulnerabilities |
 | CodeQL | GitHub (post-push) | Deep security analysis |
 | CodeFactor | Cloud (automatic) | Code quality grading, complexity, duplication |

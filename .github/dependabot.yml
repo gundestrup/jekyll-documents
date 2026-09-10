@@ -13,6 +13,8 @@ updates:
         update-types:
           - "minor"
           - "patch"
+    cooldown:
+      default-days: 7
 
   # Keep GitHub Actions up-to-date
   - package-ecosystem: "github-actions"
@@ -20,3 +22,5 @@ updates:
     schedule:
       interval: "monthly"
     open-pull-requests-limit: 3
+    cooldown:
+      default-days: 7
