@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+- Auto-update `Gemfile.lock` on `rake version:bump` via `bundle lock` (use `SKIP_LOCK=1` to skip)
+- Further reduced `latest_documents.rb` `render` complexity by extracting `resolve_count` and `select_documents`
+
 ## [0.7.3] - 2026-09-10
 
 ### Added
