@@ -13,18 +13,24 @@ module Jekyll
         normalized = query.to_s.strip.downcase
         return nil if normalized.empty?
 
-        exact = categories.select do |category|
-          category_values(category).include?(normalized)
-        end
-        matches = exact.empty? ? partial_categories(categories, normalized) : exact
+        matches = match_categories(categories, normalized)
         aggregate = options["aggregate"] == "true" && options["list"] == "true"
         return matches if matches.one? || (aggregate && matches.any?)
         return nil if matches.empty?
 
+        report_ambiguous_category(site, query, matches)
+        nil
+      end
+
+      def match_categories(categories, normalized)
+        exact = categories.select { |cat| category_values(cat).include?(normalized) }
+        exact.empty? ? partial_categories(categories, normalized) : exact
+      end
+
+      def report_ambiguous_category(site, query, matches)
         paths = matches.map { |category| category["path"] }.sort.join(", ")
         message = "Ambiguous doc_category #{query.inspect}; matches: #{paths}. Rendering nothing."
         report_resolution_issue(site, message)
-        nil
       end
 
       def resolve_category_path(path, categories, site)

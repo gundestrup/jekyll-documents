@@ -13,6 +13,12 @@
 - Pinned all GitHub Actions to commit SHAs to prevent supply-chain attacks
 - Added cooldown period to Dependabot configuration
 - Pinned Lunr.js CDN to version 2.3.9 with SRI integrity hash
+- Reduced method complexity across 6 flagged CodeFactor findings:
+  - `generator.rb`: Extracted `process_file` and `merge_passthrough_fields` from `generate` and `configure_client_search`
+  - `doc_link.rb`: Extracted `match_documents` and `report_ambiguous` from `find_document`
+  - `doc_category.rb`: Extracted `match_categories` and `report_ambiguous_category` from `resolve_category`
+  - `latest_documents.rb`: Extracted `render_list` and `list_item` from `render`
+  - `options_parser.rb`: Extracted `read_value` from `parse_options`
 
 ### Fixed
 - Replaced dangerous subshell in system spec with Open3.capture2

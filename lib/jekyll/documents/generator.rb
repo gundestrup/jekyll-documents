@@ -43,39 +43,10 @@ module Jekyll
         Dir.glob("#{root}/**/*").each do |path|
           next unless File.file?(path)
 
-          source_extension = File.extname(path)
-          ext = source_extension.downcase
-          if @config["strict_extensions"] && !@config["include_extensions"].include?(ext)
-            ::Jekyll.logger.abort_with "jekyll-documents",
-                                       "Unsupported file type: #{path} (#{ext})"
-          end
-          next unless @config["include_extensions"].include?(ext)
+          doc, rel_path = process_file(path, root, collection)
+          next unless doc
 
-          source_path = source_path_for(path, root)
-          category_path = document_category_path(source_path)
-          category = remap_category(category_path)
-          rel_path = normalize_path(File.join(@config["root"], source_path))
           current_paths << rel_path
-          basename = File.basename(path, source_extension)
-
-          date, title, valid = parse_filename(basename)
-          if !valid && @config["strict_filename"]
-            ::Jekyll.logger.abort_with "jekyll-documents",
-                                       "Filename must be 'YYYY-MM-DD_Title.ext' → #{rel_path}"
-          end
-
-          doc = ::Jekyll::Document.new(
-            source_stub_for(source_path),
-            site: site,
-            collection: collection
-          )
-          file_info = {
-            title: title, date: date, category: category, category_path: category_path,
-            category_slug: slugify(category, "uncategorized"), source_path: source_path,
-            rel_path: rel_path, ext: ext, file_type: ext.delete_prefix("."),
-            icon_set: @config["icon_set"], slug: build_slug(basename), path: path
-          }
-          bake_document_data(doc, file_info)
           collection.docs << doc
           generated_docs << doc
         end
@@ -87,6 +58,42 @@ module Jekyll
 
       private
 
+      def process_file(path, root, collection)
+        source_extension = File.extname(path)
+        ext = source_extension.downcase
+        if @config["strict_extensions"] && !@config["include_extensions"].include?(ext)
+          ::Jekyll.logger.abort_with "jekyll-documents",
+                                     "Unsupported file type: #{path} (#{ext})"
+        end
+        return [nil, nil] unless @config["include_extensions"].include?(ext)
+
+        source_path = source_path_for(path, root)
+        rel_path = normalize_path(File.join(@config["root"], source_path))
+        basename = File.basename(path, source_extension)
+
+        date, title, valid = parse_filename(basename)
+        if !valid && @config["strict_filename"]
+          ::Jekyll.logger.abort_with "jekyll-documents",
+                                     "Filename must be 'YYYY-MM-DD_Title.ext' → #{rel_path}"
+        end
+
+        category_path = document_category_path(source_path)
+        category = remap_category(category_path)
+        doc = ::Jekyll::Document.new(
+          source_stub_for(source_path),
+          site: @site,
+          collection: collection
+        )
+        file_info = {
+          title: title, date: date, category: category, category_path: category_path,
+          category_slug: slugify(category, "uncategorized"), source_path: source_path,
+          rel_path: rel_path, ext: ext, file_type: ext.delete_prefix("."),
+          icon_set: @config["icon_set"], slug: build_slug(basename), path: path
+        }
+        bake_document_data(doc, file_info)
+        [doc, rel_path]
+      end
+
       # Auto-injects passthrough_fields into client_search config when the
       # documents collection is indexed. Only acts if client_search is already
       # configured with +documents+ in its collections list — does nothing if
@@ -96,13 +103,17 @@ module Jekyll
         return unless search_config.is_a?(Hash)
         return unless Array(search_config["collections"]).include?("documents")
 
+        merge_passthrough_fields(search_config)
+        search_config["icon_field"] = "icon_url" unless search_config.key?("icon_field")
+      end
+
+      def merge_passthrough_fields(search_config)
         fields = search_config["passthrough_fields"] || []
         existing = fields.flat_map { |f| f.is_a?(Hash) ? f.keys : [f.to_s] }
         %w[file_type icon_url icon_set].each do |field|
           fields << field unless existing.include?(field)
         end
         search_config["passthrough_fields"] = fields
-        search_config["icon_field"] = "icon_url" unless search_config.key?("icon_field")
       end
 
       # Ensures a collection exists and is configured for output

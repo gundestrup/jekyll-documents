@@ -13,21 +13,27 @@ module Jekyll
         normalized = query.to_s.strip.downcase
         return nil if normalized.empty?
 
-        exact = docs.select { |doc| document_values(doc).include?(normalized) }
-        matches = if exact.empty?
-                    docs.select do |doc|
-                      document_values(doc).any? { |value| value.include?(normalized) }
-                    end
-                  else
-                    exact
-                  end
+        matches = match_documents(docs, normalized)
         return matches.first if matches.one?
         return nil if matches.empty?
 
+        report_ambiguous(site, query, matches)
+        nil
+      end
+
+      def match_documents(docs, normalized)
+        exact = docs.select { |doc| document_values(doc).include?(normalized) }
+        return exact unless exact.empty?
+
+        docs.select do |doc|
+          document_values(doc).any? { |value| value.include?(normalized) }
+        end
+      end
+
+      def report_ambiguous(site, query, matches)
         paths = matches.map { |doc| doc.data["source_path"] || doc.path }.sort.join(", ")
         message = "Ambiguous doc_link #{query.inspect}; matches: #{paths}. Rendering nothing."
         report_resolution_issue(site, message)
-        nil
       end
 
       def find_document_by_path(docs, path, site)

@@ -27,16 +27,20 @@ module Jekyll
           scanner.skip(/\s*/)
           next unless scanner.scan(":")
 
-          scanner.skip(/\s*/)
-          value = if scanner.scan(/'([^']*)'/) || scanner.scan(/"([^"]*)"/)
-                    scanner[1]
-                  else
-                    scanner.scan(/\S+/)
-                  end
+          value = read_value(scanner)
           options[key] = value unless value.nil?
         end
 
         options
+      end
+
+      def read_value(scanner)
+        scanner.skip(/\s*/)
+        if scanner.scan(/'([^']*)'/) || scanner.scan(/"([^"]*)"/)
+          scanner[1]
+        else
+          scanner.scan(/\S+/)
+        end
       end
     end
   end

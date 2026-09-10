@@ -20,19 +20,25 @@ module Jekyll
         docs = docs.select { |doc| doc.data["category"] == category } if category
         docs = docs.sort_by { |doc| doc.data["date"] || Time.at(0) }.reverse.first(count)
 
+        render_list(docs)
+      end
+
+      private
+
+      def render_list(docs)
         out = +"<ul class=\"latest-documents\">\n"
-        docs.each do |doc|
-          data = doc.data
-          title = escape_html(data["title"])
-          url   = escape_html(doc.url)
-          date  = (data["date"] || Time.at(0)).strftime("%Y-%m-%d")
-          out << %(<li><a href="#{url}">#{title}</a> <small>(#{date})</small></li>\n)
-        end
+        docs.each { |doc| out << list_item(doc) }
         out << "</ul>\n"
         out
       end
 
-      private
+      def list_item(doc)
+        data = doc.data
+        title = escape_html(data["title"])
+        url   = escape_html(doc.url)
+        date  = (data["date"] || Time.at(0)).strftime("%Y-%m-%d")
+        %(<li><a href="#{url}">#{title}</a> <small>(#{date})</small></li>\n)
+      end
 
       def escape_html(text)
         return "" unless text
