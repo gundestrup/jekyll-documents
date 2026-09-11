@@ -8,6 +8,7 @@
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/gundestrup/jekyll-documents)
 [![CodeFactor](https://www.codefactor.io/repository/github/gundestrup/jekyll-documents/badge)](https://www.codefactor.io/repository/github/gundestrup/jekyll-documents)
 [![Semgrep CE](https://img.shields.io/badge/Semgrep_CE-security-success)](https://github.com/gundestrup/jekyll-documents/security/code-scanning)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=gundestrup_jekyll-documents&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=gundestrup_jekyll-documents)
 
 Turn files in `assets/documents/` into browsable document pages.
 

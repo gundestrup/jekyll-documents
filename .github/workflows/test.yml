@@ -35,13 +35,13 @@ jobs:
       run: sudo apt-get update && sudo apt-get install --no-install-recommends -y poppler-utils
 
     - name: Install JavaScript dependencies
-      run: npm ci
+      run: npm ci --ignore-scripts
 
     - name: Run Ruby quality suite
       run: bundle exec rake quality
 
     - name: Install Semgrep
-      run: pip3 install semgrep
+      run: 'pip3 install --only-binary :all: "semgrep==1.176.1"'
 
     - name: Run Semgrep security scan
       env:
@@ -73,10 +73,10 @@ jobs:
         cache: npm
 
     - name: Install browser test dependencies
-      run: npm ci
+      run: npm ci --ignore-scripts
 
     - name: Install Chromium
-      run: npx playwright install --with-deps chromium
+      run: ./node_modules/.bin/playwright install --with-deps chromium
 
     - name: Run browser tests
       run: bundle exec rake browser_test

@@ -118,6 +118,7 @@ rake quick            # RuboCop + RSpec only
 | bundler-audit | CI | Ruby dependency vulnerabilities |
 | CodeQL | GitHub (post-push) | Deep security analysis |
 | CodeFactor | Cloud (automatic) | Code quality grading, complexity, duplication |
+| SonarQube Cloud | Cloud (automatic) | Security + quality analysis ([dashboard](https://sonarcloud.io/project/overview?id=gundestrup_jekyll-documents)) |
 | Playwright | CI | Browser E2E tests |
 
 ## Code Conventions
