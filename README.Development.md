@@ -12,7 +12,7 @@ rake help         # Show all commands
 
 ## Quality Tools
 
-- **Ruby coverage**: at least 98% required by SimpleCov
+- **Ruby coverage**: at least 98% required by SimpleCov; uploaded to Codecov in CI (`codecov.yml`)
 - **Security**: 0 vulnerabilities required
 - **Style**: 0 offenses required
 
@@ -111,6 +111,7 @@ The full `rake quality` task rebuilds and force-installs the gem before running 
 - Current: 99.52% (623/626 lines)
 - Integration tests cover Liquid tags and the full Ruby build pipeline
 - Playwright browser tests cover search interaction, generated links, icons, baseurl, and network errors
+- In CI, coverage is uploaded to Codecov as Cobertura XML (`simplecov-cobertura`); thresholds live in `codecov.yml`
 
 ## Troubleshooting
 
@@ -130,7 +131,8 @@ gem uninstall jekyll-documents  # Installed gem
 
 GitHub Actions runs on every push and pull request:
 1. Ruby quality suite (RuboCop, bundler-audit, RSpec) — Ruby from `.ruby-version`
-2. Browser tests (Playwright + Chromium)
+2. Codecov coverage upload (OIDC; `CODECOV_TOKEN` secret as fallback)
+3. Browser tests (Playwright + Chromium)
 3. Gem build verification
 4. npm audit (JavaScript dependency security)
 5. npm outdated (non-blocking — warns about outdated packages)

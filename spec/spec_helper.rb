@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 require "simplecov"
+require "simplecov-cobertura" if ENV["CI"]
+
 SimpleCov.start do
   skip "/spec/"
   skip "/tmp/"
   minimum_coverage 98
+  formatter SimpleCov::Formatter::CoberturaFormatter if ENV["CI"]
 end
 
 require "jekyll"

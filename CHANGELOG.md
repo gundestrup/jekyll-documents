@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- Added Codecov coverage reporting: CI uploads Cobertura XML (via `simplecov-cobertura`) after the Ruby quality suite, with `codecov.yml` status checks (98% project / 90% patch targets)
+
 ### Changed
 - Auto-update `Gemfile.lock` on `rake version:bump` via `bundle lock` (use `SKIP_LOCK=1` to skip)
 - Further reduced `latest_documents.rb` `render` complexity by extracting `resolve_count` and `select_documents`

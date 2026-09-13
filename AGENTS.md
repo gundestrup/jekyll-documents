@@ -116,6 +116,7 @@ rake quick            # RuboCop + RSpec only
 | RuboCop | Pre-commit, pre-push, CI | Code style and lint |
 | Semgrep CE | Pre-commit, CI | Security scanning (ReDoS, injection patterns) via `.semgrep.yml`; CI uses `semgrep ci` with Cloud sync |
 | bundler-audit | CI | Ruby dependency vulnerabilities |
+| Codecov | CI | Coverage reporting — uploads `coverage/coverage.xml` (Cobertura via `simplecov-cobertura`) after the Ruby quality suite |
 | CodeQL | GitHub (post-push) | Deep security analysis |
 | CodeFactor | Cloud (automatic) | Code quality grading, complexity, duplication |
 | SonarQube Cloud | Cloud (automatic) | Security + quality analysis ([dashboard](https://sonarcloud.io/project/overview?id=gundestrup_jekyll-documents)) |
