@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Exec(semgrep)",
+      "Exec(bundle)",
+      "Exec(rake)",
+      "Exec(gem)",
+      "Exec(npm)",
+      "Exec(npx)"
+    ]
+  }
+}
