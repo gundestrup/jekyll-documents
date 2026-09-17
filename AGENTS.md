@@ -197,6 +197,7 @@ Documents must follow `YYYY-MM-DD_Title.ext` format. Supported extensions: `.pdf
 - [.rubocop.yml](./.rubocop.yml) — Code style rules (TargetRubyVersion 3.4)
 - [jekyll-documents.gemspec](./jekyll-documents.gemspec) — Gem spec and metadata
 - [.devin/wiki.json](./.devin/wiki.json) — DeepWiki steering file
+- [.devin/config.json](./.devin/config.json) — Devin CLI project permissions (allow-listed commands)
 
 ## Do NOT
 
