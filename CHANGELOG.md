@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.7.4] - 2026-09-18
+
 ### Added
 - Added Codecov coverage reporting: CI uploads Cobertura XML (via `simplecov-cobertura`) after the Ruby quality suite, with `codecov.yml` status checks (98% project / 90% patch targets)
 
