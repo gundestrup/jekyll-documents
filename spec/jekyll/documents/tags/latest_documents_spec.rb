@@ -4,9 +4,7 @@ require "spec_helper"
 require "liquid"
 
 RSpec.describe Jekyll::Documents::LatestDocumentsTag do
-  include_context "liquid tag helpers"
-
-  let(:tag_name) { "latest_documents" }
+  include_context "liquid tag helpers", "latest_documents"
 
   describe "#initialize" do
     it "parses empty markup without error" do

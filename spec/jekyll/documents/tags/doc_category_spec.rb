@@ -4,9 +4,7 @@ require "spec_helper"
 require "liquid"
 
 RSpec.describe Jekyll::Documents::DocCategoryTag do
-  include_context "liquid tag helpers"
-
-  let(:tag_name) { "doc_category" }
+  include_context "liquid tag helpers", "doc_category"
 
   describe "#initialize" do
     it "parses a quoted category" do

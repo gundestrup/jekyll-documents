@@ -4,9 +4,7 @@ require "spec_helper"
 require "liquid"
 
 RSpec.describe Jekyll::Documents::DocLinkTag do
-  include_context "liquid tag helpers"
-
-  let(:tag_name) { "doc_link" }
+  include_context "liquid tag helpers", "doc_link"
 
   describe "#initialize" do
     it "parses a quoted query" do

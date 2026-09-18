@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.shared_context "liquid tag helpers" do
+RSpec.shared_context "liquid tag helpers" do |name|
   let(:tag_class) { described_class }
+  let(:tag_name) { name }
   let(:site) { make_site }
   let(:context) { Liquid::Context.new({}, {}, { site: site }) }
 
