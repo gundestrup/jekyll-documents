@@ -4,19 +4,9 @@ require "spec_helper"
 require "liquid"
 
 RSpec.describe Jekyll::Documents::LatestDocumentsTag do
-  let(:tag_class) { described_class }
-  let(:site) { make_site }
-  let(:context) { Liquid::Context.new({}, {}, { site: site }) }
+  include_context "liquid tag helpers"
 
-  def create_tag(markup = "")
-    tag_class.new("latest_documents", markup, Liquid::Tokenizer.new(""))
-  end
-
-  def render_tag(markup, site_override = nil)
-    ctx = Liquid::Context.new({}, {}, { site: site_override || site })
-    tag = create_tag(markup)
-    tag.render(ctx)
-  end
+  let(:tag_name) { "latest_documents" }
 
   describe "#initialize" do
     it "parses empty markup without error" do

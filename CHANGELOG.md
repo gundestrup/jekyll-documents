@@ -8,6 +8,9 @@
 ### Changed
 - Auto-update `Gemfile.lock` on `rake version:bump` via `bundle lock` (use `SKIP_LOCK=1` to skip)
 - Further reduced `latest_documents.rb` `render` complexity by extracting `resolve_count` and `select_documents`
+- Extracted shared `TagHelpers` module (markup parsing, document collection access, path normalization, HTML escaping) used by `doc_link`, `doc_category`, `document_icon`, and `latest_documents` tags — removes SonarCloud-flagged duplication
+- Extracted shared `liquid tag helpers` spec context (`spec/support/shared_context_tags.rb`) for tag spec setup
+- Added `.sonarcloud.properties` excluding `spec/fixtures/` from SonarCloud duplication analysis (fixture templates intentionally mirror shipped includes/layouts)
 
 ## [0.7.3] - 2026-09-10
 

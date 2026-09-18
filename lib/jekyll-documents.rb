@@ -12,6 +12,7 @@ require_relative "jekyll/documents/assets_generator"
 require_relative "jekyll/documents/json_index_generator"
 require_relative "jekyll/documents/layout_registrar"
 require_relative "jekyll/documents/options_parser"
+require_relative "jekyll/documents/tag_helpers"
 
 # Liquid tag(s)
 require_relative "jekyll/documents/tags/latest_documents"

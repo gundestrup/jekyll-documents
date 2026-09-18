@@ -10,6 +10,8 @@ module Jekyll
 
       public_class_method :new
 
+      include TagHelpers
+
       def render(context)
         site = context.registers[:site]
         cfg  = Configuration.read(site)
@@ -46,21 +48,9 @@ module Jekyll
         %(<li><a href="#{url}">#{title}</a> <small>(#{date})</small></li>\n)
       end
 
-      def escape_html(text)
-        return "" unless text
-
-        text.to_s.gsub(/[&<>"']/, {
-                         "&" => "&amp;",
-                         "<" => "&lt;",
-                         ">" => "&gt;",
-                         '"' => "&quot;",
-                         "'" => "&#39;"
-                       })
-      end
-
       # supports: count:5 category:'referat'
       def parse_args(markup)
-        OptionsParser.parse_options(markup)
+        extract_options(markup)
       end
     end
   end

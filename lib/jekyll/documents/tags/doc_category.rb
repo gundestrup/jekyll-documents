@@ -4,6 +4,7 @@ module Jekyll
   module Documents
     module CategoryResolver
       include ResolutionReporter
+      include TagHelpers
 
       private
 
@@ -34,7 +35,7 @@ module Jekyll
       end
 
       def resolve_category_path(path, categories, site)
-        normalized = normalize_category_path(path)
+        normalized = normalize_tag_path(path)
         matches = categories.select { |category| category["path"] == normalized }
         return matches if matches.one?
 
@@ -54,17 +55,13 @@ module Jekyll
         leaf = category["path"].split("/").last.to_s.downcase
         [category["category"], category["slug"], leaf].map { |value| value.to_s.downcase }.uniq
       end
-
-      def normalize_category_path(path)
-        path.to_s.strip.tr("\\", "/").squeeze("/").delete_prefix("./").delete_prefix("/")
-            .delete_suffix("/")
-      end
     end
 
     class DocCategoryTag < Liquid::Tag
       public_class_method :new
 
       include CategoryResolver
+      include TagHelpers
       include Jekyll::Filters::URLFilters
 
       def initialize(tag_name, markup, tokens)
@@ -87,11 +84,6 @@ module Jekyll
       end
 
       private
-
-      def documents_from(context)
-        site = context.registers[:site]
-        site.collections["documents"]&.docs || []
-      end
 
       def available_categories(docs)
         categories = docs.group_by { |doc| doc.data["category_path"] || doc.data["category"] }
@@ -136,38 +128,6 @@ module Jekyll
           date = (doc.data["date"] || Time.at(0)).strftime("%Y-%m-%d")
           out << %(<li><a href="#{url}">#{title}</a> <small>(#{date})</small></li>\n)
         end
-      end
-
-      def parse_markup(markup)
-        text = markup.to_s
-        category, remainder = extract_category(text)
-        options = extract_options(remainder)
-        [category, options]
-      end
-
-      def extract_category(text)
-        return [nil, text] if text.strip.match?(/\Apath\s*:/)
-
-        quoted = text.match(/\A["']([^"']+)["']/)
-        return [quoted[1], text[quoted.end(0)..]] if quoted
-
-        bare = text.strip.match(/\A([^\s]+)/)
-        return [nil, ""] unless bare
-
-        [bare[1], text[bare.end(0)..]]
-      end
-
-      def extract_options(text)
-        OptionsParser.parse_options(text)
-      end
-
-      def escape_html(value)
-        value.to_s.gsub(/[&<>"']/,
-                        "&" => "&amp;",
-                        "<" => "&lt;",
-                        ">" => "&gt;",
-                        '"' => "&quot;",
-                        "'" => "&#39;")
       end
     end
   end

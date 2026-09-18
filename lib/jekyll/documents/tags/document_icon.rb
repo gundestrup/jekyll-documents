@@ -5,6 +5,7 @@ module Jekyll
     class DocumentIconTag < Liquid::Tag
       public_class_method :new
 
+      include TagHelpers
       include Jekyll::Filters::URLFilters
 
       def initialize(tag_name, markup, tokens)
@@ -46,15 +47,6 @@ module Jekyll
       def parse_markup(markup)
         expression = markup.to_s.strip[/\A[^\s]+/]
         [expression, OptionsParser.parse_options(markup)]
-      end
-
-      def escape_html(value)
-        value.to_s.gsub(/[&<>"']/,
-                        "&" => "&amp;",
-                        "<" => "&lt;",
-                        ">" => "&gt;",
-                        '"' => "&quot;",
-                        "'" => "&#39;")
       end
     end
   end

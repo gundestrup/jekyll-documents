@@ -4,19 +4,9 @@ require "spec_helper"
 require "liquid"
 
 RSpec.describe Jekyll::Documents::DocLinkTag do
-  let(:tag_class) { described_class }
-  let(:site) { make_site }
-  let(:context) { Liquid::Context.new({}, {}, { site: site }) }
+  include_context "liquid tag helpers"
 
-  def create_tag(markup = "")
-    tag_class.new("doc_link", markup, Liquid::Tokenizer.new(""))
-  end
-
-  def render_tag(markup, site_override = nil)
-    ctx = Liquid::Context.new({}, {}, { site: site_override || site })
-    tag = create_tag(markup)
-    tag.render(ctx)
-  end
+  let(:tag_name) { "doc_link" }
 
   describe "#initialize" do
     it "parses a quoted query" do

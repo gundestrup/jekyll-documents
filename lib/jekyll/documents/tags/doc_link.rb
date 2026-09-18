@@ -4,6 +4,7 @@ module Jekyll
   module Documents
     module DocumentResolver
       include ResolutionReporter
+      include TagHelpers
 
       private
 
@@ -37,7 +38,7 @@ module Jekyll
       end
 
       def find_document_by_path(docs, path, site)
-        normalized = normalize_identifier_path(path)
+        normalized = normalize_tag_path(path)
         matches = docs.select { |doc| doc.data["source_path"].to_s == normalized }
         return matches.first if matches.one?
 
@@ -46,11 +47,6 @@ module Jekyll
         detail = candidates.empty? ? normalized : candidates
         report_resolution_issue(site, "#{issue} doc_link path #{path.inspect}: #{detail}")
         nil
-      end
-
-      def normalize_identifier_path(path)
-        path.to_s.strip.tr("\\", "/").squeeze("/").delete_prefix("./").delete_prefix("/")
-            .delete_suffix("/")
       end
 
       def document_values(doc)
@@ -62,6 +58,7 @@ module Jekyll
       public_class_method :new
 
       include DocumentResolver
+      include TagHelpers
       include Jekyll::Filters::URLFilters
 
       SIZE_UNITS = %w[B KB MB GB].freeze
@@ -86,11 +83,6 @@ module Jekyll
       end
 
       private
-
-      def documents_from(context)
-        site = context.registers[:site]
-        site.collections["documents"]&.docs || []
-      end
 
       def build_link(doc, url, text)
         inner = +""
@@ -132,38 +124,6 @@ module Jekyll
 
           value /= 1024
         end
-      end
-
-      def parse_markup(markup)
-        text = markup.to_s
-        query, remainder = extract_query(text)
-        options = extract_options(remainder)
-        [query, options]
-      end
-
-      def extract_query(text)
-        return [nil, text] if text.strip.match?(/\Apath\s*:/)
-
-        quoted = text.match(/\A["']([^"']+)["']/)
-        return [quoted[1], text[quoted.end(0)..]] if quoted
-
-        bare = text.strip.match(/\A([^\s]+)/)
-        return [nil, ""] unless bare
-
-        [bare[1], text[bare.end(0)..]]
-      end
-
-      def extract_options(text)
-        OptionsParser.parse_options(text)
-      end
-
-      def escape_html(value)
-        value.to_s.gsub(/[&<>"']/,
-                        "&" => "&amp;",
-                        "<" => "&lt;",
-                        ">" => "&gt;",
-                        '"' => "&quot;",
-                        "'" => "&#39;")
       end
     end
   end

@@ -29,6 +29,8 @@ lib/jekyll/documents/
   file_type_icons.rb                       # Icon mappings + Liquid filters
   filters.rb                               # documents_slugify + documents_title_from_filename
   utils.rb                                 # TextStaticFile (writes JSON index, sitemap: false)
+  options_parser.rb                        # Linear-time Liquid markup key:value parser
+  tag_helpers.rb                           # Shared tag markup parsing, collection access, HTML escaping
   tags/latest_documents.rb                 # {% latest_documents %} Liquid tag
   tags/document_icon.rb                    # {% document_icon page %} Liquid tag
   tags/doc_link.rb                         # {% doc_link "title" %} Liquid tag
@@ -119,7 +121,7 @@ rake quick            # RuboCop + RSpec only
 | Codecov | CI | Coverage reporting — uploads `coverage/coverage.xml` (Cobertura via `simplecov-cobertura`) after the Ruby quality suite |
 | CodeQL | GitHub (post-push) | Deep security analysis |
 | CodeFactor | Cloud (automatic) | Code quality grading, complexity, duplication |
-| SonarQube Cloud | Cloud (automatic) | Security + quality analysis ([dashboard](https://sonarcloud.io/project/overview?id=gundestrup_jekyll-documents)) |
+| SonarQube Cloud | Cloud (automatic) | Security + quality analysis ([dashboard](https://sonarcloud.io/project/overview?id=gundestrup_jekyll-documents)); `.sonarcloud.properties` excludes `spec/fixtures/` from duplication checks |
 | Playwright | CI | Browser E2E tests |
 
 ## Code Conventions
