@@ -125,15 +125,22 @@ namespace :version do
     puts "Add a '## [#{next_version}] - YYYY-MM-DD' entry to CHANGELOG.md before committing."
   end
 
-  desc "Check Ruby-version literals in tracked docs match the gemspec"
+  desc "Check Ruby-version literals in tracked files match .ruby-version"
   task :check_consistency do
-    floor = File.read("jekyll-documents.gemspec")[/required_ruby_version\s*=\s*">=\s*([\d.]+)"/, 1]
-    abort "Could not parse required_ruby_version from gemspec" unless floor
+    # .ruby-version is the single source; the gemspec floor derives from it
+    floor = File.read(".ruby-version").strip[/\d+\.\d+/] ||
+            File.read("jekyll-documents.gemspec")[/required_ruby_version\s*=\s*">=\s*([\d.]+)"/, 1]
+    abort "Could not determine the Ruby floor (.ruby-version / gemspec)" unless floor
 
-    # CHANGELOG is historical — old entries legitimately cite older floors
-    problems = `git ls-files '*.md' '*.json'`.split.grep_v(/CHANGELOG/).flat_map do |file|
+    # Static config that can't derive: .rubocop.yml TargetRubyVersion
+    problems = File.read(".rubocop.yml").scan(/TargetRubyVersion:\s*([\d.]+)/).filter_map do |match|
+      ".rubocop.yml: TargetRubyVersion #{match[0]} != #{floor} (.ruby-version)" if match[0] != floor
+    end
+
+    # Doc literals — CHANGELOG is historical, old entries cite older floors
+    problems += `git ls-files '*.md' '*.json'`.split.grep_v(/CHANGELOG/).flat_map do |file|
       File.read(file).scan(/Ruby >= ([\d.]+)/i).filter_map do |match|
-        "#{file}: 'Ruby >= #{match[0]}' but gemspec requires >= #{floor}" if match[0] != floor
+        "#{file}: 'Ruby >= #{match[0]}' but .ruby-version floor is >= #{floor}" if match[0] != floor
       end
     end
 

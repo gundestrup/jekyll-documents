@@ -4,10 +4,11 @@
 
 ### Changed
 - Git hooks now live in `bin/hooks/` as tracked files — `bin/install-hooks.sh` sets `core.hooksPath` so git runs them directly, eliminating drift between committed and installed hooks
+- `.ruby-version` is now the single source for the supported Ruby floor — the gemspec derives `required_ruby_version` from it instead of keeping a separate literal
 
 ### Fixed
 - `.devin/wiki.json` steering notes updated to `Ruby >= 3.4` and the stale RSpec example count removed (matched the gemspec requirement and current gates)
-- Added `rake version:check_consistency` (wired into `version:pre_release`) — fails the release if `Ruby >= X.Y` literals in tracked docs don't match `required_ruby_version`
+- Added `rake version:check_consistency` (wired into `version:pre_release`) — fails the release if `Ruby >= X.Y` literals in tracked docs or `.rubocop.yml`'s `TargetRubyVersion` don't match the `.ruby-version` floor
 
 ## [0.7.4] - 2026-09-18
 

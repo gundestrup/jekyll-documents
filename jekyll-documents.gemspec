@@ -24,7 +24,11 @@ Gem::Specification.new do |spec|
     "rubygems_mfa_required" => "true"
   }
 
-  spec.required_ruby_version = ">= 3.4"
+  # Floor derived from .ruby-version's major.minor — single source for the
+  # supported minimum. If the floor ever needs to lag the dev version
+  # (e.g. support 3.3 while developing on 3.4), revert to a literal here.
+  spec.required_ruby_version =
+    ">= #{File.read(File.expand_path('.ruby-version', __dir__)).strip[/\d+\.\d+/]}"
 
   spec.files         = Dir.glob("{lib,assets,_includes,_layouts}/**/*") +
                        ["README.md", "CHANGELOG.md", "LICENSE", "jekyll-documents.gemspec"]
