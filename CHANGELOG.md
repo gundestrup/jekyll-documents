@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+- `bin/install-hooks.sh` now generates the semgrep step in the pre-commit hook — the installed hook ran it but the installer still produced a rubocop-only version
+- `.devin/wiki.json` steering note updated to `Ruby >= 3.4` (matched the gemspec requirement)
+
 ## [0.7.4] - 2026-09-18
 
 ### Added

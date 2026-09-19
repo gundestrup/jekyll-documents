@@ -1,6 +1,6 @@
 {
   "repo_notes": [
-    "Jekyll plugin (Ruby >= 3.3) that turns files in assets/documents/ into browsable document pages with icons, categories, and search.",
+    "Jekyll plugin (Ruby >= 3.4) that turns files in assets/documents/ into browsable document pages with icons, categories, and search.",
     "Architecture: AssetsGenerator publishes packaged assets → Generator scans files → parses YYYY-MM-DD_Title.ext filenames → bakes icon_url/icon_set into document data → creates Jekyll collection → JsonIndexGenerator builds /documents.json for Lunr search.",
     "Key gotcha: Liquid filters don't receive context, so templates should use the context-aware {% document_icon doc %} tag. The tag uses baked icon data and applies the site baseurl automatically.",
     "Key gotcha: Jekyll::Drops::SiteDrop#config always returns nil in Liquid. Config must be read via Ruby Configuration.read(site) in tags/generators, not via {{ site.config }} in templates.",

@@ -69,7 +69,7 @@ rake quick        # Fast check during development
 rake              # Full check before commit
 ```
 
-Pre-commit hook runs RuboCop only (fast, ~2s). Pre-push hook runs
+Pre-commit hook runs RuboCop + Semgrep (fast). Pre-push hook runs
 `rake quick` (RuboCop + RSpec) as a full quality gate before pushing.
 
 ### 4. Test in Real App
