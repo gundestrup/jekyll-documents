@@ -1,0 +1,18 @@
+#!/bin/bash
+# Pre-commit hook — fast style + security check
+echo "🔍 Running RuboCop..."
+if ! bundle exec rubocop --force-exclusion; then
+    echo "❌ Style checks failed"
+    echo "Fix the issues or use 'git commit --no-verify' to skip"
+    exit 1
+fi
+
+echo "🔍 Running Semgrep security scan..."
+if ! semgrep scan --config .semgrep.yml --error lib/ 2>&1; then
+    echo "❌ Semgrep scan failed"
+    echo "Fix the issues or use 'git commit --no-verify' to skip"
+    exit 1
+fi
+
+echo "✅ Style and security checks passed"
+exit 0

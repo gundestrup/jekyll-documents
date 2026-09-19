@@ -125,6 +125,26 @@ namespace :version do
     puts "Add a '## [#{next_version}] - YYYY-MM-DD' entry to CHANGELOG.md before committing."
   end
 
+  desc "Check Ruby-version literals in tracked docs match the gemspec"
+  task :check_consistency do
+    floor = File.read("jekyll-documents.gemspec")[/required_ruby_version\s*=\s*">=\s*([\d.]+)"/, 1]
+    abort "Could not parse required_ruby_version from gemspec" unless floor
+
+    # CHANGELOG is historical — old entries legitimately cite older floors
+    problems = `git ls-files '*.md' '*.json'`.split.grep_v(/CHANGELOG/).flat_map do |file|
+      File.read(file).scan(/Ruby >= ([\d.]+)/i).filter_map do |match|
+        "#{file}: 'Ruby >= #{match[0]}' but gemspec requires >= #{floor}" if match[0] != floor
+      end
+    end
+
+    if problems.empty?
+      puts "✅ Ruby-version literals consistent (>= #{floor})"
+    else
+      problems.each { |problem| warn "❌ #{problem}" }
+      abort "Update the literal or the gemspec — don't let docs drift."
+    end
+  end
+
   desc "Verify CHANGELOG.md has an entry for the current version"
   task :check_changelog do
     version = File.read(VERSION_FILE)[/VERSION = "([^"]+)"/, 1]
@@ -136,7 +156,7 @@ namespace :version do
   end
 
   desc "Run pre-release security and quality checks (use FORCE=1 to override findings)"
-  task pre_release: :check_changelog do
+  task pre_release: %i[check_changelog check_consistency] do
     version = File.read(VERSION_FILE)[/VERSION = "([^"]+)"/, 1]
     puts "🔍 Pre-release checks for version #{version}"
     puts ""

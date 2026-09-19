@@ -57,8 +57,11 @@ rake install_local # Install locally
 
 ### 1. Setup
 ```bash
-bin/install-hooks.sh  # Install pre-commit and pre-push hooks
+bin/install-hooks.sh  # Point git at the tracked hooks (core.hooksPath)
 ```
+
+Hooks live in `bin/hooks/` as tracked files — `core.hooksPath` makes git
+run them directly, so they can never drift from what's committed.
 
 ### 2. Make Changes
 Edit code in `lib/` directory

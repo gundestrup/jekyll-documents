@@ -2,9 +2,12 @@
 
 ## [Unreleased]
 
+### Changed
+- Git hooks now live in `bin/hooks/` as tracked files — `bin/install-hooks.sh` sets `core.hooksPath` so git runs them directly, eliminating drift between committed and installed hooks
+
 ### Fixed
-- `bin/install-hooks.sh` now generates the semgrep step in the pre-commit hook — the installed hook ran it but the installer still produced a rubocop-only version
-- `.devin/wiki.json` steering note updated to `Ruby >= 3.4` (matched the gemspec requirement)
+- `.devin/wiki.json` steering notes updated to `Ruby >= 3.4` and the stale RSpec example count removed (matched the gemspec requirement and current gates)
+- Added `rake version:check_consistency` (wired into `version:pre_release`) — fails the release if `Ruby >= X.Y` literals in tracked docs don't match `required_ruby_version`
 
 ## [0.7.4] - 2026-09-18
 

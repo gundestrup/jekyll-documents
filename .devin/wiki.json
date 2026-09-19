@@ -5,7 +5,7 @@
     "Key gotcha: Liquid filters don't receive context, so templates should use the context-aware {% document_icon doc %} tag. The tag uses baked icon data and applies the site baseurl automatically.",
     "Key gotcha: Jekyll::Drops::SiteDrop#config always returns nil in Liquid. Config must be read via Ruby Configuration.read(site) in tags/generators, not via {{ site.config }} in templates.",
     "Key gotcha: public_class_method :new is required in LatestDocumentsTag because Liquid::Tag makes .new private. Do not remove.",
-    "Quality gates: 0 RuboCop offenses, 100% Ruby line coverage (currently 186 RSpec examples). Run 'rake quality' before commit.",
+    "Quality gates: 0 RuboCop offenses, 98%+ Ruby line coverage. Run 'rake quality' before commit.",
     "See AGENTS.md for full project context, gotchas, and conventions."
   ],
   "pages": [
