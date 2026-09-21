@@ -25,7 +25,7 @@ exact local Ruby version from `.ruby-version`; the gemspec keeps the broader sup
 range for published consumers. Do not add transitive Jekyll or RuboCop dependencies to
 `Gemfile` unless the project directly requires them.
 
-Use `bundle update` to refresh compatible locked versions, then run the full quality checks.
+Use `bundle update --all` to refresh compatible locked versions, then run the full quality checks.
 
 ## Commands
 
