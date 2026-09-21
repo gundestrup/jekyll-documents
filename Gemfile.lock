@@ -146,7 +146,7 @@ GEM
       racc
     pathutil (0.16.2)
       forwardable-extended (~> 2.6)
-    plaintext (0.3.7)
+    plaintext (0.4.0)
       activesupport (> 2.2.1)
       nokogiri (~> 1.10, >= 1.10.4)
       rubyzip (>= 1.2.0)
@@ -265,7 +265,7 @@ PLATFORMS
 DEPENDENCIES
   bundler-audit (~> 0.9)
   jekyll-documents!
-  plaintext (~> 0.3)
+  plaintext (~> 0.4)
   rake (~> 13.4)
   rspec (~> 3.13)
   rubocop (~> 1.91)
@@ -339,7 +339,7 @@ CHECKSUMS
   parallel (2.2.0) sha256=e1059c5fd7b649558a0aec38a769f06a42942bdb40503d005a59c352fe011cd8
   parser (3.3.12.0) sha256=21a6d7f755d5a24dfbdc6e6b772e4e879a52e7631a88bc5a3a134606052c9828
   pathutil (0.16.2) sha256=e43b74365631cab4f6d5e4228f812927efc9cb2c71e62976edcb252ee948d589
-  plaintext (0.3.7) sha256=3b923152ee84d98898d459e9442ec9cca84d2acdbb8d232e2bcf41c5723e70d5
+  plaintext (0.4.0) sha256=c41ecbcc64e0cb46bcb7bb032885f77ab3e0727d8c636e330ca03fcac359e866
   prism (1.9.0) sha256=7b530c6a9f92c24300014919c9dcbc055bf4cdf51ec30aed099b06cd6674ef85
   public_suffix (7.0.5) sha256=1a8bb08f1bbea19228d3bed6e5ed908d1cb4f7c2726d18bd9cadf60bc676f623
   racc (1.8.1) sha256=4a7f6929691dbec8b5209a0b373bc2614882b55fc5d2e447a21aaa691303d62f
