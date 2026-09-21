@@ -118,7 +118,11 @@ namespace :version do
     updated = content.sub(/VERSION = "[^"]+"/, "VERSION = \"#{next_version}\"")
     File.write(VERSION_FILE, updated)
 
-    sh "bundle lock" unless ENV["SKIP_LOCK"]
+    unless ENV["SKIP_LOCK"]
+      sh "bundle lock"
+      # example/ consumes the gem via path: ".." — keep its lockfile in sync
+      Dir.chdir("example") { sh "bundle lock" }
+    end
 
     puts "Bumped #{current} -> #{next_version}"
     puts "Updated: #{VERSION_FILE}"
