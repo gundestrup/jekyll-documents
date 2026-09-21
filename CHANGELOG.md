@@ -1,10 +1,12 @@
 # Changelog
 
-## [Unreleased]
+## [0.7.5] - 2026-09-21
 
 ### Changed
 - Git hooks now live in `bin/hooks/` as tracked files — `bin/install-hooks.sh` sets `core.hooksPath` so git runs them directly, eliminating drift between committed and installed hooks
 - `.ruby-version` is now the single source for the supported Ruby floor — the gemspec derives `required_ruby_version` from it instead of keeping a separate literal
+- Bump `plaintext` to `~> 0.4`
+- Sync `example/` lockfile with the root bundle (jekyll-documents 0.7.4, bigdecimal 4.1.3, google-protobuf 4.36.2, sass-embedded 1.104.1)
 
 ### Fixed
 - `.devin/wiki.json` steering notes updated to `Ruby >= 3.4` and the stale RSpec example count removed (matched the gemspec requirement and current gates)
