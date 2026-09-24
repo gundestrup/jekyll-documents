@@ -3,6 +3,7 @@
   "private": true,
   "description": "Browser end-to-end tests for jekyll-documents",
   "scripts": {
+    "lint:markdown": "markdownlint-cli2",
     "test": "npm run test:browser",
     "test:browser": "playwright test"
   },
@@ -10,7 +11,11 @@
     "type": "git",
     "url": "git+https://github.com/gundestrup/jekyll-documents.git"
   },
-  "keywords": ["jekyll", "documents", "testing"],
+  "keywords": [
+    "jekyll",
+    "documents",
+    "testing"
+  ],
   "author": "Svend Gundestrup",
   "license": "AGPL-3.0-only",
   "type": "commonjs",
@@ -20,6 +25,10 @@
   "homepage": "https://github.com/gundestrup/jekyll-documents#readme",
   "devDependencies": {
     "@playwright/test": "1.62.1",
-    "lunr": "2.3.9"
+    "lunr": "2.3.9",
+    "markdownlint-cli2": "0.23.2"
+  },
+  "overrides": {
+    "smol-toml": "1.8.0"
   }
 }

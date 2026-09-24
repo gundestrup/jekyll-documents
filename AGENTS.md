@@ -114,7 +114,7 @@ rake quick            # RuboCop + RSpec only
 ### Security and Quality Tools
 
 | Tool | Where | Purpose |
-|------|-------|---------|
+| ------ | ------- | --------- |
 | RuboCop | Pre-commit, pre-push, CI | Code style and lint |
 | Semgrep CE | Pre-commit, CI | Security scanning (ReDoS, injection patterns) via `.semgrep.yml`; CI uses `semgrep ci` with Cloud sync |
 | bundler-audit | CI | Ruby dependency vulnerabilities |
@@ -180,7 +180,7 @@ the CHANGELOG entry. If Semgrep finds issues, the task aborts. Use
 `FORCE=1 rake version:pre_release` to override and release anyway.
 
 Also check the CodeFactor dashboard before release:
-https://www.codefactor.io/repository/github/gundestrup/jekyll-documents
+<https://www.codefactor.io/repository/github/gundestrup/jekyll-documents>
 
 Pushing the tag triggers the release workflow which builds the gem,
 attaches it to a GitHub release, and publishes to RubyGems via trusted

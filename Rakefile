@@ -15,8 +15,8 @@ task default: :quality
 desc "Run all tests with coverage"
 task test: %i[install_local spec browser_test]
 
-desc "Run all quality checks (style, security, tests)"
-task quality: %i[install_local rubocop bundler_audit spec]
+desc "Run all quality checks (style, docs, security, tests)"
+task quality: %i[install_local rubocop markdownlint bundler_audit spec]
 
 desc "Run tests only (fast)"
 task spec: :install_local do
@@ -31,6 +31,11 @@ end
 desc "Check code style with RuboCop"
 task :rubocop do
   sh "bundle exec rubocop"
+end
+
+desc "Lint Markdown documentation"
+task :markdownlint do
+  sh "npm run lint:markdown"
 end
 
 desc "Auto-fix RuboCop issues"

@@ -1,4 +1,5 @@
 # jekyll-documents
+
 [![Status: Active](https://img.shields.io/badge/status-active-success)](https://github.com/gundestrup/jekyll-documents)
 [![Tests](https://github.com/gundestrup/jekyll-documents/actions/workflows/test.yml/badge.svg)](https://github.com/gundestrup/jekyll-documents/actions/workflows/test.yml)
 [![Codecov](https://codecov.io/gh/gundestrup/jekyll-documents/graph/badge.svg)](https://codecov.io/gh/gundestrup/jekyll-documents)
@@ -34,7 +35,7 @@ documents:
   icon_set: "color"  # color, lines, minimal, ultra-minimal
 ```
 
-```
+```text
 # Add files
 assets/documents/reports/2026-03-01_Annual_Report.pdf
 assets/documents/minutes/2026-02-15_Board_Meeting.docx
@@ -51,7 +52,7 @@ assets/documents/minutes/2026-02-15_Board_Meeting.docx
 
 **Format**: `YYYY-MM-DD_Title.ext`
 
-```
+```text
 assets/documents/reports/2026-03-01_Annual_Report.pdf
 ```
 
@@ -299,7 +300,7 @@ documents:
 
 Add the cache directory to `.gitignore`:
 
-```
+```text
 .cache/jekyll-documents/
 ```
 
@@ -309,7 +310,7 @@ The `plaintext` gem uses the `rubyzip` Ruby gem for Office formats (no CLI
 tools needed). PDF extraction shells out to a system command:
 
 | Format | Tool |
-|--------|------|
+| -------- | ------ |
 | PDF | `pdftotext` (poppler-utils) |
 | DOCX/PPTX/XLSX | rubyzip (Ruby gem, no CLI needed) |
 | ODT/ODS/ODP | rubyzip (Ruby gem, no CLI needed) |

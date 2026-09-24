@@ -56,6 +56,7 @@ rake install_local # Install locally
 ## Development Workflow
 
 ### 1. Setup
+
 ```bash
 bin/install-hooks.sh  # Point git at the tracked hooks (core.hooksPath)
 ```
@@ -64,9 +65,11 @@ Hooks live in `bin/hooks/` as tracked files — `core.hooksPath` makes git
 run them directly, so they can never drift from what's committed.
 
 ### 2. Make Changes
+
 Edit code in `lib/` directory
 
 ### 3. Test Changes
+
 ```bash
 rake quick        # Fast check during development
 rake              # Full check before commit
@@ -76,12 +79,14 @@ Pre-commit hook runs RuboCop + Semgrep (fast). Pre-push hook runs
 `rake quick` (RuboCop + RSpec) as a full quality gate before pushing.
 
 ### 4. Test in Real App
+
 ```ruby
 # Gemfile in test app
 gem "jekyll-documents", path: "/path/to/this/repo"
 ```
 
 ### 5. Release
+
 ```bash
 bundle exec rake "version:bump[patch]"  # Update version.rb
 # Edit CHANGELOG.md: add '## [X.Y.Z] - YYYY-MM-DD' section
@@ -100,6 +105,7 @@ publishing. No manual `gh release create` needed.
 ## Testing
 
 ### Run Tests
+
 ```bash
 rake spec                         # Rebuild/install gem, then run all tests
 bundle exec rspec spec/filters    # Run one source-level spec file
@@ -110,6 +116,7 @@ System tests verify the packaged gem contents and run a Jekyll build using the i
 The full `rake quality` task rebuilds and force-installs the gem before running the Ruby test suite. Run `rake browser_test` for real browser coverage of the search UI; it requires Node.js and Chromium.
 
 ### Coverage
+
 - Target: 100% Ruby line coverage
 - Current: 99.52% (623/626 lines)
 - Integration tests cover Liquid tags and the full Ruby build pipeline
@@ -119,12 +126,14 @@ The full `rake quality` task rebuilds and force-installs the gem before running 
 ## Troubleshooting
 
 **Tests failing?**
+
 ```bash
 bundle install      # Update deps
 rm -rf tmp/         # Clear cache
 ```
 
 **Gem not updating?**
+
 ```bash
 bundle update jekyll-documents  # Path gem
 gem uninstall jekyll-documents  # Installed gem
@@ -133,12 +142,13 @@ gem uninstall jekyll-documents  # Installed gem
 ## CI/CD
 
 GitHub Actions runs on every push and pull request:
+
 1. Ruby quality suite (RuboCop, bundler-audit, RSpec) — Ruby from `.ruby-version`
 2. Codecov coverage upload (OIDC; `CODECOV_TOKEN` secret as fallback)
 3. Browser tests (Playwright + Chromium)
-3. Gem build verification
-4. npm audit (JavaScript dependency security)
-5. npm outdated (non-blocking — warns about outdated packages)
+4. Gem build verification
+5. npm audit (JavaScript dependency security)
+6. npm outdated (non-blocking — warns about outdated packages)
 
 The release workflow triggers on tag push (`v*`), verifies the tag
 matches the gem version, checks the CHANGELOG has an entry for the

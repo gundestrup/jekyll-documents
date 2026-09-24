@@ -3,21 +3,25 @@
 ## [0.7.5] - 2026-09-21
 
 ### Changed
+
 - Git hooks now live in `bin/hooks/` as tracked files — `bin/install-hooks.sh` sets `core.hooksPath` so git runs them directly, eliminating drift between committed and installed hooks
 - `.ruby-version` is now the single source for the supported Ruby floor — the gemspec derives `required_ruby_version` from it instead of keeping a separate literal
 - Bump `plaintext` to `~> 0.4`
 - Sync `example/` lockfile with the root bundle (jekyll-documents 0.7.4, bigdecimal 4.1.3, google-protobuf 4.36.2, sass-embedded 1.104.1)
 
 ### Fixed
+
 - `.devin/wiki.json` steering notes updated to `Ruby >= 3.4` and the stale RSpec example count removed (matched the gemspec requirement and current gates)
 - Added `rake version:check_consistency` (wired into `version:pre_release`) — fails the release if `Ruby >= X.Y` literals in tracked docs or `.rubocop.yml`'s `TargetRubyVersion` don't match the `.ruby-version` floor
 
 ## [0.7.4] - 2026-09-18
 
 ### Added
+
 - Added Codecov coverage reporting: CI uploads Cobertura XML (via `simplecov-cobertura`) after the Ruby quality suite, with `codecov.yml` status checks (98% project / 90% patch targets)
 
 ### Changed
+
 - Auto-update `Gemfile.lock` on `rake version:bump` via `bundle lock` (use `SKIP_LOCK=1` to skip)
 - Further reduced `latest_documents.rb` `render` complexity by extracting `resolve_count` and `select_documents`
 - Extracted shared `TagHelpers` module (markup parsing, document collection access, path normalization, HTML escaping) used by `doc_link`, `doc_category`, `document_icon`, and `latest_documents` tags — removes SonarCloud-flagged duplication
@@ -27,12 +31,14 @@
 ## [0.7.3] - 2026-09-10
 
 ### Added
+
 - Added Semgrep CE security scanning with a custom ReDoS detection rule for pre-commit and CI
 - Added CodeFactor code quality analysis badge and integration
 - Added SEMGREP_APP_TOKEN integration for Cloud dashboard sync from CI
 - Added `rake version:pre_release` task for pre-release security gate with FORCE=1 override
 
 ### Changed
+
 - Updated CI to Node.js 26 and current Node 24-based GitHub Actions runtimes
 - Pinned all GitHub Actions to commit SHAs to prevent supply-chain attacks
 - Added cooldown period to Dependabot configuration
@@ -46,16 +52,19 @@
   - `options_parser.rb`: Extracted `read_value` from `parse_options`
 
 ### Fixed
+
 - Replaced dangerous subshell in system spec with Open3.capture2
 
 ## [0.7.2] - 2026-09-09
 
 ### Fixed
+
 - Replaced polynomial-time Liquid tag option regexes with a shared linear-time parser
 
 ## [0.7.1] - 2026-09-09
 
 ### Changed
+
 - Development dependencies now live in `Gemfile`; the gemspec declares runtime dependencies only
 - Removed redundant transitive dependency pins and made `Gemfile` read the exact Ruby version from `.ruby-version`
 - Refreshed compatible locked dependency versions and tracked `Gemfile.lock` for reproducible CI development environments
@@ -64,18 +73,21 @@
 ## [0.7.0] - 2026-09-05
 
 ### Added
+
 - Added stable `source_path`, `category_path`, and `category_slug` document metadata and JSON index fields
 - Added exact `path:` resolution for document and category tags plus explicit category aggregation
 - Added path/date permalink placeholders and full-path-first category mappings
 - Added configurable `warn` or `strict` handling for unresolved and ambiguous tag references
 
 ### Fixed
+
 - Ambiguous tags no longer silently select the first match
 - Duplicate generated permalinks now abort the build and identify every conflicting source file
 
 ## [0.6.1] - 2026-09-03
 
 ### Changed
+
 - Text extraction cache keys now include the source digest, extraction configuration, Plaintext version, and cache schema version so configuration or extractor changes invalidate stale results
 - Extracted document content now retains searchable metadata for title, category, file type, and date
 - Text cache cleanup now preserves shared digest files and removes orphaned files safely
@@ -86,30 +98,35 @@
 - Removed redundant package metadata and duplicate development dependency declarations
 
 ### Fixed
+
 - Replaced use of the private ActiveSupport deprecation API with the public `ActiveSupport.deprecator` API
 - Empty extraction results now fall back to metadata-only searchable content
 - Manifest loading now validates entries, logs filesystem read failures, and resets dirty state after successful saves
 - Updated stale CI, development, cache-cleanup, and package-lock documentation
 
 ### Tests
+
 - Added real PDF extraction coverage and stronger cache-hit/persistence assertions
 - Added tests for cache configuration invalidation, UTF-8 byte truncation, shared cache references, orphan cleanup, and conditional cache exclusion
 
 ## [0.6.0] - 2026-08-27
 
 ### Added
+
 - Auto-inject `file_type`, `icon_url`, and `icon_set` into jekyll-client-search's `passthrough_fields` config when `documents` is in the search collections — zero extra config needed for icons in search results
 - Documented field renaming in jekyll-client-search for integration with other search conventions
 - Framework-agnostic CSS file (`assets/css/documents.css`) with icon scaling utility classes (`icon-x1` through `icon-x9`: 16px to 512px) — no dependency on Bulma, Bootstrap, or Tailwind
 - Icons default to `1em` (line-height) so they scale with surrounding text
 
 ### Changed
+
 - Renamed icon CSS class from `file-icon` to `document-file-icon` to avoid collision with Bulma's `.file-icon` (which uses `display: flex` and breaks inline SVG icons onto a separate line)
 - Inline `1em` sizing added to JS-rendered and folder icons as a fallback when the CSS file is not included
 
 ## [0.5.0] - 2026-08-27
 
 ### Added
+
 - Text extraction from PDF, DOCX, XLSX, PPTX, ODT, ODS, and ODP files via the optional `plaintext` gem, enabling full-text search of document contents through `jekyll-client-search`
 - `extract_text` configuration option to enable text extraction (disabled by default)
 - `text_max_bytes` configuration option to control extracted text truncation (default 500KB)
@@ -120,6 +137,7 @@
 - `plaintext` as a development dependency for testing extraction
 
 ### Changed
+
 - Minimum Ruby version raised from 3.3 to 3.4 (tested on Ruby 3.4.10)
 - RuboCop target version updated from 3.3 to 3.4
 - Updated development dependencies: `rubocop` ~> 1.90, `rubocop-performance` ~> 1.27, `simplecov` ~> 1.1, `rake` ~> 13.4
@@ -130,18 +148,19 @@
 - Suppressed ActiveSupport deprecation warnings from the `plaintext` gem (`String#mb_chars`, deprecated in Rails 8.2)
 
 ### Fixed
+
 - `CHANGELOG.md` file permissions corrected to be world-readable (was `600`, now `644`)
 
 ## [0.4.0] - 2026-08-26
 
 ### Added
+
 - `categories` array baked into each document's data (in addition to the existing singular `category`) for compatibility with search plugins like `jekyll-client-search` that expect the plural Jekyll convention
 - Searchable content string (title, category, file type, date) set as document content so client-side search engines can index uploaded documents
 
 ### Changed
-- Refactored `Generator#generate` by extracting `bake_document_data` and `searchable_content` helper methods to keep method length within RuboCop limits
 
-### Changed
+- Refactored `Generator#generate` by extracting `bake_document_data` and `searchable_content` helper methods to keep method length within RuboCop limits
 - Simplified release workflow to tag-push trigger (`push: tags: v*`) — no manual `gh release create` needed
 - Switched to RubyGems trusted publishing (`rubygems/release-gem@v1` with OIDC)
 - Centralized version in `version.rb` as single source of truth — removed `version` field from `package.json` (was drifted to 0.3.1)
@@ -157,6 +176,7 @@
 ## [0.3.3] - 2026-08-12
 
 ### Added
+
 - `{% doc_link "title" %}` Liquid tag for linking to documents by partial title or slug match (case-insensitive); renders file icon, title, and human-readable file size; supports `text:"custom label"`, `icon:false`, and `size:false` options
 - `{% doc_category "name" %}` Liquid tag for linking to category pages or listing documents by category; supports `text:"label"`, `list:true`, and `limit:N` options
 - `file_size` attribute baked into each document's data at generation time
@@ -166,20 +186,24 @@
 ## [0.3.2] - 2026-08-12
 
 ### Added
+
 - Auto-registration of gem-packaged `_layouts` and `_includes` via a `:site, :after_init` hook so Jekyll discovers the `document` layout and all includes without the gem being declared as a theme; user-provided files always take precedence
 - 7 RSpec examples for `LayoutRegistrar` covering copy, override, idempotency, and hook registration
 
 ### Fixed
+
 - Corrected publish workflow Ruby version from 3.2 to 3.3 to match the gemspec `required_ruby_version` so the gem builds and publishes to RubyGems successfully
 
 ## [0.3.1] - 2026-08-03
 
 ### Added
+
 - Added the context-aware `{% document_icon page %}` Liquid tag for simple icon rendering
 - Added installed-gem system coverage for all supported document types and icon themes
 - Added Playwright browser coverage for search interaction, links, icons, baseurl, and network errors
 
 ### Changed
+
 - Minimum Ruby version raised from `>= 3.2` to `>= 3.3`
 - Updated RuboCop target Ruby version to 3.3
 - Updated compatible development gems, including RuboCop, Reek, RSpec, and Playwright tooling
@@ -187,6 +211,7 @@
 - Added package-content checks to verify the built gem contains runtime templates, icons, JavaScript, and Liquid tags
 
 ### Fixed
+
 - Corrected non-color icon mappings to reference packaged SVG assets
 - Registered packaged icons and search JavaScript for copying during Jekyll builds
 - Made document search respect the configured index path and site base URL
@@ -197,6 +222,7 @@
 - Made Reek failures fail the quality task consistently
 
 ### Verification
+
 - 186 Ruby/system examples passing with 100% Ruby line coverage
 - 3 Playwright browser tests passing
 - 0 RuboCop offenses, 0 Reek warnings, and 0 Bundler Audit vulnerabilities
@@ -204,6 +230,7 @@
 ## [0.3.0] - 2026-07-23
 
 ### Added
+
 - **Baked icon data**: Generator now bakes `icon_url` and `icon_set` into each document's data at build time, eliminating the need for Liquid context in filters
 - **`FileTypeIcons.icon_for` class method**: Allows icon URL resolution without a Liquid context (used by generator)
 - **Search JavaScript wired up**: `_includes/documents_search.html` now loads Lunr.js and `documents-search.js` for out-of-the-box client-side search
@@ -213,6 +240,7 @@
 - **System test for full build pipeline**: End-to-end test covering generator → JSON index → tag rendering
 
 ### Changed
+
 - **Minimum Ruby version**: Bumped from `>= 2.7` to `>= 3.2` (zeitwerk 2.7+ — a Jekyll dependency — requires Ruby >= 3.2)
 - **RuboCop `TargetRubyVersion`**: Updated from `2.7` to `3.2` to match gemspec
 - **Templates use baked icon data**: `latest_documents.html`, `documents_list.html`, `document.html` now use `{{ doc.icon_url }}` instead of the broken `file_type_icon_tag` filter
@@ -227,6 +255,7 @@
 - **Reek**: 0 warnings (7 files inspected)
 
 ### Fixed
+
 - **Icon set config ignored in templates** (High): `file_type_icon_tag` filter never received Liquid context, causing `icon_set` config to be silently ignored — always fell back to `"color"`. Fixed by baking icon URLs into document data at generation time
 - **`rel_path` slicing** (Low): Replaced fragile `path[(site.source.length + 1)..]` with `String#delete_prefix` for robustness
 - **`Date.parse` in `parse_filename`** (Low): Replaced with `Date.new(year, month, day)` using integer-converted regex captures for clarity
@@ -237,6 +266,7 @@
 ## [0.2.0] - 2026-03-12
 
 ### Added
+
 - **Comprehensive code quality tools** (RuboCop, Reek, Bundler Audit, SimpleCov)
 - **98.99% test coverage** with integration tests for Liquid tags
 - **Enhanced release automation** with 10 safety checks and validations
@@ -250,6 +280,7 @@
 - **Post-release verification** with helpful links
 
 ### Changed
+
 - **Consolidated documentation** (README.Development.md combines all dev docs)
 - **Simplified README.md** with KISS approach
 - **Improved Rake tasks** with better organization and help system
@@ -257,12 +288,14 @@
 - **Better error handling** in release scripts
 
 ### Fixed
+
 - **Liquid tag testing** through integration tests (resolves 98% coverage)
 - **Keyword argument compatibility** in filters
 - **Release script safety** with comprehensive validation
 - **Documentation consistency** across all markdown files
 
 ### Development
+
 - **Quality metrics**: 98.99% coverage • 0 vulnerabilities • 3 RuboCop offenses
 - **Release workflow**: Fully automated with rollback capability
 - **Testing**: 79 examples, 0 failures, integration tests for all features
@@ -270,11 +303,13 @@
 ## [0.1.2] - 2026-03-09
 
 ### Added
+
 - **Release automation scripts**
 
 ## [0.1.1] - 2026-03-09
 
 ### Added
+
 - **4 icon sets**: color, lines, minimal, ultra-minimal (configurable)
 - File type icons for 20+ formats (PDF, DOCX, XLSX, etc.)
 - Folder icons for category lists
@@ -287,6 +322,7 @@
 - `icon_set` configuration option
 
 ### Fixed
+
 - Icon URLs (now using actual svgrepo.com icons)
 - XSS vulnerabilities (HTML escaping)
 - Date format standardized to ISO (YYYY-MM-DD)
@@ -294,17 +330,20 @@
 - JavaScript search null safety
 
 ### Changed
+
 - Icons now included in gem (no external dependencies)
 - JSON index includes file_type and extension
 - Search results display icons dynamically
 - Improved documentation and examples
 
 ### Attribution
+
 - Icons from [SVG Repo](https://www.svgrepo.com)
 
 ## [0.1.0] - 2026-03-09
 
 ### Initial Release
+
 - Auto-collection from `assets/documents/`
 - Filename parsing: `YYYY-MM-DD_Title.ext`
 - Category from folder structure
