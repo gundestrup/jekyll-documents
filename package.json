@@ -24,9 +24,9 @@
   },
   "homepage": "https://github.com/gundestrup/jekyll-documents#readme",
   "devDependencies": {
-    "@playwright/test": "1.62.1",
+    "@playwright/test": "1.63.0",
     "lunr": "2.3.9",
-    "markdownlint-cli2": "0.23.2"
+    "markdownlint-cli2": "0.23.3"
   },
   "overrides": {
     "smol-toml": "1.8.0"

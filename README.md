@@ -116,6 +116,36 @@ Link mode renders an `<a>` tag to the category page. List mode renders a `<ul>` 
 Use `path:` for an exact, case-sensitive category path, `limit:N` to cap the list, and
 `aggregate:true list:true` to explicitly combine repeated short category names.
 
+## Document template customization
+
+The document layout provides two optional include hooks. Both are empty by default, and the
+`LayoutRegistrar` copies them only when the site does not already provide a file with that name:
+
+- `_includes/document_metadata_extra.html` renders inside the document metadata paragraph, after the
+  date and category.
+- `_includes/document_download_attributes.html` renders inside the opening tag of the document
+  download link. It should output zero or more valid HTML attributes, including any leading spaces.
+
+For example, a site can put a downloads label or count display in the metadata include, and add
+analytics attributes to the download link without copying the full document layout. These hooks are
+provider-neutral; the site owns their content and any associated JavaScript.
+
+### Optional GoatCounter click events
+
+If the site loads GoatCounter's `count.js`, it can record clicks on the document-page download link
+using the attributes include. Use a stable, unique event name for each document:
+
+```liquid
+ data-goatcounter-click="download-{{ page.source_path | url_encode | escape }}"
+ data-goatcounter-no-session="1"
+```
+
+`data-goatcounter-no-session="1"` counts repeat clicks by the same visitor. GoatCounter counts a
+click attempt, not a confirmed file transfer. This hook covers the download link on the document
+page only; direct file links in site-authored listings or posts need the same event attributes of
+their own. The gem does not load GoatCounter, fetch event totals, or combine historical baselines.
+Those remain optional site-level analytics behavior.
+
 ## Configuration
 
 ```yaml

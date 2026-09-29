@@ -57,6 +57,8 @@ RSpec.describe "Gem packaging", type: :system do
       _includes/latest_documents.html
       _includes/documents_search.html
       _includes/category_list.html
+      _includes/document_metadata_extra.html
+      _includes/document_download_attributes.html
       assets/js/documents-search.js
       assets/icons/color/pdf-document-svgrepo-com.svg
       assets/icons/lines/pdf-file-type-svgrepo-com.svg

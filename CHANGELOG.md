@@ -1,5 +1,22 @@
 # Changelog
 
+## [Unreleased]
+
+## [0.7.6] - 2026-09-29
+
+### Added
+
+- Optional document metadata and download-link attribute include hooks in the generated layout
+- README recipe for provider-neutral template customization and optional GoatCounter click events
+
+### Changed
+
+- Bump dev dependencies: simplecov 1.3.1, @playwright/test 1.63.0, markdownlint-cli2 0.23.3 (plus transitive activesupport 8.1.4, regexp_parser 2.13.1, sass-embedded 1.105.0)
+
+### Fixed
+
+- Browser fixture build now invokes `bundle exec jekyll` and surfaces build output on failure — the previous bare `jekyll` invocation silently swallowed a sass-embedded version conflict
+
 ## [0.7.5] - 2026-09-21
 
 ### Changed

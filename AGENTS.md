@@ -60,6 +60,8 @@ _includes/latest_documents.html            # Recent docs list (uses document_ico
 _includes/documents_list.html              # Full doc list (uses document_icon tag)
 _includes/category_list.html               # Category folders (reads icon_set from first doc)
 _includes/documents_search.html            # Search input + Lunr.js + documents-search.js
+_includes/document_metadata_extra.html     # Optional metadata extension hook
+_includes/document_download_attributes.html # Optional download-link attributes hook
 _layouts/document.html                     # Single document page (uses document_icon tag)
 assets/js/documents-search.js              # Client-side Lunr search
 assets/css/documents.css                   # Framework-agnostic icon sizing (icon-x1 through icon-x9)
@@ -90,7 +92,7 @@ Since `site.documents` is an array (not config), `site.documents.icon_set` is ni
 
 ### 6. Layouts and includes are auto-copied, not themed
 
-Jekyll only auto-discovers `_layouts` and `_includes` from **theme gems** (via the `theme:` config key). This gem is a plugin, not a theme, so `LayoutRegistrar` copies the gem's `_layouts/` and `_includes/` into the site source directory via a `:site, :after_init` hook. Files already present in the user's site are never overwritten. **Do not remove the hook** — without it, Jekyll cannot find the `document` layout and the includes.
+Jekyll only auto-discovers `_layouts` and `_includes` from **theme gems** (via the `theme:` config key). This gem is a plugin, not a theme, so `LayoutRegistrar` copies the gem's `_layouts/` and `_includes/` into the site source directory via a `:site, :after_init` hook. Files already present in the user's site are never overwritten. **Do not remove the hook** — without it, Jekyll cannot find the `document` layout and the includes. The document layout exposes optional `document_metadata_extra.html` and `document_download_attributes.html` includes so sites can customize those areas without forking the layout.
 
 ## Quality Gates
 

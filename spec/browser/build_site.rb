@@ -3,6 +3,7 @@
 require "fileutils"
 require "tmpdir"
 require "rubygems"
+require "open3"
 
 site_dir = Dir.mktmpdir("jekyll-documents-browser-site-")
 destination = File.join(site_dir, "_site")
@@ -52,9 +53,11 @@ File.write(File.join(site_dir, "_config.yml"), <<~YAML)
     icon_set: color
 YAML
 
-success = system("jekyll", "build", "--source", site_dir, "--destination", destination,
-                 out: File::NULL, err: File::NULL)
-abort "Jekyll browser fixture build failed" unless success
+output, status = Open3.capture2e(
+  "bundle", "exec", "jekyll", "build",
+  "--source", site_dir, "--destination", destination
+)
+abort "Jekyll browser fixture build failed:\n#{output}" unless status.success?
 
 server_root = Dir.mktmpdir("jekyll-documents-browser-server-")
 FileUtils.mkdir_p(File.join(server_root, "manual"))

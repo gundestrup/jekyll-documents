@@ -18,6 +18,8 @@ RSpec.describe Jekyll::Documents::LayoutRegistrar do
     copied = File.read(File.join(temp_source, "_layouts", "document.html"))
     expect(copied).to include("{{ page.title }}")
     expect(copied).to include("{{ page.file_url | relative_url }}")
+    expect(copied).to include("{% include document_metadata_extra.html %}")
+    expect(copied).to include("{% include document_download_attributes.html %}")
   end
 
   it "copies gem _includes into the site source" do
@@ -28,6 +30,8 @@ RSpec.describe Jekyll::Documents::LayoutRegistrar do
       documents_list.html
       category_list.html
       documents_search.html
+      document_metadata_extra.html
+      document_download_attributes.html
     ].each do |file|
       expect(File.exist?(File.join(temp_source, "_includes", file))).to be true
     end

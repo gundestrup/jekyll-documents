@@ -70,6 +70,14 @@ RSpec.describe "Installed gem Jekyll build", type: :system do
       File.join(gem_root, "_layouts", "document.html"),
       File.join(dir, "_layouts", "document.html")
     )
+    File.write(
+      File.join(dir, "_includes", "document_metadata_extra.html"),
+      "<br><strong>Extra:</strong> {{ page.category }}"
+    )
+    File.write(
+      File.join(dir, "_includes", "document_download_attributes.html"),
+      ' data-document-source="{{ page.source_path | escape }}"'
+    )
 
     File.write(File.join(dir, "_layouts", "default.html"), <<~HTML)
       ---
@@ -128,8 +136,12 @@ RSpec.describe "Installed gem Jekyll build", type: :system do
     content = File.read(page)
     expect(content).to include('<article class="document">')
     expect(content).to include("Annual Report")
+    expect(content).to include("<strong>Extra:</strong> reports")
     expect(content).to include(
       'href="/manual/assets/documents/reports/2026-03-01_Annual_Report.pdf"'
+    )
+    expect(content).to include(
+      'data-document-source="reports/2026-03-01_Annual_Report.pdf"'
     )
     expect(content).to include("<img")
     expect(content).to include("document-file-icon")
