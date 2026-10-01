@@ -1,6 +1,6 @@
 # .engineering-memory.yml — last knowledge sync with engineering-memory.
 # Written by engineering-memory/bin/kb-sync.rb (see prompts/sync.md).
 # Do not hand-edit — regenerate at each sync.
-synced_at:   "2026-09-30"
-repo_commit: "00debbf"
-kb_commit:   "4c6d1bc"
+synced_at:   "2026-10-01"
+repo_commit: "d5d28cc"
+kb_commit:   "90b53ef"
