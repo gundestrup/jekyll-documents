@@ -182,7 +182,7 @@ namespace :version do
       warn "⚠️  Semgrep not installed — skipping security scan"
     else
       puts "Running Semgrep security scan..."
-      output = `semgrep scan --config .semgrep.yml --json lib/ 2>/dev/null`
+      output = `semgrep scan --config .semgrep.yml --json . 2>/dev/null`
       findings = JSON.parse(output)["results"]
       if findings.empty?
         puts "✅ Semgrep: 0 findings"

@@ -1,7 +1,7 @@
 # Semgrep configuration for jekyll-documents
 # https://semgrep.dev/docs/
 #
-# Run: semgrep scan --config .semgrep.yml --error lib/
+# Run: semgrep scan --config .semgrep.yml --error .
 
 rules:
   # Detect String#scan with unanchored polynomial regex (ReDoS).

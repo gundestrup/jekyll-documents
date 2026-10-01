@@ -166,6 +166,7 @@ RSpec.describe "Installed gem Jekyll build", type: :system do
     expect(positions).to eq(positions.sort)
 
     expected_categories = %w[open-format presentations reports spreadsheets]
+    # nosemgrep: ruby-redos-string-scan — asserting on generated HTML output, not user input
     categories = list.scan(%r{<small>\((?:[^,]+), ([^)]+)\)</small>}).flatten.uniq.sort
     expect(categories).to eq(expected_categories)
   end
