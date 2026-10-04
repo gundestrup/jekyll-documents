@@ -1,7 +1,7 @@
 # jekyll-documents
 
 [![Status: Active](https://img.shields.io/badge/status-active-success)](https://github.com/gundestrup/jekyll-documents)
-[![Tests](https://github.com/gundestrup/jekyll-documents/actions/workflows/test.yml/badge.svg)](https://github.com/gundestrup/jekyll-documents/actions/workflows/test.yml)
+[![Tests](https://github.com/gundestrup/jekyll-documents/actions/workflows/ci.yml/badge.svg)](https://github.com/gundestrup/jekyll-documents/actions/workflows/ci.yml)
 [![Codecov](https://codecov.io/gh/gundestrup/jekyll-documents/graph/badge.svg)](https://codecov.io/gh/gundestrup/jekyll-documents)
 [![Gem Version](https://img.shields.io/gem/v/jekyll-documents)](https://rubygems.org/gems/jekyll-documents)
 [![Gem Downloads](https://img.shields.io/gem/dt/jekyll-documents)](https://rubygems.org/gems/jekyll-documents)
