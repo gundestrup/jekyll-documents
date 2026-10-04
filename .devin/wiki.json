@@ -1,18 +1,18 @@
 {
   "repo_notes": [
-    "Jekyll plugin (Ruby >= 3.4) that turns files in assets/documents/ into browsable document pages with icons, categories, and search.",
-    "Architecture: AssetsGenerator publishes packaged assets → Generator scans files → parses YYYY-MM-DD_Title.ext filenames → bakes icon_url/icon_set into document data → creates Jekyll collection → JsonIndexGenerator builds /documents.json for Lunr search.",
-    "Key gotcha: Liquid filters don't receive context, so templates should use the context-aware {% document_icon doc %} tag. The tag uses baked icon data and applies the site baseurl automatically.",
-    "Key gotcha: Jekyll::Drops::SiteDrop#config always returns nil in Liquid. Config must be read via Ruby Configuration.read(site) in tags/generators, not via {{ site.config }} in templates.",
-    "Key gotcha: public_class_method :new is required in LatestDocumentsTag because Liquid::Tag makes .new private. Do not remove.",
-    "Quality gates: 0 RuboCop offenses, 98%+ Ruby line coverage. Run 'rake quality' before commit.",
-    "See AGENTS.md for full project context, gotchas, and conventions."
+    { "content": "Jekyll plugin (Ruby >= 3.4) that turns files in assets/documents/ into browsable document pages with icons, categories, and search." },
+    { "content": "Architecture: AssetsGenerator publishes packaged assets → Generator scans files → parses YYYY-MM-DD_Title.ext filenames → bakes icon_url/icon_set into document data → creates Jekyll collection → JsonIndexGenerator builds /documents.json for Lunr search." },
+    { "content": "Key gotcha: Liquid filters don't receive context, so templates should use the context-aware {% document_icon doc %} tag. The tag uses baked icon data and applies the site baseurl automatically." },
+    { "content": "Key gotcha: Jekyll::Drops::SiteDrop#config always returns nil in Liquid. Config must be read via Ruby Configuration.read(site) in tags/generators, not via {{ site.config }} in templates." },
+    { "content": "Key gotcha: public_class_method :new is required in LatestDocumentsTag because Liquid::Tag makes .new private. Do not remove." },
+    { "content": "Quality gates: 0 RuboCop offenses, 98%+ Ruby line coverage. Run 'rake quality' before commit." },
+    { "content": "See AGENTS.md for full project context, gotchas, and conventions." }
   ],
   "pages": [
     {
       "title": "Architecture Overview",
       "purpose": "High-level architecture of the jekyll-documents plugin: generators, Liquid tags/filters, template includes, and data flow from file scanning to rendered pages",
-      "page_notes": ["Include Mermaid diagram of data flow: Generator → Collection → JSON Index → Templates"]
+      "page_notes": [{ "content": "Include Mermaid diagram of data flow: Generator → Collection → JSON Index → Templates" }]
     },
     {
       "title": "Generator",
