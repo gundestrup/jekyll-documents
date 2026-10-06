@@ -13,7 +13,6 @@ module Jekyll
 
     class Configuration
       RESOLUTION_MODES = %w[warn strict].freeze
-      private_constant :RESOLUTION_MODES
 
       DEFAULTS = {
         "root" => "assets/documents",

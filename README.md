@@ -116,6 +116,17 @@ Link mode renders an `<a>` tag to the category page. List mode renders a `<ul>` 
 Use `path:` for an exact, case-sensitive category path, `limit:N` to cap the list, and
 `aggregate:true list:true` to explicitly combine repeated short category names.
 
+**List the most recent documents**:
+
+```liquid
+{% latest_documents %}
+{% latest_documents count:3 %}
+{% latest_documents count:3 category:"minutes" %}
+```
+
+`count:` defaults to `latest_default_count` (5); `category:` filters to a single category.
+Unlike `{% include latest_documents.html %}`, the tag reads its defaults from site config.
+
 ## Document template customization
 
 The document layout provides two optional include hooks. Both are empty by default, and the
@@ -152,7 +163,9 @@ Those remain optional site-level analytics behavior.
 documents:
   root: "assets/documents"
   icon_set: "color"
+  include_extensions: [".pdf", ".docx", ".pptx", ".xlsx", ".odt", ".ods", ".odp"]
   strict_filename: true
+  strict_extensions: true
   resolution_mode: "warn"
 ```
 
@@ -204,6 +217,7 @@ Usage with the `document_icon` tag:
 
 ```liquid
 {% document_icon page class:"document-file-icon icon-x2" %}
+{% document_icon doc alt:"Board minutes" %}
 ```
 
 Or with any `<img>`:

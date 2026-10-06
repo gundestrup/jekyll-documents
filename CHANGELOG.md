@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+### Added
+
+- `Jekyll::Documents::Interface.to_h` — the public tag/filter/config/enum
+  surface derived from the code constants and the Liquid tag registry,
+  serialized to a committed `interface.yml` by `rake interface` for
+  downstream tooling (e.g. the jekyll-imgflow-vscode parity spec).
+- `spec/interface_spec.rb` pins code ↔ manifest ↔ docs: a stale
+  `interface.yml`, an unmanifested tag/param/config key, or an
+  undocumented tag/param fails the suite.
+- README coverage for `document_icon alt:`, the `{% latest_documents %}`
+  tag options (`count:`/`category:`), and `documents.include_extensions`.
+
 ## [0.7.6] - 2026-09-29
 
 ### Added

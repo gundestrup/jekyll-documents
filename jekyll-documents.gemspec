@@ -31,7 +31,8 @@ Gem::Specification.new do |spec|
     ">= #{File.read(File.expand_path('.ruby-version', __dir__)).strip[/\d+\.\d+/]}"
 
   spec.files         = Dir.glob("{lib,assets,_includes,_layouts}/**/*") +
-                       ["README.md", "CHANGELOG.md", "LICENSE", "jekyll-documents.gemspec"]
+                       ["README.md", "CHANGELOG.md", "LICENSE", "interface.yml",
+                        "jekyll-documents.gemspec"]
   spec.require_paths = ["lib"]
 
   spec.add_dependency "jekyll", ">= 4.4", "< 5.0"

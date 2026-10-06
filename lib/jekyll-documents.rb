@@ -20,6 +20,8 @@ require_relative "jekyll/documents/tags/document_icon"
 require_relative "jekyll/documents/tags/doc_link"
 require_relative "jekyll/documents/tags/doc_category"
 
+require_relative "jekyll/documents/interface"
+
 module Jekyll
   module Documents
     # Namespace module for the plugin.
