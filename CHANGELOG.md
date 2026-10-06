@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.7.7] - 2026-10-06
+
 ### Added
 
 - `Jekyll::Documents::Interface.to_h` — the public tag/filter/config/enum
