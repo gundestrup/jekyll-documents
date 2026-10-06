@@ -14,6 +14,14 @@
 - README coverage for `document_icon alt:`, the `{% latest_documents %}`
   tag options (`count:`/`category:`), and `documents.include_extensions`.
 
+### Security
+
+- Dev-tooling audit gate: `scripts/npm-audit.mjs` + `.audit-allow.json`
+  replace the bare `npm audit` CI step — patchable transitive deps are
+  forced to fixed versions via `overrides` (smol-toml, katex), and only
+  explicitly allowlisted unpatched advisories are tolerated (braces,
+  dev-only, no patched release).
+
 ## [0.7.6] - 2026-09-29
 
 ### Added

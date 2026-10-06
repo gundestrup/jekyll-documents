@@ -5,7 +5,8 @@
   "scripts": {
     "lint:markdown": "markdownlint-cli2",
     "test": "npm run test:browser",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "audit": "node scripts/npm-audit.mjs"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
     "markdownlint-cli2": "0.23.3"
   },
   "overrides": {
-    "smol-toml": "1.8.0"
+    "smol-toml": "^1.9.0",
+    "katex": "^0.18.2"
   }
 }
