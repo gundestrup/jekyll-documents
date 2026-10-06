@@ -7,7 +7,11 @@ SimpleCov.start do
   skip "/spec/"
   skip "/tmp/"
   minimum_coverage 98
-  formatter SimpleCov::Formatter::CoberturaFormatter if ENV["CI"]
+  if ENV["CI"]
+    formatter SimpleCov::Formatter::MultiFormatter.new(
+      [SimpleCov::Formatter::CoberturaFormatter, SimpleCov::Formatter::JSONFormatter]
+    )
+  end
 end
 
 require "jekyll"

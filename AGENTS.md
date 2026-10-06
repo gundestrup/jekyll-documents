@@ -123,7 +123,7 @@ rake quick            # RuboCop + RSpec only
 | Codecov | CI | Coverage reporting — uploads `coverage/coverage.xml` (Cobertura via `simplecov-cobertura`) after the Ruby quality suite |
 | CodeQL | GitHub (post-push) | Deep security analysis |
 | CodeFactor | Cloud (automatic) | Code quality grading, complexity, duplication |
-| SonarQube Cloud | Cloud (automatic) | Security + quality analysis ([dashboard](https://sonarcloud.io/project/overview?id=gundestrup_jekyll-documents)); `.sonarcloud.properties` excludes `spec/fixtures/` from duplication checks |
+| SonarQube Cloud | CI scan | Security + quality + coverage analysis ([dashboard](https://sonarcloud.io/project/overview?id=gundestrup_jekyll-documents)); `sonar-project.properties` excludes `spec/fixtures/` from duplication checks and imports `coverage/coverage.json` (SimpleCov) |
 | Playwright | CI | Browser E2E tests |
 
 ## Code Conventions
