@@ -16,7 +16,7 @@ desc "Run all tests with coverage"
 task test: %i[install_local spec browser_test]
 
 desc "Run all quality checks (style, docs, security, tests)"
-task quality: %i[install_local rubocop markdownlint bundler_audit spec]
+task quality: %i[markdownlint install_local rubocop bundler_audit spec]
 
 desc "Run tests only (fast)"
 task spec: :install_local do
@@ -48,7 +48,7 @@ task :bundler_audit do
   sh "bundle exec bundler-audit check --update"
 end
 
-desc "Run quick checks (style + tests only)"
+desc "Run quick checks (style + markdown + tests)"
 task quick: :install_local do
   puts "🏃 Running quick checks..."
   begin
@@ -56,6 +56,11 @@ task quick: :install_local do
     puts "✅ Style checks passed"
   rescue StandardError
     puts "⚠️  Style issues found (continuing with tests)"
+  end
+  if File.directory?("node_modules")
+    sh "npm run lint:markdown"
+  else
+    puts "⚠️  node_modules missing — skipping markdownlint"
   end
   sh "bundle exec rspec"
   puts "✅ Tests passed"
@@ -135,8 +140,13 @@ namespace :version do
 
     unless ENV["SKIP_LOCK"]
       sh "bundle lock"
-      # example/ consumes the gem via path: ".." — keep its lockfile in sync
-      Dir.chdir("example") { sh "bundle lock" }
+      # example/ consumes the gem via path: ".." — keep its lockfile in sync.
+      # Explicit BUNDLE_GEMFILE: under `bundle exec` the env var pins the root
+      # Gemfile, so a plain `bundle lock` in example/ would rewrite root's lock.
+      sh "BUNDLE_GEMFILE=example/Gemfile bundle lock"
+
+      # interface.yml embeds the gem version — regenerate or interface_spec fails
+      Rake::Task["interface"].invoke
     end
 
     puts "Bumped #{current} -> #{next_version}"

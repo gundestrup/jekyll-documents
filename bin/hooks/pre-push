@@ -1,6 +1,6 @@
 #!/bin/bash
 # Pre-push hook — full quality gate before pushing
-echo "🔍 Running pre-push checks (rubocop + rspec)..."
+echo "🔍 Running pre-push checks (rubocop + markdownlint + rspec)..."
 echo ""
 if bundle exec rake quick 2>&1 | grep -q "✅ Tests passed"; then
     echo ""

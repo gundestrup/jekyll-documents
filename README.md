@@ -379,7 +379,7 @@ from `PATH`. You can also configure a custom `pdftotext` command through the
 rake              # Ruby quality checks
 rake test         # Rebuild/install gem + Ruby and browser tests
 rake browser_test # Browser search tests (Node.js + Chromium required)
-rake quick        # Fast Ruby check
+rake quick        # Fast check (style + markdown + tests)
 rake help         # Show commands
 ```
 
