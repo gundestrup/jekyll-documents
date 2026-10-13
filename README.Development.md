@@ -6,7 +6,7 @@
 
 ```bash
 rake              # Run all quality checks
-rake quick        # Quick check (style + tests)
+rake quick        # Quick check (style + markdown + tests)
 rake help         # Show all commands
 ```
 
@@ -76,7 +76,7 @@ rake              # Full check before commit
 ```
 
 Pre-commit hook runs RuboCop + Semgrep (fast). Pre-push hook runs
-`rake quick` (RuboCop + RSpec) as a full quality gate before pushing.
+`rake quick` (RuboCop + markdownlint + RSpec) as a full quality gate before pushing.
 
 ### 4. Test in Real App
 
@@ -166,7 +166,7 @@ bin/install-hooks.sh
 | Hook | What it runs | When |
 | --- | --- | --- |
 | `pre-commit` | `rubocop` only (~2s) | Before each commit |
-| `pre-push` | `rubocop + rspec` (~15s) | Before each push |
+| `pre-push` | `rubocop + markdownlint + rspec` (~15s) | Before each push |
 
 Skip with `git commit --no-verify` or `git push --no-verify`.
 

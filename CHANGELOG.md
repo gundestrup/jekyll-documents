@@ -2,6 +2,26 @@
 
 ## [Unreleased]
 
+## [0.7.8] - 2026-10-13
+
+### Changed
+
+- `rake quick` now runs `markdownlint` between RuboCop and RSpec (skipped when
+  `node_modules` is absent), so the pre-push hook catches Markdown lint errors
+  before CI instead of ~5 minutes in.
+- `rake quality` runs `markdownlint` first, before the gem build/install, so
+  trivial doc errors fail fast.
+- CI workflow supports manual runs via `workflow_dispatch` (covers dropped
+  push events).
+- Bump dev dependencies: rubocop 1.92.0, @playwright/test 1.64.0 (plus
+  transitive uri 1.1.2).
+
+### Fixed
+
+- `rake version:bump` now actually syncs `example/Gemfile.lock` — under
+  `bundle exec`, `BUNDLE_GEMFILE` pinned the root Gemfile, so the `bundle
+  lock` in `example/` silently rewrote the root lockfile instead.
+
 ## [0.7.7] - 2026-10-06
 
 ### Added

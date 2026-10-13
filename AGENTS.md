@@ -110,7 +110,7 @@ semgrep scan --config .semgrep.yml --error .  # 0 security findings
 Quick check during development:
 
 ```bash
-rake quick            # RuboCop + RSpec only
+rake quick            # RuboCop + markdownlint + RSpec
 ```
 
 ### Security and Quality Tools
