@@ -1,22 +1,23 @@
 {
   "repo_notes": [
     { "content": "Jekyll plugin (Ruby >= 3.4) that turns files in assets/documents/ into browsable document pages with icons, categories, and search." },
-    { "content": "Architecture: AssetsGenerator publishes packaged assets → Generator scans files → parses YYYY-MM-DD_Title.ext filenames → bakes icon_url/icon_set into document data → creates Jekyll collection → JsonIndexGenerator builds /documents.json for Lunr search." },
+    { "content": "Architecture: AssetsGenerator publishes packaged assets (CSS/icons/JS) -> Generator scans files -> parses YYYY-MM-DD_Title.ext filenames -> bakes icon_url/icon_set/file_type into document data -> creates the documents collection -> JsonIndexGenerator builds /documents.json for Lunr search -> LayoutRegistrar copies the default layout/includes only when the site lacks them." },
     { "content": "Key gotcha: Liquid filters don't receive context, so templates should use the context-aware {% document_icon doc %} tag. The tag uses baked icon data and applies the site baseurl automatically." },
     { "content": "Key gotcha: Jekyll::Drops::SiteDrop#config always returns nil in Liquid. Config must be read via Ruby Configuration.read(site) in tags/generators, not via {{ site.config }} in templates." },
     { "content": "Key gotcha: public_class_method :new is required in LatestDocumentsTag because Liquid::Tag makes .new private. Do not remove." },
-    { "content": "Quality gates: 0 RuboCop offenses, 98%+ Ruby line coverage. Run 'rake quality' before commit." },
+    { "content": "Text extraction is optional (documents.extract_text, via the plaintext gem): extracted text lands in doc.content with a SHA-256-digest cache in .cache/jekyll-documents/ that survives jekyll clean; falls back to metadata-only content if plaintext is missing." },
+    { "content": "Quality gates: 0 RuboCop offenses, 98%+ Ruby line coverage (SimpleCov). Run 'rake quality' before commit." },
     { "content": "See AGENTS.md for full project context, gotchas, and conventions." }
   ],
   "pages": [
     {
       "title": "Architecture Overview",
-      "purpose": "High-level architecture of the jekyll-documents plugin: generators, Liquid tags/filters, template includes, and data flow from file scanning to rendered pages",
-      "page_notes": [{ "content": "Include Mermaid diagram of data flow: Generator → Collection → JSON Index → Templates" }]
+      "purpose": "High-level architecture of the jekyll-documents plugin: generators, Liquid tags/filters, template includes, optional text extraction, and data flow from file scanning to rendered pages",
+      "page_notes": [{ "content": "Include Mermaid diagram of data flow: Generator -> Collection -> JSON Index -> Templates" }]
     },
     {
       "title": "Generator",
-      "purpose": "How the main Generator class scans assets/documents/, parses filenames, builds slugs, infers categories, and bakes icon data into Jekyll::Document objects",
+      "purpose": "How the main Generator class scans assets/documents/, parses filenames, builds slugs, infers categories from category_path, and bakes icon data into Jekyll::Document objects",
       "parent": "Architecture Overview"
     },
     {
@@ -25,23 +26,33 @@
       "parent": "Architecture Overview"
     },
     {
-      "title": "FileTypeIcons and Filters",
-      "purpose": "Icon set mappings (color/lines/minimal/ultra-minimal), the icon_for class method, and Liquid filters (file_type_icon, file_type_icon_tag, documents_slugify, documents_title_from_filename)",
+      "title": "Linking Tags: doc_link and doc_category",
+      "purpose": "The {% doc_link %} and {% doc_category %} tags in lib/jekyll/documents/tags/: title/slug vs exact path: lookup, text/icon/size overrides, list mode with limit and aggregate, and how resolution_mode warn/strict handles ambiguous references",
       "parent": "Architecture Overview"
     },
     {
       "title": "LatestDocumentsTag",
-      "purpose": "The {% latest_documents %} Liquid tag: argument parsing, rendering, HTML escaping, and why public_class_method :new is required",
+      "purpose": "The {% latest_documents %} Liquid tag: argument parsing (count:, category:), rendering, HTML escaping, and why public_class_method :new is required",
+      "parent": "Architecture Overview"
+    },
+    {
+      "title": "FileTypeIcons, document_icon, and Filters",
+      "purpose": "Icon set mappings (color/lines/minimal/ultra-minimal), the icon_for class method, the context-aware {% document_icon %} tag, and Liquid filters (file_type_icon, file_type_icon_tag, documents_slugify, documents_title_from_filename)",
+      "parent": "Architecture Overview"
+    },
+    {
+      "title": "Text Extraction",
+      "purpose": "Optional plaintext-gem-based extraction (text_extraction_manifest.rb): extract_text/text_max_bytes/text_cache_dir options, SHA-256 digest cache that survives jekyll clean, CLI tool requirements (pdftotext for PDF), and metadata-only fallback",
       "parent": "Architecture Overview"
     },
     {
       "title": "Templates and Includes",
-      "purpose": "How _includes/ and _layouts/ templates render documents with the context-aware document_icon tag and document data (icon_url, icon_set, category, slug)",
+      "purpose": "How _includes/ and _layouts/ render documents, the document_icon tag usage, and the LayoutRegistrar customization hooks (_includes/document_metadata_extra.html and document_download_attributes.html) copied only when the site lacks them",
       "parent": "Architecture Overview"
     },
     {
       "title": "Configuration",
-      "purpose": "All configuration options in _config.yml under 'documents:' key, defaults, and how Configuration.read(site) merges user config with DEFAULTS",
+      "purpose": "All configuration options in _config.yml under 'documents:' (root, icon_set, include_extensions, strict_filename, strict_extensions, resolution_mode, permalink placeholders, category_map, extract_text), defaults, and how Configuration.read(site) merges user config with DEFAULTS",
       "parent": "Architecture Overview"
     },
     {
