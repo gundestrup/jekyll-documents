@@ -105,7 +105,13 @@ rake spec             # All Ruby examples pass with at least 98% coverage
 rake browser_test     # Separate Playwright browser test gate
 bundle exec bundler-audit check --update  # 0 vulnerabilities
 semgrep scan --config .semgrep.yml --error .  # 0 security findings
+npm run audit         # CI's allowlist-aware JavaScript dependency audit
 ```
+
+The allowlist-aware JavaScript audit currently permits the unpatched,
+dev-only `braces` advisory GHSA-vfj7-8cjw-p6xm; `npm audit` reports it
+until a patched release is available. Review `.audit-allow.json` for
+the rationale and expiry.
 
 Quick check during development:
 
