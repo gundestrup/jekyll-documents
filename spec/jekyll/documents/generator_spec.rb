@@ -472,7 +472,7 @@ RSpec.describe Jekyll::Documents::Generator do
     context "when called twice on the same site" do
       include_context "with temp documents directory"
 
-      it "does not duplicate documents" do
+      it "appends documents on each run" do
         create_document("referat", "2026-03-01_Board_Meeting.pdf")
 
         site = site_with_documents

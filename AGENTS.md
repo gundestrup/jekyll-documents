@@ -202,7 +202,7 @@ Documents must follow `YYYY-MM-DD_Title.ext` format. Supported extensions: `.pdf
 
 - [README.md](./README.md) — User-facing quick start and feature overview
 - [README.Development.md](./README.Development.md) — Development workflow, commands, CI/CD
-- [readme.errors.md](./readme.errors.md) — Known bugs and issues with fix status markers
+- [README.todo.md](./README.todo.md) — Roadmap/status notes and companion-extension context
 - [CHANGELOG.md](./CHANGELOG.md) — Version history and release notes
 - [.rubocop.yml](./.rubocop.yml) — Code style rules (TargetRubyVersion 3.4)
 - [jekyll-documents.gemspec](./jekyll-documents.gemspec) — Gem spec and metadata

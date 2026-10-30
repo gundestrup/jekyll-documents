@@ -24,4 +24,9 @@ updates:
     open-pull-requests-limit: 3
     cooldown:
       default-days: 7
-  # Keep CI tooling (Semgrep) up-to-date
+
+# NOTE: The Semgrep container image pin in .github/workflows/ci.yml
+# (jobs.<id>.container.image) cannot be updated by Dependabot — the
+# github-actions ecosystem only covers `uses:` refs and the docker
+# ecosystem only scans Dockerfiles (dependabot/dependabot-core#5819).
+# Bump it manually when new semgrep releases ship.

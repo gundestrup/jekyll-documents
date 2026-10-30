@@ -8,7 +8,7 @@
 > - Coding conventions (frozen strings, double quotes, max line 100, etc.)
 > - Development commands (`rake quick`, `rake quality`, `bundle exec rspec`)
 > - Code quality tools (RuboCop, RSpec, SimpleCov, bundler-audit)
-> - Testing conventions (186 examples, 100% coverage, no regressions)
+> - Testing conventions (319 examples, ≥98% coverage gate, no regressions)
 > - Critical gotchas and release process
 >
 > **Do not duplicate instructions here. Always refer to AGENTS.md.**

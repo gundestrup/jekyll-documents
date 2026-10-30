@@ -4,9 +4,26 @@
 
 ### Changed
 
-- Dev-tooling bump: `@playwright/test` 1.64.1 (patch).
+- Dev-tooling bumps: `markdownlint-cli2` 0.24.0, `rubocop` 1.92.2,
+  `@playwright/test` 1.64.1 (patch); transitive bumps addressable 2.9.1,
+  csv 3.3.7, parser 3.3.13.0, sass-embedded 1.107.0.
+- CI: Semgrep runs as a pinned `semgrep/semgrep` container image
+  (tag + sha256 digest), bumped to 1.183.0. Dependabot cannot update
+  `jobs.<id>.container.image` refs (dependabot/dependabot-core#5819), so
+  `dependabot.yml` documents the pin as a manual bump.
+- CI: `SonarSource/sonarqube-scan-action` v8.3.0 → v8.4.0 (SHA pin).
+- Spec cleanup: renamed the inverted "does not duplicate documents"
+  generator example (it asserted documents ARE appended on a second
+  `generate` run) and trimmed the `latest_documents` integration spec to
+  the unique `Liquid::Template.parse` path it actually covers
+  (319 examples).
 
-- CI: Semgrep moved from an inline `pip3 install semgrep==1.176.1` pin to hashed `.github/requirements-ci.txt` (compiled from `requirements-ci.in`, Python 3.12), installed with `--require-hashes`. Bumped Semgrep to 1.180.0; the version is now Dependabot-visible via a new `pip` ecosystem entry for `/.github`.
+### Security
+
+- `markdownlint-cli2` 0.24.0 pulls in `markdownlint` → `re2js` 2.8.6,
+  affected by GHSA-gg6h-894w-4m9c (quadratic-time DoS in lookbehind
+  matching). Forced patched `re2js` ~2.8.7 (resolves to 2.8.8) via
+  `overrides` — no allowlist entry needed.
 
 ## [0.7.8] - 2026-10-13
 
