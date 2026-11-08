@@ -17,6 +17,19 @@ Turn files in `assets/documents/` into browsable document pages.
 
 **Features**: Auto-collection • File icons • Categories • Search
 
+<!-- markdownlint-disable MD033 -->
+<picture>
+  <source
+    srcset="docs/assets/jekyll-documents-demo.avif"
+    type="image/avif">
+  <source
+    srcset="docs/assets/jekyll-documents-demo.webp"
+    type="image/webp">
+  <img src="docs/assets/jekyll-documents-demo.png"
+       alt="jekyll-documents demo">
+</picture>
+<!-- markdownlint-enable MD033 -->
+
 ## Quick Start
 
 ```ruby

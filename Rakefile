@@ -226,3 +226,8 @@ namespace :version do
     puts "✅ Pre-release checks complete for version #{version}"
   end
 end
+
+desc "Generate docs/assets demo captures (needs Chrome, ffmpeg, img2webp)"
+task "docs:demo" do
+  sh "scripts/docs-demo.sh"
+end
