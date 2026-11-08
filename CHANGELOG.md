@@ -5,8 +5,11 @@
 ### Changed
 
 - Dev-tooling bumps: `markdownlint-cli2` 0.24.0, `rubocop` 1.92.2,
-  `@playwright/test` 1.64.1 (patch); transitive bumps addressable 2.9.1,
-  csv 3.3.7, parser 3.3.13.0, sass-embedded 1.107.0.
+  `@playwright/test` 1.65.0; transitive bumps addressable 2.9.2,
+  csv 3.3.7, parser 3.3.13.0, sass-embedded 1.108.1, nokogiri 1.19.7,
+  activesupport 8.1.4.1, minitest 6.1.0, irb 1.19.0;
+  `BUNDLED WITH` 4.0.6 → 4.0.24.
+- CI: `ruby/setup-ruby` pin bumped v1.335.0 → v1.338.0.
 - CI: Semgrep runs as a pinned `semgrep/semgrep` container image
   (tag + sha256 digest), bumped to 1.183.0. Dependabot cannot update
   `jobs.<id>.container.image` refs (dependabot/dependabot-core#5819), so
