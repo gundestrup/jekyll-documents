@@ -384,6 +384,27 @@ On macOS and other non-standard installations, the executable is discovered
 from `PATH`. You can also configure a custom `pdftotext` command through the
 `plaintext` gem configuration.
 
+## VS Code extension
+
+[jekyll-imgflow-vscode](https://github.com/gundestrup/jekyll-imgflow-vscode)
+autocompletes `{% doc_link %}`, `{% doc_category %}`, `{% document_icon %}`
+and `{% latest_documents %}` in VS Code / VSCodium — document titles and
+categories, tag parameters, and exact `path:` values to disambiguate
+duplicate titles:
+
+<!-- markdownlint-disable MD033 -->
+<picture>
+  <source
+    srcset="https://raw.githubusercontent.com/gundestrup/jekyll-imgflow-vscode/main/docs/assets/document-flow.avif"
+    type="image/avif">
+  <source
+    srcset="https://raw.githubusercontent.com/gundestrup/jekyll-imgflow-vscode/main/docs/assets/document-flow.webp"
+    type="image/webp">
+  <img src="https://raw.githubusercontent.com/gundestrup/jekyll-imgflow-vscode/main/docs/assets/document-flow.png"
+       alt="jekyll-imgflow-vscode: document title, parameter and path: autocomplete">
+</picture>
+<!-- markdownlint-enable MD033 -->
+
 ## Development
 
 ```bash
