@@ -2,7 +2,7 @@
 # Public tag/filter/config surface for tooling (editor extensions, doc linters).
 ---
 gem: jekyll-documents
-version: 0.7.8
+version: 0.7.9
 tags:
   doc_link:
     params:

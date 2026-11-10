@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.7.9] - 2026-11-10
+
 ### Added
 
 - `rake docs:demo` — captures the checked-in illustrative overview as
@@ -11,6 +13,11 @@
 
 ### Changed
 
+- Gemspec `description` now renders as RDoc on rubygems.org — the heredoc
+  opens with an `==`-level heading at column 0 so the gem page shows
+  headings and bullet lists instead of one plain paragraph — and mentions
+  the jekyll-imgflow-vscode VS Code companion extension for tag
+  autocomplete.
 - Dev-tooling bumps: `markdownlint-cli2` 0.24.0, `rubocop` 1.92.2,
   `@playwright/test` 1.65.0; transitive bumps addressable 2.9.2,
   csv 3.3.7, parser 3.3.13.0, sass-embedded 1.108.1, nokogiri 1.19.7,
