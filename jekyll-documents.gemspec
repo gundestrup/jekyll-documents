@@ -12,7 +12,9 @@ Gem::Specification.new do |spec|
   spec.description   = "A Jekyll plugin + theme that scans assets/documents/**, " \
                        "creates a collection item per file, adds metadata " \
                        "(title/date/category), outputs pages, generates " \
-                       "a JSON index for Lunr, and integrates with jekyll-sitemap."
+                       "a JSON index for Lunr, and integrates with jekyll-sitemap. " \
+                       "A companion VS Code extension (jekyll-imgflow-vscode) " \
+                       "provides tag autocomplete; see the README for animated demos."
   spec.homepage      = "https://github.com/gundestrup/jekyll-documents"
   spec.license       = "AGPL-3.0-only"
 
