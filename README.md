@@ -2,16 +2,23 @@
 # jekyll-documents <a href="https://gundestrup.github.io/flow/"><img align="right" src="https://gundestrup.github.io/flow/assets/badges/part-of-flow.svg?v=2" alt="Part of Flow software" height="40"></a>
 <!-- markdownlint-enable MD013 MD033 -->
 
-[![Status: Active](https://img.shields.io/badge/status-active-success)](https://github.com/gundestrup/jekyll-documents)
+[![Status:
+Active](https://img.shields.io/badge/status-active-success)](https://github.com/gundestrup/jekyll-documents)
 [![Tests](https://github.com/gundestrup/jekyll-documents/actions/workflows/ci.yml/badge.svg)](https://github.com/gundestrup/jekyll-documents/actions/workflows/ci.yml)
 [![Codecov](https://codecov.io/gh/gundestrup/jekyll-documents/graph/badge.svg)](https://codecov.io/gh/gundestrup/jekyll-documents)
-[![Gem Version](https://img.shields.io/gem/v/jekyll-documents)](https://rubygems.org/gems/jekyll-documents)
-[![Gem Downloads](https://img.shields.io/gem/dt/jekyll-documents)](https://rubygems.org/gems/jekyll-documents)
-[![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-blue)](LICENSE)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/gundestrup/jekyll-documents)
+[![Gem
+Version](https://img.shields.io/gem/v/jekyll-documents)](https://rubygems.org/gems/jekyll-documents)
+[![Gem
+Downloads](https://img.shields.io/gem/dt/jekyll-documents)](https://rubygems.org/gems/jekyll-documents)
+[![License:
+AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-blue)](LICENSE)
+[![Ask
+DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/gundestrup/jekyll-documents)
 [![CodeFactor](https://www.codefactor.io/repository/github/gundestrup/jekyll-documents/badge)](https://www.codefactor.io/repository/github/gundestrup/jekyll-documents)
-[![Semgrep CE](https://img.shields.io/badge/Semgrep_CE-security-success)](https://github.com/gundestrup/jekyll-documents/security/code-scanning)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=gundestrup_jekyll-documents&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=gundestrup_jekyll-documents)
+[![Semgrep
+CE](https://img.shields.io/badge/Semgrep_CE-security-success)](https://github.com/gundestrup/jekyll-documents/security/code-scanning)
+[![Quality Gate
+Status](https://sonarcloud.io/api/project_badges/measure?project=gundestrup_jekyll-documents&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=gundestrup_jekyll-documents)
 
 Turn files in `assets/documents/` into browsable document pages.
 
@@ -86,8 +93,9 @@ Render a document icon in templates with the context-aware tag:
 {% document_icon page %}
 ```
 
-The tag applies the configured icon set and site `baseurl` automatically. The `file_type_icon` and
-`file_type_icon_tag` filters remain available for lower-level or Ruby-side use.
+The tag applies the configured icon set and site `baseurl` automatically. The
+`file_type_icon` and `file_type_icon_tag` filters remain available for
+lower-level or Ruby-side use.
 
 ## Usage
 
@@ -110,10 +118,11 @@ The tag applies the configured icon set and site `baseurl` automatically. The `f
 {% doc_link path:"Reports/2026-03-01_Annual_Report.pdf" %}
 ```
 
-Renders an `<a>` tag with the file type icon, title, and human-readable file size.
-Use `text:"..."` to override the link text, `icon:false` to hide the icon,
-or `size:false` to hide the file size. A `path:` lookup is exact and case-sensitive after
-normalizing `/` and `\` separators; use it when a title or slug matches multiple documents.
+Renders an `<a>` tag with the file type icon, title, and human-readable file
+size. Use `text:"..."` to override the link text, `icon:false` to hide the icon,
+or `size:false` to hide the file size. A `path:` lookup is exact and
+case-sensitive after normalizing `/` and `\` separators; use it when a title or
+slug matches multiple documents.
 
 **Link to or list a category**:
 
@@ -125,9 +134,10 @@ normalizing `/` and `\` separators; use it when a title or slug matches multiple
 {% doc_category "reports" aggregate:true list:true %}
 ```
 
-Link mode renders an `<a>` tag to the category page. List mode renders a `<ul>` sorted by date.
-Use `path:` for an exact, case-sensitive category path, `limit:N` to cap the list, and
-`aggregate:true list:true` to explicitly combine repeated short category names.
+Link mode renders an `<a>` tag to the category page. List mode renders a `<ul>`
+sorted by date. Use `path:` for an exact, case-sensitive category path,
+`limit:N` to cap the list, and `aggregate:true list:true` to explicitly combine
+repeated short category names.
 
 **List the most recent documents**:
 
@@ -137,38 +147,44 @@ Use `path:` for an exact, case-sensitive category path, `limit:N` to cap the lis
 {% latest_documents count:3 category:"minutes" %}
 ```
 
-`count:` defaults to `latest_default_count` (5); `category:` filters to a single category.
-Unlike `{% include latest_documents.html %}`, the tag reads its defaults from site config.
+`count:` defaults to `latest_default_count` (5); `category:` filters to a single
+category. Unlike `{% include latest_documents.html %}`, the tag reads its
+defaults from site config.
 
 ## Document template customization
 
-The document layout provides two optional include hooks. Both are empty by default, and the
-`LayoutRegistrar` copies them only when the site does not already provide a file with that name:
+The document layout provides two optional include hooks. Both are empty by
+default, and the `LayoutRegistrar` copies them only when the site does not
+already provide a file with that name:
 
-- `_includes/document_metadata_extra.html` renders inside the document metadata paragraph, after the
-  date and category.
-- `_includes/document_download_attributes.html` renders inside the opening tag of the document
-  download link. It should output zero or more valid HTML attributes, including any leading spaces.
+- `_includes/document_metadata_extra.html` renders inside the document
+  metadata paragraph, after the date and category.
+- `_includes/document_download_attributes.html` renders inside the
+  opening tag of the document download link. It should output zero or
+  more valid HTML attributes, including any leading spaces.
 
-For example, a site can put a downloads label or count display in the metadata include, and add
-analytics attributes to the download link without copying the full document layout. These hooks are
-provider-neutral; the site owns their content and any associated JavaScript.
+For example, a site can put a downloads label or count display in the metadata
+include, and add analytics attributes to the download link without copying the
+full document layout. These hooks are provider-neutral; the site owns their
+content and any associated JavaScript.
 
 ### Optional GoatCounter click events
 
-If the site loads GoatCounter's `count.js`, it can record clicks on the document-page download link
-using the attributes include. Use a stable, unique event name for each document:
+If the site loads GoatCounter's `count.js`, it can record clicks on the
+document-page download link using the attributes include. Use a stable, unique
+event name for each document:
 
 ```liquid
  data-goatcounter-click="download-{{ page.source_path | url_encode | escape }}"
  data-goatcounter-no-session="1"
 ```
 
-`data-goatcounter-no-session="1"` counts repeat clicks by the same visitor. GoatCounter counts a
-click attempt, not a confirmed file transfer. This hook covers the download link on the document
-page only; direct file links in site-authored listings or posts need the same event attributes of
-their own. The gem does not load GoatCounter, fetch event totals, or combine historical baselines.
-Those remain optional site-level analytics behavior.
+`data-goatcounter-no-session="1"` counts repeat clicks by the same visitor.
+GoatCounter counts a click attempt, not a confirmed file transfer. This hook
+covers the download link on the document page only; direct file links in
+site-authored listings or posts need the same event attributes of their own. The
+gem does not load GoatCounter, fetch event totals, or combine historical
+baselines. Those remain optional site-level analytics behavior.
 
 ## Configuration
 
@@ -182,14 +198,14 @@ documents:
   resolution_mode: "warn"
 ```
 
-`resolution_mode` controls ambiguous or unknown path references. The default `warn` mode logs
-all matching candidates and renders nothing. Set it to `strict` to log the same diagnostic and
-abort the build.
+`resolution_mode` controls ambiguous or unknown path references. The default
+`warn` mode logs all matching candidates and renders nothing. Set it to `strict`
+to log the same diagnostic and abort the build.
 
-Generated documents expose `source_path`, `category_path`, and `category_slug`. Category mappings
-check the complete `category_path` before falling back to its final directory component.
-Permalinks support `:category`, `:category_path`, `:slug`, `:source_path`, `:date`, `:year`,
-`:month`, and `:day`. For example:
+Generated documents expose `source_path`, `category_path`, and `category_slug`.
+Category mappings check the complete `category_path` before falling back to its
+final directory component. Permalinks support `:category`, `:category_path`,
+`:slug`, `:source_path`, `:date`, `:year`, `:month`, and `:day`. For example:
 
 ```yaml
 documents:
@@ -199,8 +215,8 @@ documents:
     Research: "Research"
 ```
 
-The default permalink remains backward compatible. Any duplicate final permalink is fatal and
-the build error lists every conflicting `source_path`.
+The default permalink remains backward compatible. Any duplicate final permalink
+is fatal and the build error lists every conflicting `source_path`.
 
 See [configuration.rb](lib/jekyll/documents/configuration.rb) for all options.
 
@@ -244,10 +260,11 @@ dependency on Bulma, Bootstrap, Tailwind, or any other framework.
 
 ## Search Integration
 
-Documents are compatible with [jekyll-client-search](https://github.com/gundestrup/jekyll-client-search)
-for client-side search. Each document has `categories` (plural array) and
-searchable `content` baked in at generation time, so search plugins can
-index uploaded files alongside posts.
+Documents are compatible with
+[jekyll-client-search](https://github.com/gundestrup/jekyll-client-search) for
+client-side search. Each document has `categories` (plural array) and searchable
+`content` baked in at generation time, so search plugins can index uploaded
+files alongside posts.
 
 To include documents in the search index, add `documents` to the
 `collections` list in `_config.yml`:
@@ -304,11 +321,17 @@ client_search:
 }
 
 /* Theme-aware icon sizing */
-.client-search-result[data-icon-set="color"] .client-search-result-icon { width: 2em; }
-.client-search-result[data-icon-set="ultra-minimal"] .client-search-result-icon { width: 1em; }
+.client-search-result[data-icon-set="color"] .client-search-result-icon {
+  width: 2em;
+}
+.client-search-result[data-icon-set="ultra-minimal"]
+  .client-search-result-icon {
+  width: 1em;
+}
 ```
 
-See the [jekyll-client-search README](https://github.com/gundestrup/jekyll-client-search#customizing-search-results-with-css)
+See the [jekyll-client-search
+README](https://github.com/gundestrup/jekyll-client-search#customizing-search-results-with-css)
 for all CSS customization options.
 
 ## Text Extraction
