@@ -10,8 +10,7 @@ Version](https://img.shields.io/gem/v/jekyll-documents)](https://rubygems.org/ge
 Downloads](https://img.shields.io/gem/dt/jekyll-documents)](https://rubygems.org/gems/jekyll-documents)
 [![License:
 AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-blue)](LICENSE)
-[![Ask
-DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/gundestrup/jekyll-documents)
+[<img src="https://devin.ai/assets/askdeepwiki.png" alt="Ask DeepWiki" height="20"/>](https://deepwiki.com/gundestrup/jekyll-documents)
 [![CodeFactor](https://www.codefactor.io/repository/github/gundestrup/jekyll-documents/badge)](https://www.codefactor.io/repository/github/gundestrup/jekyll-documents)
 [![Semgrep
 CE](https://img.shields.io/badge/Semgrep_CE-security-success)](https://github.com/gundestrup/jekyll-documents/security/code-scanning)
