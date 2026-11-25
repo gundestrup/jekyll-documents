@@ -7,6 +7,7 @@
 - npm dev-deps: `markdownlint-cli2` 0.24.0 → 0.24.2, `@playwright/test`
   1.64.1 → 1.65.1.
 - Dev-tooling bump: `rubocop` 1.92.2 → 1.92.3 (plus transitive `parser` 3.3.14.0, `prism` 2.1.0, `rubocop-ast` 1.53.0, `regexp_parser` 2.13.4).
+- Development Ruby pin bumped to 3.4.13 (CVE-2026-132825); `ruby/setup-ruby` bumped to v1.343.0.
 
 ## [0.7.9] - 2026-11-10
 
